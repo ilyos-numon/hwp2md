@@ -20,3 +20,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: f37049c [T-20261022-stack-cli-smoke][S0][wip] auto checkpoint (stop)
 - 다음: 사용자 승인 대기
+
+## [2026-10-22 11:58] S1 | orchestrator | START
+- 한 일: 패키지 메타데이터 pyproject.toml
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f151c33 [T-20261022-stack-cli-smoke][plan] approved
+
+## [2026-10-22 12:00] S1 | implementer(opus) | DONE
+- 한 일: pyproject.toml 생성 (§4.2 그대로)
+- 변경 파일(미커밋, .ai 제외): pyproject.toml uv.lock 
+- 커밋: f151c33 [T-20261022-stack-cli-smoke][plan] approved
+- 다음: orchestrator: uv lock·커밋
+- 메모: tomllib 검증 OK, uv lock --dry-run Resolved 15 packages, 범위 내 파일 1개. 로그 logs/s1-pyproject.log
+
+## [2026-10-22 12:00] S1 | orchestrator | DONE
+- 한 일: pyproject.toml 검증 통과 (§4.2 verbatim diff 0, uv lock → uv.lock 15 pkgs, sanitize OK). 설정 단계라 runner/reviewer 생략, orchestrator가 직접 검증
+- 변경 파일(미커밋, .ai 제외): pyproject.toml uv.lock 
+- 커밋: f151c33 [T-20261022-stack-cli-smoke][plan] approved
+- 다음: S2 시작 (CLAUDE.md 명령 블록, orchestrator 직접)

@@ -1,0 +1,41 @@
+[project]
+name = "hwp2md"
+version = "0.1.0"
+description = "Convert HWP 5.0 documents to Markdown without Hancom Office"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["olefile>=0.46"]
+
+[project.scripts]
+hwp2md = "hwp2md.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hwp2md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = "olefile"
+ignore_missing_imports = true
