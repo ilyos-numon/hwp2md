@@ -6,8 +6,9 @@ from pathlib import Path
 import olefile
 import pytest
 
+from hwp2md.blocks import Paragraph, Table
 from hwp2md.hwp5.body import parse_blocks
-from hwp2md.hwp5.reader import read_sections
+from hwp2md.hwp5.reader import read_blocks, read_sections
 from hwp2md.hwp5.records import (
     HWPTAG_CTRL_HEADER,
     HWPTAG_LIST_HEADER,
@@ -21,14 +22,18 @@ from hwp2md.hwp5.records import (
 from synth_hwp5 import (
     EXPECTED_BLOCKS_MERGED,
     EXPECTED_BLOCKS_WITH_TABLE,
+    FIXTURE_ITEMS_HEADING_IN_CELL,
+    FIXTURE_ITEMS_HEADINGS,
     FIXTURE_ITEMS_MERGED,
     FIXTURE_ITEMS_WITH_TABLE,
     FIXTURE_PARAGRAPHS,
     HWP5_SIGNATURE,
     build_cfb,
+    build_docinfo,
     build_file_header,
     build_hwp5,
     build_section0,
+    has_heading,
     write_hwp5,
 )
 
@@ -211,3 +216,120 @@ def test_plain_fixture_has_no_table_records() -> None:
     table_tags = {HWPTAG_CTRL_HEADER, HWPTAG_TABLE, HWPTAG_LIST_HEADER}
     assert [r for r in recs if r.tag_id in table_tags] == []
     assert all(r.level == (0 if r.tag_id == HWPTAG_PARA_HEADER else 1) for r in recs)
+
+
+_BASE_DOCINFO_SHA256 = "39f61ef96a725101222bf887e50fcaac3c9b9c80c3610caa593c582870d031d4"
+
+
+def test_docinfo_default_unchanged() -> None:
+    docinfo = build_docinfo()
+    assert docinfo == build_docinfo(outline=False)
+    assert len(docinfo) == 30
+    assert hashlib.sha256(docinfo).hexdigest() == _BASE_DOCINFO_SHA256
+    assert [r.tag_id for r in iter_records(docinfo)] == [0x10]
+
+
+def test_docinfo_outline_records() -> None:
+    recs = list(iter_records(build_docinfo(outline=True)))
+    assert [r.tag_id for r in recs] == [0x10] + [0x19] * 8 + [0x1A] * 8
+    shapes = [r for r in recs if r.tag_id == 0x19]
+    assert all(len(r.payload) == 54 for r in shapes)
+    attrs = [struct.unpack_from("<I", r.payload, 0)[0] for r in shapes]
+    assert attrs[0] == 0
+    for lv in range(1, 8):
+        assert attrs[lv] == (1 << 23) | ((lv - 1) << 25)
+
+
+def test_style_record_layout() -> None:
+    styles = [r for r in iter_records(build_docinfo(outline=True)) if r.tag_id == 0x1A]
+    payload = styles[2].payload
+    assert len(payload) == 40
+    off = 0
+    (n1,) = struct.unpack_from("<H", payload, off)
+    off += 2
+    ko = payload[off : off + 2 * n1].decode("utf-16-le")
+    off += 2 * n1
+    (n2,) = struct.unpack_from("<H", payload, off)
+    off += 2
+    en = payload[off : off + 2 * n2].decode("utf-16-le")
+    off += 2 * n2
+    attr, next_id, lang, para_shape_id, char_shape_id, zero = struct.unpack_from(
+        "<BBhHHH", payload, off
+    )
+    assert ko == "개요 2"
+    assert en == "Outline 2"
+    assert (attr, next_id, lang) == (0, 2, 1042)
+    assert para_shape_id == 2
+    assert (char_shape_id, zero) == (0, 0)
+
+
+def _header_ids(section: bytes, level: int) -> list[tuple[int, int]]:
+    heads = [
+        r for r in iter_records(section) if r.tag_id == HWPTAG_PARA_HEADER and r.level == level
+    ]
+    assert all(len(r.payload) == 22 for r in heads)
+    return [(struct.unpack_from("<H", r.payload, 8)[0], r.payload[10]) for r in heads]
+
+
+def test_heading_paragraph_header_ids() -> None:
+    section = build_section0(FIXTURE_ITEMS_HEADINGS)
+    assert _header_ids(section, 0) == [(1, 1), (0, 0), (2, 2), (0, 0), (3, 3), (0, 0)]
+
+
+def test_cell_heading_paragraph_header_ids() -> None:
+    section = build_section0(FIXTURE_ITEMS_HEADING_IN_CELL)
+    assert _header_ids(section, 2) == [(2, 2), (0, 0)]
+
+
+@pytest.mark.parametrize(
+    ("items", "properties", "expected"),
+    [
+        (
+            FIXTURE_PARAGRAPHS,
+            0x1,
+            "8e17f5de3eabea84e476d13d0e5dc993e629de8597d850b75921ad37c05b8b4b",
+        ),
+        (
+            FIXTURE_PARAGRAPHS,
+            0,
+            "50f3b370aa8f41c2ccc8ca961500567a956de10baebe4bb957b8848a1980b030",
+        ),
+        (
+            FIXTURE_ITEMS_WITH_TABLE,
+            0x1,
+            "b3635fb47a3412ca763b8491d9b61e8e8eb400d7950292a0dc500df201ffd7ee",
+        ),
+        (
+            FIXTURE_ITEMS_WITH_TABLE,
+            0,
+            "93121aecd08248f24ac247473cd0ec96348eb28b832d2dc2a670d7ec3da4a689",
+        ),
+        (
+            FIXTURE_ITEMS_MERGED,
+            0x1,
+            "223eb106e7f43245822cc178f919abba72d2a45e42fa386d4cf6e38b4796d33e",
+        ),
+        (
+            FIXTURE_ITEMS_MERGED,
+            0,
+            "bb8c92ff627fbca29984d7371c9db1c0cb98bfbe08cfec250a03d69ec03ad097",
+        ),
+    ],
+)
+def test_fixture_bytes_unchanged_sha256(items: list, properties: int, expected: str) -> None:
+    assert hashlib.sha256(build_hwp5(items, properties=properties)).hexdigest() == expected
+
+
+def test_has_heading() -> None:
+    assert has_heading(FIXTURE_ITEMS_HEADING_IN_CELL) is True
+    assert has_heading(FIXTURE_ITEMS_HEADINGS) is True
+    assert has_heading(FIXTURE_ITEMS_WITH_TABLE) is False
+    assert has_heading(FIXTURE_PARAGRAPHS) is False
+
+
+def test_heading_fixture_round_trips_text(tmp_path: Path) -> None:
+    blocks = read_blocks(write_hwp5(tmp_path / "h.hwp", FIXTURE_ITEMS_HEADINGS))
+    texts = [b.text for b in blocks if isinstance(b, Paragraph)]
+    assert texts == ["문서 제목", "본문 단락", "1. 사업 개요", "가. 세부 내용", "마지막 단락"]
+    tables = [b for b in blocks if isinstance(b, Table)]
+    assert tables == [Table([["구분", "내용"], ["지원 규모", "총 30억 원"]])]
