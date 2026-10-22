@@ -49,7 +49,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     summary = f"  단락 {result.paragraph_count}개 · 표 {result.table_count}개"
     if result.heading_count:
         summary += f" · 제목 {result.heading_count}개"
+    if result.image_count:
+        summary += f" · 이미지 {result.image_count}개"
     print(summary)
+    if result.image_files:
+        print(f"  이미지: {result.image_dir}/ ({len(result.image_files)} files)")
     return 0
 
 
