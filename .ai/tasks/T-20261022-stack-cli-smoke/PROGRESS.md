@@ -54,3 +54,40 @@
 - 변경 파일(미커밋, .ai 제외): .gitignore CLAUDE.md 
 - 커밋: 2b392a3 [T-20261022-stack-cli-smoke][s1] build: pyproject.toml (hatchling, olefile, dev tools)
 - 다음: S3 시작 (implementer opus: records 파서·에러·뼈대)
+
+## [2026-10-22 12:01] S3 | orchestrator | START
+- 한 일: hwp5 레코드 파서·에러 타입·패키지 뼈대
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+
+## [2026-10-22 12:03] S3 | implementer(opus) | DONE
+- 한 일: errors.py·hwp5/records.py(iter_records, decode_para_text)·__init__·py.typed·test_hwp5_records.py(12 passed)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+- 다음: runner 검증 → reviewer
+- 메모: uv sync 첫 성공(.venv). mypy OK, ruff OK(E501 2건 수정), 12 passed. truncated 메시지 offset=헤더 시작. 로그 logs/s3-*.log
+
+## [2026-10-22 12:04] S3 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+
+## [2026-10-22 12:04] S3 | runner(haiku) | DONE
+- 한 일: 검증 실행: mypy OK(4 files), ruff check+format OK, pytest unit 12 passed, grep lxml|hwpx 0건
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+- 다음: reviewer 판정 대기
+- 메모: 로그 logs/s3-{typecheck,lint,test}.log
+
+## [2026-10-22 12:05] S3 | reviewer(sonnet) | DONE
+- 한 일: PASS — 7기준 OK (쓰기범위·§4.3 계약·헤더 비트·PARA_TEXT 제어문자·테스트 8+4·OUT 없음·익명화)
+- 변경 파일(미커밋, .ai 제외): src/.gitkeep src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+- 다음: orchestrator 마감
+- 메모: truncated offset = 레코드 헤더 시작. S4 테스트에서 가정 가능
+
+## [2026-10-22 12:05] S3 | orchestrator | DONE
+- 한 일: hwp5 레코드 파서 검증 통과 (runner·reviewer PASS), src/.gitkeep 삭제
+- 변경 파일(미커밋, .ai 제외): src/.gitkeep src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
+- 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
+- 다음: S4 시작 (implementer opus: 합성 HWP 5.0 생성기)
