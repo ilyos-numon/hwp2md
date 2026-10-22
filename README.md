@@ -27,3 +27,11 @@
 - 본문·제목·표·이미지 4종 지원
 - `hwp2md input.hwp -o out/` 한 줄
 - 공공기관 샘플 문서 20개로 변환 품질 비교표 작성
+
+## 설치와 실행 (개발 중)
+```bash
+uv sync                               # .venv 생성 + 개발 의존성 설치
+uv run hwp2md input.hwp -o out/       # out/input.md 생성
+uv run pytest tests/unit tests/e2e -q # 테스트
+```
+현재 지원: HWP 5.0 바이너리의 본문 단락 텍스트. 표·이미지·각주·HWPX는 진행 중.

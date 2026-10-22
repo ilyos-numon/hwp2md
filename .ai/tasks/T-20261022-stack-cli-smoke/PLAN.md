@@ -529,3 +529,6 @@ Stage 1(pyproject) → Stage 2(CLAUDE.md, orchestrator) → Stage 3(records) →
 
 ## 9. 예상 비용
 - 예상 단계 수: 9 (서브에이전트 호출 단계 8 + orchestrator 직접 1) · 서브에이전트 호출: 10회 (implementer 5, scribe 2, test-writer 1, runner 1, reviewer 1) · 주 모델: opus 50% / sonnet 20% / haiku 30%
+
+## 변경 이력
+- 2026-10-22 12:59 (orchestrator): Stage 7 담당을 scribe(haiku) → implementer(opus)로 변경. 사유: scribe 에이전트 정의가 `.ai/` 밖 파일 수정을 금지해 docs/decisions.md·README.md를 쓸 수 없음. 쓰기 범위·내용(§4.9/§4.10)·검증은 변경 없음(범위 확대 아님).

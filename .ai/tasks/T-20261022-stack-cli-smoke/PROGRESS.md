@@ -214,3 +214,33 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
 - 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
 - 다음: S7 시작 (scribe haiku: decisions.md·README)
+
+## [2026-10-22 12:58] S7 | orchestrator | START
+- 한 일: 결정 기록·README 실행 방법
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
+
+## [2026-10-22 12:58] S7 | orchestrator | RETRY
+- 한 일: 담당 변경: scribe(haiku) → implementer(opus). scribe 정의가 .ai/ 밖 수정 금지. PLAN.md 변경 이력 추가
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
+- 다음: implementer(opus) 호출 (docs/decisions.md, README.md)
+- 메모: 범위·내용·검증 불변
+
+## [2026-10-22 12:58] S7 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
+
+## [2026-10-22 13:00] S7 | implementer(opus) | DONE
+- 한 일: docs/decisions.md +12 (§4.9 3항목), README.md +8 (§4.10 설치·실행 절). grep 3/1/1, 삭제 0줄, sanitize OK
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
+- 다음: orchestrator 검증·커밋
+- 메모: sed로 플랜 원문 복사. 로그 logs/s7-docs.log
+
+## [2026-10-22 13:00] S7 | orchestrator | DONE
+- 한 일: 결정 기록·README 검증 통과 (grep 3/1/1, 플랜 §4.9/§4.10과 diff 0). 문서 단계라 runner/reviewer 생략, orchestrator 직접 검증
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
+- 다음: S8 시작 (test-writer sonnet: E2E 6케이스)
