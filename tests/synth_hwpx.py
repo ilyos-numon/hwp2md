@@ -10,7 +10,15 @@ from xml.sax.saxutils import escape
 
 from hwp2md.blocks import Paragraph
 from hwp2md.hwpx.reader import HWPX_MIMETYPE, NS_HP, NS_HS
-from synth_hwp5 import Item, SynthCell, SynthHeading, SynthTable, has_heading  # 재정의 금지
+from synth_hwp5 import (  # 재정의 금지
+    Item,
+    SynthCell,
+    SynthHeading,
+    SynthImage,
+    SynthTable,
+    collect_images,
+    has_heading,
+)
 
 NS_HC = "http://www.hancom.co.kr/hwpml/2011/core"
 NS_HH = "http://www.hancom.co.kr/hwpml/2011/head"
@@ -66,12 +74,44 @@ def paragraph_xml(text: str, *, para_id: int, first: bool = False, para_pr_id: i
     )
 
 
-def cell_xml(cell: SynthCell) -> str:
+def pic_xml(k: int, *, pic_id: int) -> str:
+    return (
+        f'<hp:pic id="{pic_id}" zOrder="0" numberingType="PICTURE" textWrap="TOP_AND_BOTTOM" '
+        'textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" href="" groupLevel="0" '
+        f'instid="{pic_id + 1000}" reverse="0">'
+        '<hp:offset x="0" y="0"/><hp:orgSz width="8196" height="3382"/>'
+        '<hp:curSz width="0" height="0"/><hp:flip horizontal="0" vertical="0"/>'
+        '<hp:rotationInfo angle="0" centerX="4098" centerY="1691" rotateimage="1"/>'
+        "<hp:renderingInfo/>"
+        f'<hc:img binaryItemIDRef="image{k}" bright="0" contrast="0" effect="REAL_PIC" alpha="0"/>'
+        '<hp:imgRect/><hp:imgClip left="0" right="0" top="0" bottom="0"/>'
+        '<hp:inMargin left="0" right="0" top="0" bottom="0"/>'
+        '<hp:imgDim dimwidth="0" dimheight="0"/><hp:effects/>'
+        '<hp:sz width="8196" widthRelTo="ABSOLUTE" height="3382" heightRelTo="ABSOLUTE" '
+        'protect="0"/>'
+        '<hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" '
+        'holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="PARA" vertAlign="TOP" horzAlign="LEFT" '
+        'vertOffset="0" horzOffset="0"/>'
+        '<hp:outMargin left="0" right="0" top="0" bottom="0"/><hp:shapeComment/></hp:pic>'
+    )
+
+
+def pic_paragraph_xml(k: int, *, para_id: int, first: bool = False) -> str:
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0">{pic_xml(k, pic_id=2000 + para_id)}</hp:run></hp:p>'
+    )
+
+
+def cell_xml(cell: SynthCell, images: Sequence[SynthImage] = ()) -> str:
     return (
         f"<hp:tc {TC_ATTRS}><hp:subList {SUBLIST_ATTRS}>"
         + "".join(
             paragraph_xml(t.text, para_id=0, para_pr_id=t.level)
             if isinstance(t, SynthHeading)
+            else pic_paragraph_xml(images.index(t) + 1, para_id=0)
+            if isinstance(t, SynthImage)
             else paragraph_xml(t, para_id=0)
             for t in (cell.paragraphs or ("",))
         )
@@ -83,27 +123,36 @@ def cell_xml(cell: SynthCell) -> str:
     )
 
 
-def table_xml(table: SynthTable, *, para_id: int, first: bool = False) -> str:
+def table_xml(
+    table: SynthTable,
+    *,
+    para_id: int,
+    first: bool = False,
+    images: Sequence[SynthImage] = (),
+) -> str:
     return (
         f'<hp:p id="{para_id}" {P_ATTRS}>'
         + (SECPR_RUN if first else "")
         + f'<hp:run charPrIDRef="0"><hp:tbl id="{1000 + para_id}" rowCnt="{table.rows}" '
         + f'colCnt="{table.cols}" {TBL_ATTRS}>'
         + "".join(
-            "<hp:tr>" + "".join(cell_xml(c) for c in table.cells if c.row == r) + "</hp:tr>"
+            "<hp:tr>" + "".join(cell_xml(c, images) for c in table.cells if c.row == r) + "</hp:tr>"
             for r in range(table.rows)
         )
         + "</hp:tbl></hp:run></hp:p>"
     )
 
 
-def section_xml(items: Sequence[Item]) -> bytes:
+def section_xml(items: Sequence[Item], images: Sequence[SynthImage] | None = None) -> bytes:
+    imgs = collect_images(items) if images is None else images
     body = "".join(
         paragraph_xml(item, para_id=i, first=(i == 0))
         if isinstance(item, str)
         else paragraph_xml(item.text, para_id=i, first=(i == 0), para_pr_id=item.level)
         if isinstance(item, SynthHeading)
-        else table_xml(item, para_id=i, first=(i == 0))
+        else pic_paragraph_xml(imgs.index(item) + 1, para_id=i, first=(i == 0))
+        if isinstance(item, SynthImage)
+        else table_xml(item, para_id=i, first=(i == 0), images=imgs)
         for i, item in enumerate(items)
     )
     return (
@@ -155,13 +204,27 @@ def header_xml(section_count: int, *, outline: bool) -> bytes:
     ).encode("utf-8")
 
 
+def manifest_items(images: Sequence[SynthImage]) -> str:
+    return "".join(
+        f'<opf:item id="image{k}" href="BinData/image{k}.{img.ext}" '
+        f'media-type="image/{img.ext}" isEmbeded="1"/>'
+        for k, img in enumerate(images, 1)
+    )
+
+
 def hwpx_entries(
     items: Sequence[Item], *, more_sections: Sequence[Sequence[Item]] = ()
 ) -> dict[str, bytes]:
     """삽입 순서: mimetype, version.xml, META-INF/container.xml, Contents/content.hpf,
-    Contents/header.xml, Contents/section0.xml, (Contents/section1.xml, …)."""
+    Contents/header.xml, BinData/image{k}.{ext} (missing 제외),
+    Contents/section0.xml, (Contents/section1.xml, …)."""
     sections: list[Sequence[Item]] = [items, *more_sections]
     n = len(sections)
+    images: list[SynthImage] = []
+    for sec in sections:
+        for img in collect_images(sec):
+            if img not in images:
+                images.append(img)
     version = (
         XML_DECL
         + f'<hv:HCFVersion xmlns:hv="{NS_HV}" tagetApplication="WORDPROCESSOR" major="5" '
@@ -180,6 +243,7 @@ def hwpx_entries(
         + f'<opf:package xmlns:opf="{NS_OPF}" version="" unique-identifier="" id="">'
         + "<opf:metadata><opf:title/><opf:language/></opf:metadata><opf:manifest>"
         + '<opf:item id="header" href="Contents/header.xml" media-type="application/xml"/>'
+        + manifest_items(images)
         + "".join(
             f'<opf:item id="section{i}" href="Contents/section{i}.xml" '
             'media-type="application/xml"/>'
@@ -197,8 +261,11 @@ def hwpx_entries(
         "Contents/content.hpf": content.encode("utf-8"),
         "Contents/header.xml": header,
     }
+    for k, img in enumerate(images, 1):
+        if not img.missing:
+            entries[f"BinData/image{k}.{img.ext}"] = img.data
     for i, sec_items in enumerate(sections):
-        entries[f"Contents/section{i}.xml"] = section_xml(sec_items)
+        entries[f"Contents/section{i}.xml"] = section_xml(sec_items, images)
     return entries
 
 

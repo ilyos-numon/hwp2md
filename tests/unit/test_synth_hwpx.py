@@ -13,16 +13,23 @@ from synth_hwp5 import (
     EXPECTED_BLOCKS_WITH_TABLE,
     FIXTURE_ITEMS_HEADING_IN_CELL,
     FIXTURE_ITEMS_HEADINGS,
+    FIXTURE_ITEMS_IMAGE_IN_CELL,
+    FIXTURE_ITEMS_IMAGE_MISSING,
+    FIXTURE_ITEMS_IMAGES,
     FIXTURE_ITEMS_MERGED,
     FIXTURE_ITEMS_WITH_TABLE,
     FIXTURE_PARAGRAPHS,
+    JPEG_STUB,
+    PNG_1X1,
     Item,
     SynthTable,
 )
 from synth_hwpx import (
     EXPECTED_BLOCKS_INLINE,
     FIXTURE_PARAGRAPHS_INLINE,
+    NS_HC,
     NS_HH,
+    NS_OPF,
     P_ATTRS,
     XML_DECL,
     build_hwpx,
@@ -166,3 +173,81 @@ def test_heading_fixture_round_trips_text(tmp_path: Path) -> None:
     assert [b.text for b in blocks if isinstance(b, Paragraph)] == HEADING_TEXTS
     tables = [b for b in blocks if isinstance(b, Table)]
     assert tables == [Table([["구분", "내용"], ["지원 규모", "총 30억 원"]])]
+
+
+HP = f"{{{NS_HP}}}"
+HC_IMG = f"{{{NS_HC}}}img"
+OPF_ITEM = f"{{{NS_OPF}}}item"
+
+
+def _manifest_items(content: bytes) -> list[ET.Element]:
+    return list(ET.fromstring(content).iter(OPF_ITEM))
+
+
+def test_ns_hc_constant_present() -> None:
+    assert NS_HC == "http://www.hancom.co.kr/hwpml/2011/core"
+
+
+def test_entries_with_images_order_and_bytes() -> None:
+    entries = hwpx_entries(FIXTURE_ITEMS_IMAGES)
+    assert list(entries) == ENTRY_NAMES[:5] + [
+        "BinData/image1.png",
+        "BinData/image2.jpg",
+        "Contents/section0.xml",
+    ]
+    assert entries["BinData/image1.png"] == PNG_1X1
+    assert entries["BinData/image2.jpg"] == JPEG_STUB
+
+
+def test_manifest_items_inserted_after_header() -> None:
+    items = _manifest_items(hwpx_entries(FIXTURE_ITEMS_IMAGES)["Contents/content.hpf"])
+    assert [i.get("id") for i in items] == ["header", "image1", "image2", "section0"]
+    image1 = items[1]
+    assert image1.get("href") == "BinData/image1.png"
+    assert image1.get("media-type") == "image/png"
+    assert image1.get("isEmbeded") == "1"
+
+
+def test_content_hpf_unchanged_without_images() -> None:
+    content = hwpx_entries(FIXTURE_ITEMS_HEADINGS)["Contents/content.hpf"]
+    assert [i.get("id") for i in _manifest_items(content)] == ["header", "section0"]
+    assert b"BinData" not in content
+
+
+def test_pic_paragraph_structure() -> None:
+    root = ET.fromstring(section_xml(FIXTURE_ITEMS_IMAGES))
+    paras = root.findall(f"{HP}p")
+    runs = paras[1].findall(f"{HP}run")
+    assert [c.tag for r in runs for c in r] == [f"{HP}pic"]
+    img1 = paras[1].find(f"{HP}run/{HP}pic/{HC_IMG}")
+    assert img1 is not None and img1.get("binaryItemIDRef") == "image1"
+    img2 = paras[3].find(f"{HP}run/{HP}pic/{HC_IMG}")
+    assert img2 is not None and img2.get("binaryItemIDRef") == "image2"
+
+
+def test_cell_image_paragraph() -> None:
+    root = ET.fromstring(section_xml(FIXTURE_ITEMS_IMAGE_IN_CELL))
+    tc = next(root.iter(f"{HP}tc"))
+    cell_paras = tc.findall(f"{HP}subList/{HP}p")
+    assert len(cell_paras) == 2
+    img = cell_paras[0].find(f".//{HC_IMG}")
+    assert img is not None and img.get("binaryItemIDRef") == "image1"
+    assert "".join(t.text or "" for t in cell_paras[1].iter(f"{HP}t")) == "값"
+    top = root.findall(f"{HP}p")[1].find(f"{HP}run/{HP}pic/{HC_IMG}")
+    assert top is not None and top.get("binaryItemIDRef") == "image2"
+
+
+def test_missing_image_has_manifest_but_no_entry() -> None:
+    entries = hwpx_entries(FIXTURE_ITEMS_IMAGE_MISSING)
+    ids = [i.get("id") for i in _manifest_items(entries["Contents/content.hpf"])]
+    assert "image1" in ids and "image2" in ids
+    assert [n for n in entries if n.startswith("BinData/")] == ["BinData/image2.png"]
+
+
+def test_image_fixture_round_trips_text(tmp_path: Path) -> None:
+    blocks = read_blocks(write_hwpx(tmp_path / "doc.hwpx", FIXTURE_ITEMS_IMAGES))
+    assert [b.text for b in blocks if isinstance(b, Paragraph)] == [
+        "그림 앞 단락",
+        "1. 결과",
+        "그림 뒤 단락",
+    ]

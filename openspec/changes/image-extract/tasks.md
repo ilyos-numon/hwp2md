@@ -19,8 +19,8 @@
 
 ## 4. 합성 HWPX fixture
 
-- [ ] 4.1 `synth_hwpx.py`에 `pic_paragraph_xml`(`hp:pic/hc:img@binaryItemIDRef`), 셀 안 그림, manifest `opf:item`, `BinData/image{k}.{ext}` 엔트리(`missing` 제외)를 추가하고 `tests/unit/test_synth_hwpx.py`의 구조 테스트가 통과하는지 확인한다
-- [ ] 4.2 이미지 없는 기존 fixture 3종의 `build_hwpx` sha256과 `content.hpf` 바이트가 변하지 않았음을 기존 테스트로 확인한다
+- [x] 4.1 `synth_hwpx.py`에 `pic_paragraph_xml`(`hp:pic/hc:img@binaryItemIDRef`), 셀 안 그림, manifest `opf:item`, `BinData/image{k}.{ext}` 엔트리(`missing` 제외)를 추가하고 `tests/unit/test_synth_hwpx.py`의 구조 테스트가 통과하는지 확인한다
+- [x] 4.2 이미지 없는 기존 fixture 3종의 `build_hwpx` sha256과 `content.hpf` 바이트가 변하지 않았음을 기존 테스트로 확인한다
 
 ## 5. HWPX 리더
 

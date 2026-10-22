@@ -112,3 +112,31 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_bindata.py 
 - 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
 - 다음: S4 시작
+
+## [2026-10-23 00:05] S4 | orchestrator | START
+- 한 일: 합성 HWPX 생성기 hp:pic
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
+
+## [2026-10-23 00:06] S4 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
+- 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
+
+## [2026-10-23 00:07] S4 | implementer(opus) | DONE
+- 한 일: hp:pic·manifest·BinData 엔트리, 단위 8
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
+- 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
+- 다음: S4 리뷰
+- 메모: synth_hwpx 26(기존 18 parametrize 포함), unit 219
+
+## [2026-10-23 00:07] S4 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS; 실제 샘플 hp:pic 구조와 핵심 일치
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
+- 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
+
+## [2026-10-23 00:07] S4 | orchestrator | DONE
+- 한 일: 합성 HWPX 생성기 이미지 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
+- 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
+- 다음: S5 시작
