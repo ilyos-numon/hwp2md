@@ -4,17 +4,17 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: 없음
+- 현재 태스크: T-20261022-table-markdown
 - 마지막 완료: T-20261022-stack-cli-smoke
-- 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: DONE)
-- 현재 단계: S0 / 0  — 없음
-- 상태: IDLE
-- 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 13:05 (S9 orchestrator DONE)
+- 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: DRAFT)
+- 현재 단계: S0 / 7  — 플랜 작성 완료, 사용자 승인 대기
+- 상태: AWAITING_APPROVAL
+- 브랜치: `ai/T-20261022-table-markdown`
+- 마지막 체크포인트: 2026-10-22 13:55 (S0 DONE)
 - 마지막 커밋: b97d73b [T-20261022-stack-cli-smoke][s9] docs: RESULT
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. RESULT.md 검토 → `ai/T-20261022-stack-cli-smoke`를 main에 병합 → 다음 태스크는 `/plan <목표>` (후보: 표→Markdown 표)
+1. 사용자 §7 답변 반영 → PLAN.md APPROVED → 커밋 → /implement (Stage 1 implementer opus: blocks.py·hwp5/body.py)
 
 ## 차단 중이면
 - 이유: 
