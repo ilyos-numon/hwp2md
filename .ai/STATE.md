@@ -10,7 +10,7 @@
 - 현재 단계: S0 / 0 — 없음
 - 상태: AWAITING_APPROVAL
 - 브랜치: `ai/T-20261022-image-extract`
-- 마지막 체크포인트: 2026-10-22 23:11 (S9 DONE)
+- 마지막 체크포인트: 2026-10-22 23:54 (S0 DONE)
 - 마지막 커밋: ad99b4d [T-20261022-heading-levels][s8] e2e: heading levels both formats, edge cases, real samples
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
