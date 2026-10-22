@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from lxml import etree
 
 from ..blocks import Block, Paragraph, Table
+from .header import EMPTY_HEADER, HeaderInfo
 
 NS_HP = "http://www.hancom.co.kr/hwpml/2011/paragraph"
 HP_P = f"{{{NS_HP}}}p"
@@ -47,7 +48,8 @@ def text_of_t(t: etree._Element) -> str:
     return "".join(parts)
 
 
-def parse_paragraph(p: etree._Element) -> list[Block]:
+def parse_paragraph(p: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> list[Block]:
+    level = header.heading_level(_int_attr(p, "paraPrIDRef"))
     blocks: list[Block] = []
     buf: list[str] = []
 
@@ -55,7 +57,7 @@ def parse_paragraph(p: etree._Element) -> list[Block]:
         text = "".join(buf).strip()
         buf.clear()
         if text:
-            blocks.append(Paragraph(text))
+            blocks.append(Paragraph(text, level))
 
     for run in p.iterchildren(HP_RUN):
         for child in run:
@@ -157,8 +159,8 @@ def _int_attr(el: etree._Element | None, name: str) -> int | None:
         return None
 
 
-def parse_section(root: etree._Element) -> list[Block]:
+def parse_section(root: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> list[Block]:
     blocks: list[Block] = []
     for p in root.iterchildren(HP_P):
-        blocks.extend(parse_paragraph(p))
+        blocks.extend(parse_paragraph(p, header))
     return blocks
