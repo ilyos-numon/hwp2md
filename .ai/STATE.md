@@ -4,12 +4,12 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: 없음
+- 현재 태스크: T-20261022-image-extract
 - 마지막 완료: T-20261022-heading-levels
-- 플랜: `.ai/tasks/T-20261022-heading-levels/PLAN.md` (상태: DONE)
+- 플랜: `.ai/tasks/T-20261022-image-extract/PLAN.md` (상태: DRAFT)
 - 현재 단계: S0 / 0 — 없음
-- 상태: IDLE
-- 브랜치: `ai/T-20261022-heading-levels` (main 병합 대기)
+- 상태: AWAITING_APPROVAL
+- 브랜치: `ai/T-20261022-image-extract`
 - 마지막 체크포인트: 2026-10-22 23:11 (S9 DONE)
 - 마지막 커밋: ad99b4d [T-20261022-heading-levels][s8] e2e: heading levels both formats, edge cases, real samples
 
