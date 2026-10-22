@@ -177,3 +177,40 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
 - 커밋: 616857c [T-20261022-hwpx-reader][s4] feat: content-based format detection and hwp5/hwpx dispatch in convert
 - 다음: S6 시작 (test-writer sonnet: tests/e2e/test_cli_hwpx.py)
+
+## [2026-10-22 18:11] S6 | orchestrator | START
+- 한 일: E2E 테스트 작성·실행 (tests/e2e/test_cli_hwpx.py)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+
+## [2026-10-22 18:13] S6 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_hwpx.py 
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+
+## [2026-10-22 18:13] S6 | test-writer(sonnet) | DONE
+- 한 일: tests/e2e/test_cli_hwpx.py 10케이스. 로컬 E2E 21 passed, real_hwpx 3 passed, ruff OK(I001 --fix), skip 문자열 0, 기존 파일·src 변경 0, unit 113
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_hwpx.py 
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+- 다음: runner E2E 실행 블록 → reviewer
+- 메모: 케이스6 stderr 기대 기본값. 로그 logs/s6-e2e-writer.log
+
+## [2026-10-22 18:15] S6 | runner(haiku) | DONE
+- 한 일: E2E 실행: e2e.log exit=0, 21 passed. 증거 11개(합성 hwpx 3 + 기존 + 실제 hwpx 3) — orchestrator 바이트 대조: sample/table/merged_hwpx == EXPECTED_*, hwp5·hwpx table.md 동일, 실제 샘플 구분선 1/31/8
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_hwpx.py 
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+- 다음: reviewer 판정 대기
+- 메모: lint OK, skip 문자열 0
+
+## [2026-10-22 18:15] S6 | reviewer(sonnet) | DONE
+- 한 일: PASS — 7기준 OK (§4.8 상수·케이스 10·약화 없음·e2e-standard·증거 바이트 일치·구분선 1/31/8·익명화)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_hwpx.py 
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+- 다음: orchestrator 마감
+- 메모: ruff는 runner 로그(s6-lint exit 0)로 확인
+
+## [2026-10-22 18:15] S6 | orchestrator | DONE
+- 한 일: E2E 작성·실행 완료 (test-writer·reviewer PASS, runner exit=0 21 passed, 증거 확인)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_hwpx.py 
+- 커밋: 31f937d [T-20261022-hwpx-reader][s5] docs: format detection, lxml security, HWPX scope decisions; README and fixtures README
+- 다음: S7 시작 (reviewer sonnet 최종 리뷰 → scribe haiku RESULT)
