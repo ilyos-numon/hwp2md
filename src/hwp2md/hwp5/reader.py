@@ -4,16 +4,18 @@ from __future__ import annotations
 
 import struct
 import zlib
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import olefile
 
-from ..blocks import Block, Paragraph
+from ..blocks import Block, Image, Paragraph
 from ..errors import NotHwpFileError, UnsupportedHwpError
+from ..images import ImageNamer, normalize_ext
 from .body import parse_blocks
-from .docinfo import parse_docinfo
+from .docinfo import BIN_DATA_EMBEDDING, DocInfo, parse_docinfo
 from .records import iter_records
 
 HWP5_SIGNATURE = b"HWP Document File" + b"\x00" * 15  # 32 bytes
@@ -57,8 +59,16 @@ def _inflate(data: bytes) -> bytes:
     return d.decompress(data) + d.flush()
 
 
-def read_streams(path: Path) -> tuple[bytes, list[bytes]]:
-    """(DocInfo 바이트 — 압축이면 해제, 없으면 b"" ; BodyText/Section<N> N 오름차순)."""
+@dataclass(frozen=True)
+class Hwp5Package:
+    header: FileHeader
+    docinfo: bytes  # 압축이면 해제됨, 없으면 b""
+    sections: list[bytes]  # 압축이면 해제됨, Section<N> 오름차순
+    bin_data: dict[str, bytes]  # "BinData/<NAME>" 스트림 원본 바이트(해제 안 함). 키 = <NAME>
+
+
+def read_hwp5_package(path: Path) -> Hwp5Package:
+    """FileHeader·DocInfo·BodyText 섹션·BinData 스트림을 읽는다."""
     if not olefile.isOleFile(str(path)):
         raise NotHwpFileError(f"not an OLE compound file: {path}")
     ole = olefile.OleFileIO(str(path))
@@ -80,11 +90,64 @@ def read_streams(path: Path) -> tuple[bytes, list[bytes]]:
             data = _read_stream(ole, f"BodyText/Section{n}")
             sections.append(_inflate(data) if header.compressed else data)
             n += 1
+        bin_data: dict[str, bytes] = {}
+        for entry in ole.listdir():
+            if len(entry) == 2 and entry[0] == "BinData":
+                bin_data[entry[1]] = _read_stream(ole, "/".join(entry))
     finally:
         ole.close()
     if not sections:
         raise NotHwpFileError(f"BodyText/Section0 stream missing: {path}")
-    return docinfo, sections
+    return Hwp5Package(header=header, docinfo=docinfo, sections=sections, bin_data=bin_data)
+
+
+def read_streams(path: Path) -> tuple[bytes, list[bytes]]:
+    """호환 래퍼: (DocInfo 바이트, BodyText/Section<N> 목록)."""
+    pkg = read_hwp5_package(path)
+    return pkg.docinfo, pkg.sections
+
+
+class BinDataStore:
+    """ImageResolver 구현. 문서 하나당 인스턴스 하나(ImageNamer 포함)."""
+
+    def __init__(self, docinfo: DocInfo, streams: Mapping[str, bytes], *, compressed: bool) -> None:
+        self._docinfo = docinfo
+        self._streams = streams
+        self._compressed = compressed
+        self._namer = ImageNamer()
+        self._cache: dict[int, Image | None] = {}
+
+    def resolve(self, bindata_id: int) -> Image | None:
+        if bindata_id not in self._cache:
+            self._cache[bindata_id] = self._resolve(bindata_id)
+        return self._cache[bindata_id]
+
+    def _resolve(self, bindata_id: int) -> Image | None:
+        entry = self._docinfo.bin_data_entry(bindata_id)
+        if entry is None or entry.storage_type != BIN_DATA_EMBEDDING:
+            return None
+        exact = f"BIN{entry.storage_id:04X}.{entry.ext}".upper()
+        prefix = f"BIN{entry.storage_id:04X}.".upper()
+        name = next((k for k in self._streams if k.upper() == exact), None)
+        if name is None:
+            name = next((k for k in sorted(self._streams) if k.upper().startswith(prefix)), None)
+        if name is None:
+            return None
+        raw = self._streams[name]
+        if entry.compression == 2:
+            inflate = False
+        elif entry.compression == 1:
+            inflate = True
+        else:
+            inflate = self._compressed
+        data = raw
+        if inflate:
+            try:
+                data = _inflate(raw)
+            except zlib.error:
+                data = raw
+        ext = normalize_ext(entry.ext, data)
+        return Image(file_name=self._namer.name_for(str(bindata_id), ext), data=data)
 
 
 def read_sections(path: Path) -> list[bytes]:
@@ -94,11 +157,12 @@ def read_sections(path: Path) -> list[bytes]:
 
 def read_blocks(path: Path) -> list[Block]:
     """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다."""
-    docinfo_raw, sections = read_streams(path)
-    docinfo = parse_docinfo(docinfo_raw)
+    pkg = read_hwp5_package(path)
+    docinfo = parse_docinfo(pkg.docinfo)
+    store = BinDataStore(docinfo, pkg.bin_data, compressed=pkg.header.compressed)
     blocks: list[Block] = []
-    for section in sections:
-        blocks.extend(parse_blocks(iter_records(section), docinfo))
+    for section in pkg.sections:
+        blocks.extend(parse_blocks(iter_records(section), docinfo, store))
     return blocks
 
 
