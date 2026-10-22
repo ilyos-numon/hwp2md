@@ -11,7 +11,7 @@
 - 상태: IDLE
 - 브랜치: `ai/T-20261022-hwpx-reader`
 - 마지막 체크포인트: 2026-10-22 18:17 · S7 orchestrator DONE
-- 마지막 커밋: 860ad2d [T-20261022-hwpx-reader][s6] test(e2e): HWPX conversion, disguised extension, cross-format parity, failure paths (이후 [s7]·[done] 커밋 예정)
+- 마지막 커밋: ac0b636 [T-20261022-hwpx-reader][s7] docs: RESULT
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
 1. RESULT.md 검토 → `ai/T-20261022-hwpx-reader`를 main에 병합 → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 제목 계층)
