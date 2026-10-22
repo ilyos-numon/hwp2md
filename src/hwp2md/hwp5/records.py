@@ -17,6 +17,7 @@ HWPTAG_PARA_LINE_SEG = 0x45  # 69
 HWPTAG_CTRL_HEADER = 0x47  # 71
 HWPTAG_LIST_HEADER = 0x48  # 72
 HWPTAG_TABLE = 0x4D  # 77
+CTRL_ID_TABLE = b"tbl "[::-1]  # == b" lbt". 파일에는 ctrl_id 4바이트가 역순으로 저장된다
 
 _EXTENDED_SIZE = 0xFFF
 
