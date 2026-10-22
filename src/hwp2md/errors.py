@@ -1,0 +1,13 @@
+"""hwp2md exception types."""
+
+
+class Hwp2mdError(Exception):
+    """hwp2md 최상위 예외 (CLI 종료 코드 1)"""
+
+
+class NotHwpFileError(Hwp2mdError):
+    """OLE 아님 / FileHeader 시그니처 불일치 / BodyText/Section0 없음 (종료 코드 3)"""
+
+
+class UnsupportedHwpError(Hwp2mdError):
+    """암호화 또는 배포용 문서 (종료 코드 3)"""
