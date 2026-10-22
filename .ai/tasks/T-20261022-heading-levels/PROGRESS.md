@@ -26,3 +26,9 @@
 - 커밋: 93f7cea [T-20261022-heading-levels][S0][wip] auto checkpoint (stop)
 - 다음: 사용자 승인 대기
 - 메모: 샘플: form2000… 최상위 개요 18(수준1×6,2×4,3×4,7×4) → (100,8,18); 나머지 4개 제목 0. 판정은 문단 모양만(style_id 전부 0)
+
+## [2026-10-22 19:05] S0 | orchestrator | DONE
+- 한 일: 플랜 승인(§7 7개 기본값). 사용자 요청으로 실행은 한도 초기화 후 '계속해'에 시작. HANDOFF.md 작성
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: da18025 [T-20261022-heading-levels][plan] 제목 계층(개요 수준 → Markdown heading) 플랜
+- 다음: S1 START (implementer opus)

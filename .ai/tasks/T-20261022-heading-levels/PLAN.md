@@ -1,7 +1,7 @@
 # PLAN — T-20261022-heading-levels hwp2md 제목 계층(heading) 지원
 
 > 작성: planner fable · 2026-10-22 18:50 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: DRAFT)
+> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: `ce0a3f5654351f1d89e11075f8c05fed4a5be775` (main 동일) · 브랜치 `ai/T-20261022-heading-levels` · 현재 단위 113 · E2E 21 통과(합계 134)
 
@@ -697,14 +697,14 @@ Stage 1(블록·렌더) → Stage 2(hwp5 생성기) → Stage 3(hwp5 DocInfo 파
 병렬 묶음 없음(전부 순차, worktree 격리 불필요). 이유: 단계마다 앞 단계의 타입·fixture 상수를 import 하고, 단계 하나가 10분 안쪽이다. runner·reviewer는 읽기 전용이므로 같은 트리에서 implementer 뒤에 바로 띄운다.
 
 ## 7. 사용자에게 확인받을 것 (플랜 승인 시 한 번에)
-- [ ] 7-1 블록 모델: **(a) `Paragraph.level: int = 0` 필드 추가** vs (b) 별도 `Heading(text, level)` 블록. 기본값 (a) — 기존 `Paragraph("x")` 호출·동등 비교·테스트 113개가 무수정으로 유효하고, HWP 모델(개요 속성이 붙은 단락)과 맞다. (b)를 택하면 `Block` Union·render·convert·`__init__` export·`read_paragraphs` 의미가 바뀌어 §4.2·§4.9·§4.10 재작성(planner 재호출).
-- [ ] 7-2 판정 근거: **문단 모양(PARA_SHAPE 비트 / paraPr heading OUTLINE)만** vs STYLE 레코드·`hh:style` 이름("개요 N") 또는 참조를 보조로. 기본값 문단 모양만 — 실제 샘플 5개 모두 본문 style_id가 0이고 개요 정보는 문단 모양에만 있다. 보조 판정을 원하면 "para_shape_id가 범위 밖일 때만 style → para_shape_id 추적"으로 한정해 Stage 3·5에 20줄 추가(§4.3-G·§4.6-B에 `style_id` 인자 추가, 계약 변경).
-- [ ] 7-3 개요 7수준(및 HWPX hp10 변형의 8·9수준) 처리: **`######`로 clamp** vs 본문(level 0). 기본값 clamp. 영향: 실제 샘플 1 기대값 — clamp `(100, 8, 18)`, 본문 처리 시 `(104, 8, 14)`이며 §4.11·§4.13·§4.9 EDGE fixture 기대값을 함께 바꿔야 한다.
-- [ ] 7-4 CLI 2행: **제목 0개면 생략, 1개 이상이면 ` · 제목 K개` 덧붙임(기존 E2E 정규식 2줄 수정)** vs (B) 항상 ` · 제목 K개` 표기(기존 E2E 문자열 단언 6곳 + 정규식 2곳 = 8줄 수정: `test_cli_convert.py` 26·79행, `test_cli_table.py` 38·51행, `test_cli_hwpx.py` 32·49·62·75행) vs (C) CLI 불변(`heading_count`는 라이브러리 결과에만, 기존 테스트 0줄 수정, Stage 7 생략). 기본값 (A). 또한 제목은 **단락 수에서 분리**(단락 N + 제목 K = Paragraph 블록 수). 제목을 단락 수에 포함하길 원하면 §4.2-D·§4.11 숫자 변경.
-- [ ] 7-5 긴 제목·표 안 제목: **길이 제한 없음, 표 셀 안 개요 단락은 셀 텍스트로만** 기본값. 대안: N자(예 100자) 초과는 본문 처리 — 실제 샘플 1의 제목은 최대 63자라 기대값 불변이지만 규칙이 하나 늘어 §4.2-B에 추가.
-- [ ] 7-6 HWPX `hp:switch` 안의 heading: **`hp:case` 쪽(최신 앱 기준, OUTLINE level 7·8 → clamp 6)** vs `hp:default` 쪽(NONE → 본문). 기본값 case. 실제 샘플에서는 참조하는 단락이 없어 기대값 불변.
-- [ ] 7-7 실제 양성 샘플: HWP 5.0은 샘플 1(제목 18개)로 양성 검증이 되지만 HWPX 실제 샘플 3개는 전부 제목 0개. **합성 HWPX fixture로 양성 검증, 실제 HWPX 양성 샘플은 사용자가 `tests/fixtures/hwpx/`에 넣고 `REAL_EXPECTED`에 기대값 추가(fixtures README 안내)** 기본값. 샘플을 지금 넣어 주면 planner가 §4.11에 기대값을 추가한다.
-- 기본값: 답이 없으면 전부 위 굵은 글씨대로 진행한다.
+- [x] 7-1 블록 모델: **(a) `Paragraph.level: int = 0` 필드 추가** vs (b) 별도 `Heading(text, level)` 블록. 기본값 (a) — 기존 `Paragraph("x")` 호출·동등 비교·테스트 113개가 무수정으로 유효하고, HWP 모델(개요 속성이 붙은 단락)과 맞다. (b)를 택하면 `Block` Union·render·convert·`__init__` export·`read_paragraphs` 의미가 바뀌어 §4.2·§4.9·§4.10 재작성(planner 재호출).
+- [x] 7-2 판정 근거: **문단 모양(PARA_SHAPE 비트 / paraPr heading OUTLINE)만** vs STYLE 레코드·`hh:style` 이름("개요 N") 또는 참조를 보조로. 기본값 문단 모양만 — 실제 샘플 5개 모두 본문 style_id가 0이고 개요 정보는 문단 모양에만 있다. 보조 판정을 원하면 "para_shape_id가 범위 밖일 때만 style → para_shape_id 추적"으로 한정해 Stage 3·5에 20줄 추가(§4.3-G·§4.6-B에 `style_id` 인자 추가, 계약 변경).
+- [x] 7-3 개요 7수준(및 HWPX hp10 변형의 8·9수준) 처리: **`######`로 clamp** vs 본문(level 0). 기본값 clamp. 영향: 실제 샘플 1 기대값 — clamp `(100, 8, 18)`, 본문 처리 시 `(104, 8, 14)`이며 §4.11·§4.13·§4.9 EDGE fixture 기대값을 함께 바꿔야 한다.
+- [x] 7-4 CLI 2행: **제목 0개면 생략, 1개 이상이면 ` · 제목 K개` 덧붙임(기존 E2E 정규식 2줄 수정)** vs (B) 항상 ` · 제목 K개` 표기(기존 E2E 문자열 단언 6곳 + 정규식 2곳 = 8줄 수정: `test_cli_convert.py` 26·79행, `test_cli_table.py` 38·51행, `test_cli_hwpx.py` 32·49·62·75행) vs (C) CLI 불변(`heading_count`는 라이브러리 결과에만, 기존 테스트 0줄 수정, Stage 7 생략). 기본값 (A). 또한 제목은 **단락 수에서 분리**(단락 N + 제목 K = Paragraph 블록 수). 제목을 단락 수에 포함하길 원하면 §4.2-D·§4.11 숫자 변경.
+- [x] 7-5 긴 제목·표 안 제목: **길이 제한 없음, 표 셀 안 개요 단락은 셀 텍스트로만** 기본값. 대안: N자(예 100자) 초과는 본문 처리 — 실제 샘플 1의 제목은 최대 63자라 기대값 불변이지만 규칙이 하나 늘어 §4.2-B에 추가.
+- [x] 7-6 HWPX `hp:switch` 안의 heading: **`hp:case` 쪽(최신 앱 기준, OUTLINE level 7·8 → clamp 6)** vs `hp:default` 쪽(NONE → 본문). 기본값 case. 실제 샘플에서는 참조하는 단락이 없어 기대값 불변.
+- [x] 7-7 실제 양성 샘플: HWP 5.0은 샘플 1(제목 18개)로 양성 검증이 되지만 HWPX 실제 샘플 3개는 전부 제목 0개. **합성 HWPX fixture로 양성 검증, 실제 HWPX 양성 샘플은 사용자가 `tests/fixtures/hwpx/`에 넣고 `REAL_EXPECTED`에 기대값 추가(fixtures README 안내)** 기본값. 샘플을 지금 넣어 주면 planner가 §4.11에 기대값을 추가한다.
+- 결정 (2026-10-22, 사용자): 7개 모두 기본값. 승인됨. 실행은 사용자가 "계속해"라고 할 때 시작(한도 초기화 대기).
 
 ## 8. 리스크
 | 리스크 | 가능성 | 대응 |
