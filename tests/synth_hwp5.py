@@ -9,14 +9,20 @@ import math
 import struct
 import zlib
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 
+from hwp2md.blocks import Paragraph, Table
 from hwp2md.hwp5.records import (
+    CTRL_ID_TABLE,
+    HWPTAG_CTRL_HEADER,
     HWPTAG_DOCUMENT_PROPERTIES,
+    HWPTAG_LIST_HEADER,
     HWPTAG_PARA_CHAR_SHAPE,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_LINE_SEG,
     HWPTAG_PARA_TEXT,
+    HWPTAG_TABLE,
 )
 
 FIXTURE_PARAGRAPHS: list[str] = ["테스트 문서 제목", "본문 단락 1", "", "본문 단락 2"]
@@ -69,26 +75,118 @@ def build_record(tag_id: int, level: int, payload: bytes) -> bytes:
     return struct.pack("<I", tag_id | (level << 10) | (size << 20)) + payload
 
 
-def build_paragraph(text: str, *, last: bool) -> bytes:
-    """§4.4-D/E: PARA_HEADER, PARA_TEXT, PARA_CHAR_SHAPE, PARA_LINE_SEG."""
+_CTRL_CHAR_EXTENDED = 11
+_TABLE_PLACEHOLDER_MASK = 0x00000800
+_TABLE_ATTR = 0x04000006
+_CELL_ATTR = 0x20
+_INNER_MARGIN = 141
+
+
+@dataclass(frozen=True)
+class SynthCell:
+    paragraphs: tuple[str, ...]
+    col: int
+    row: int
+    col_span: int = 1
+    row_span: int = 1
+
+
+@dataclass(frozen=True)
+class SynthTable:
+    rows: int
+    cols: int
+    cells: tuple[SynthCell, ...]
+
+
+Item = str | SynthTable
+
+
+def build_paragraph(text: str, *, last: bool, level: int = 0) -> bytes:
+    """§4.4-D/E: PARA_HEADER(level), PARA_TEXT·PARA_CHAR_SHAPE·PARA_LINE_SEG(level+1)."""
     text_bytes = text.encode("utf-16-le")
     nchars = len(text_bytes) // 2 + 1
     if last:
         nchars |= _LAST_PARA_BIT
     para_header = struct.pack("<IIHBBHHHI", nchars, 0, 0, 0, 0, 1, 0, 1, 0)
     return (
-        build_record(HWPTAG_PARA_HEADER, 0, para_header)
-        + build_record(HWPTAG_PARA_TEXT, 1, text_bytes + b"\r\x00")
-        + build_record(HWPTAG_PARA_CHAR_SHAPE, 1, struct.pack("<II", 0, 0))
-        + build_record(HWPTAG_PARA_LINE_SEG, 1, b"\x00" * 36)
+        build_record(HWPTAG_PARA_HEADER, level, para_header)
+        + build_record(HWPTAG_PARA_TEXT, level + 1, text_bytes + b"\r\x00")
+        + build_record(HWPTAG_PARA_CHAR_SHAPE, level + 1, struct.pack("<II", 0, 0))
+        + build_record(HWPTAG_PARA_LINE_SEG, level + 1, b"\x00" * 36)
     )
 
 
-def build_section0(paragraphs: Sequence[str]) -> bytes:
-    """미압축 섹션. 마지막 단락만 last=True."""
-    last_index = len(paragraphs) - 1
+def build_ctrl_header_table(table: SynthTable) -> bytes:
+    """§4.4-B: 표 컨트롤 CTRL_HEADER payload 44 bytes."""
+    return CTRL_ID_TABLE + struct.pack("<IiiIIiHHHHII", 0, 0, 0, 10000, 2000, 0, 0, 0, 0, 0, 0, 0)
+
+
+def build_table_record(table: SynthTable) -> bytes:
+    """§4.4-C: TABLE payload, 18 + 2×rows + 4 bytes."""
+    per_row = [sum(1 for c in table.cells if c.row == r) for r in range(table.rows)]
+    return (
+        struct.pack("<IHHH4H", _TABLE_ATTR, table.rows, table.cols, 0, *[_INNER_MARGIN] * 4)
+        + struct.pack(f"<{table.rows}H", *per_row)
+        + struct.pack("<HH", 1, 0)
+    )
+
+
+def build_cell_header(cell: SynthCell) -> bytes:
+    """§4.4-D: 셀 LIST_HEADER payload 38 bytes."""
+    return struct.pack(
+        "<HHIHHHHII4HHI",
+        len(cell.paragraphs),
+        0,
+        _CELL_ATTR,
+        cell.col,
+        cell.row,
+        cell.col_span,
+        cell.row_span,
+        5000,
+        1000,
+        *[_INNER_MARGIN] * 4,
+        1,
+        5000,
+    )
+
+
+def build_table_control(table: SynthTable, *, level: int, last: bool) -> bytes:
+    """§4.4-F: 자리표시자 단락 + CTRL_HEADER + TABLE + [LIST_HEADER + 셀 단락]×k."""
+    placeholder = (
+        struct.pack("<H", _CTRL_CHAR_EXTENDED)
+        + CTRL_ID_TABLE
+        + b"\x00" * 8
+        + struct.pack("<H", _CTRL_CHAR_EXTENDED)
+        + b"\r\x00"
+    )
+    nchars = len(placeholder) // 2
+    if last:
+        nchars |= _LAST_PARA_BIT
+    para_header = struct.pack("<IIHBBHHHI", nchars, _TABLE_PLACEHOLDER_MASK, 0, 0, 0, 1, 0, 1, 0)
+    out = (
+        build_record(HWPTAG_PARA_HEADER, level, para_header)
+        + build_record(HWPTAG_PARA_TEXT, level + 1, placeholder)
+        + build_record(HWPTAG_PARA_CHAR_SHAPE, level + 1, struct.pack("<II", 0, 0))
+        + build_record(HWPTAG_PARA_LINE_SEG, level + 1, b"\x00" * 36)
+        + build_record(HWPTAG_CTRL_HEADER, level + 1, build_ctrl_header_table(table))
+        + build_record(HWPTAG_TABLE, level + 2, build_table_record(table))
+    )
+    for cell in table.cells:
+        out += build_record(HWPTAG_LIST_HEADER, level + 2, build_cell_header(cell))
+        last_index = len(cell.paragraphs) - 1
+        for i, text in enumerate(cell.paragraphs):
+            out += build_paragraph(text, last=(i == last_index), level=level + 2)
+    return out
+
+
+def build_section0(items: Sequence[Item]) -> bytes:
+    """미압축 섹션. str → 본문 단락, SynthTable → 표 컨트롤. 마지막 원소만 last=True."""
+    last_index = len(items) - 1
     return b"".join(
-        build_paragraph(text, last=(i == last_index)) for i, text in enumerate(paragraphs)
+        build_table_control(item, level=0, last=(i == last_index))
+        if isinstance(item, SynthTable)
+        else build_paragraph(item, last=(i == last_index))
+        for i, item in enumerate(items)
     )
 
 
@@ -235,7 +333,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
     return bytes(header) + fat_bytes + dir_bytes + minifat_bytes + ministream_padded
 
 
-def build_hwp5(paragraphs: Sequence[str], *, properties: int = 0x1) -> bytes:
+def build_hwp5(paragraphs: Sequence[Item], *, properties: int = 0x1) -> bytes:
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
     docinfo = build_docinfo()
     section0 = build_section0(paragraphs)
@@ -251,8 +349,44 @@ def build_hwp5(paragraphs: Sequence[str], *, properties: int = 0x1) -> bytes:
     )
 
 
-def write_hwp5(path: Path, paragraphs: Sequence[str], *, properties: int = 0x1) -> Path:
+def write_hwp5(path: Path, paragraphs: Sequence[Item], *, properties: int = 0x1) -> Path:
     """부모 디렉터리 생성 후 바이트 저장, path 반환."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(build_hwp5(paragraphs, properties=properties))
     return path
+
+
+# 공용 fixture (E2E·단위 테스트가 이 이름을 그대로 import)
+FIXTURE_TABLE = SynthTable(
+    rows=2,
+    cols=2,
+    cells=(
+        SynthCell(("구분",), col=0, row=0),
+        SynthCell(("내용",), col=1, row=0),
+        SynthCell(("지원 규모",), col=0, row=1),
+        SynthCell(("총 30억 원",), col=1, row=1),
+    ),
+)
+FIXTURE_ITEMS_WITH_TABLE: list[Item] = ["표 앞 단락", FIXTURE_TABLE, "표 뒤 단락"]
+EXPECTED_MARKDOWN_WITH_TABLE = (
+    "표 앞 단락\n\n| 구분 | 내용 |\n|---|---|\n| 지원 규모 | 총 30억 원 |\n\n표 뒤 단락\n"
+)
+EXPECTED_BLOCKS_WITH_TABLE = [
+    Paragraph("표 앞 단락"),
+    Table([["구분", "내용"], ["지원 규모", "총 30억 원"]]),
+    Paragraph("표 뒤 단락"),
+]
+
+FIXTURE_TABLE_MERGED = SynthTable(
+    rows=2,
+    cols=3,
+    cells=(
+        SynthCell(("머리글",), col=0, row=0, col_span=3),
+        SynthCell(("가",), col=0, row=1),
+        SynthCell(("나|다",), col=1, row=1),
+        SynthCell(("라", "마"), col=2, row=1),
+    ),
+)
+FIXTURE_ITEMS_MERGED: list[Item] = ["제목", FIXTURE_TABLE_MERGED]
+EXPECTED_MARKDOWN_MERGED = "제목\n\n| 머리글 |  |  |\n|---|---|---|\n| 가 | 나\\|다 | 라<br>마 |\n"
+EXPECTED_BLOCKS_MERGED = [Paragraph("제목"), Table([["머리글", "", ""], ["가", "나|다", "라\n마"]])]

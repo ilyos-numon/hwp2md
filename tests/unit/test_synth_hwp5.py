@@ -1,3 +1,4 @@
+import hashlib
 import struct
 import zlib
 from pathlib import Path
@@ -5,18 +6,29 @@ from pathlib import Path
 import olefile
 import pytest
 
+from hwp2md.hwp5.body import parse_blocks
+from hwp2md.hwp5.reader import read_sections
 from hwp2md.hwp5.records import (
+    HWPTAG_CTRL_HEADER,
+    HWPTAG_LIST_HEADER,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_TEXT,
+    HWPTAG_TABLE,
+    Record,
     decode_para_text,
     iter_records,
 )
 from synth_hwp5 import (
+    EXPECTED_BLOCKS_MERGED,
+    EXPECTED_BLOCKS_WITH_TABLE,
+    FIXTURE_ITEMS_MERGED,
+    FIXTURE_ITEMS_WITH_TABLE,
     FIXTURE_PARAGRAPHS,
     HWP5_SIGNATURE,
     build_cfb,
     build_file_header,
     build_hwp5,
+    build_section0,
     write_hwp5,
 )
 
@@ -105,3 +117,97 @@ def test_build_hwp5_rejects_oversized_uncompressed_section() -> None:
     long_paragraphs = ["가" * 3000]
     with pytest.raises(ValueError):
         build_hwp5(long_paragraphs, properties=0)
+
+
+# BASE(4f1b92f) 버전 build_section0(FIXTURE_PARAGRAPHS) 의 sha256
+_BASE_PLAIN_SECTION_SHA256 = "5ff234b19bad734ca9812e68b8c44d55a83faeec9dd3eb19ba4d191115b49fb6"
+
+
+def _round_trip(path: Path) -> list[object]:
+    blocks: list[object] = []
+    for section in read_sections(path):
+        blocks.extend(parse_blocks(iter_records(section)))
+    return blocks
+
+
+def _table_records() -> list[Record]:
+    return list(iter_records(build_section0(FIXTURE_ITEMS_WITH_TABLE)))
+
+
+def test_table_fixture_round_trips_to_blocks(tmp_path: Path) -> None:
+    path = write_hwp5(tmp_path / "table.hwp", FIXTURE_ITEMS_WITH_TABLE)
+    assert _round_trip(path) == EXPECTED_BLOCKS_WITH_TABLE
+
+
+def test_merged_table_fixture_round_trips_to_blocks(tmp_path: Path) -> None:
+    path = write_hwp5(tmp_path / "merged.hwp", FIXTURE_ITEMS_MERGED)
+    assert _round_trip(path) == EXPECTED_BLOCKS_MERGED
+
+
+def test_table_control_record_layout() -> None:
+    recs = _table_records()
+    ctrl = [r for r in recs if r.tag_id == HWPTAG_CTRL_HEADER]
+    assert len(ctrl) == 1
+    assert ctrl[0].payload[:4] == b" lbt"
+    assert len(ctrl[0].payload) == 44
+    assert ctrl[0].level == 1
+    tables = [r for r in recs if r.tag_id == HWPTAG_TABLE]
+    assert len(tables) == 1
+    assert tables[0].level == 2
+    assert len(tables[0].payload) == 18 + 2 * 2 + 4
+    assert struct.unpack_from("<HH", tables[0].payload, 4) == (2, 2)
+    cells = [r for r in recs if r.tag_id == HWPTAG_LIST_HEADER]
+    assert len(cells) == 4
+    assert all(r.level == 2 and len(r.payload) == 38 for r in cells)
+    coords = [struct.unpack_from("<HHHH", r.payload, 8) for r in cells]
+    assert coords == [(0, 0, 1, 1), (1, 0, 1, 1), (0, 1, 1, 1), (1, 1, 1, 1)]
+
+
+def test_table_placeholder_paragraph() -> None:
+    recs = _table_records()
+    ctrl_index = next(i for i, r in enumerate(recs) if r.tag_id == HWPTAG_CTRL_HEADER)
+    header_index = max(
+        i
+        for i, r in enumerate(recs[:ctrl_index])
+        if r.tag_id == HWPTAG_PARA_HEADER and r.level == 0
+    )
+    header = recs[header_index]
+    text = recs[header_index + 1]
+    assert text.tag_id == HWPTAG_PARA_TEXT
+    assert text.level == 1
+    assert struct.unpack_from("<H", text.payload)[0] == 11
+    assert decode_para_text(text.payload) == ""
+    nchars, control_mask = struct.unpack_from("<II", header.payload)
+    assert nchars & 0x7FFFFFFF == 9
+    assert len(text.payload) // 2 == 9
+    assert control_mask == 0x800
+
+
+def test_cell_paragraph_levels_and_last_bit() -> None:
+    recs = list(iter_records(build_section0(FIXTURE_ITEMS_MERGED)))
+    ctrl_index = next(i for i, r in enumerate(recs) if r.tag_id == HWPTAG_CTRL_HEADER)
+    cell_recs = recs[ctrl_index + 1 :]
+    cell_headers = [r for r in cell_recs if r.tag_id == HWPTAG_PARA_HEADER]
+    cell_texts = [r for r in cell_recs if r.tag_id == HWPTAG_PARA_TEXT]
+    assert len(cell_headers) == 5
+    assert all(r.level == 2 for r in cell_headers)
+    assert all(r.level == 3 for r in cell_texts)
+    texts = [decode_para_text(r.payload) for r in cell_texts]
+    assert texts == ["머리글", "가", "나|다", "라", "마"]
+    last_bits = [bool(struct.unpack_from("<I", r.payload)[0] & 0x80000000) for r in cell_headers]
+    assert last_bits == [True, True, True, False, True]
+
+
+def test_table_fixture_uncompressed_variant(tmp_path: Path) -> None:
+    path = write_hwp5(tmp_path / "plain.hwp", FIXTURE_ITEMS_WITH_TABLE, properties=0)
+    assert _read_stream(path, "FileHeader")[36:40] == b"\x00\x00\x00\x00"
+    assert _round_trip(path) == EXPECTED_BLOCKS_WITH_TABLE
+
+
+def test_plain_fixture_has_no_table_records() -> None:
+    section = build_section0(FIXTURE_PARAGRAPHS)
+    assert hashlib.sha256(section).hexdigest() == _BASE_PLAIN_SECTION_SHA256
+    recs = list(iter_records(section))
+    table_tags = {HWPTAG_CTRL_HEADER, HWPTAG_TABLE, HWPTAG_LIST_HEADER}
+    assert [r for r in recs if r.tag_id in table_tags] == []
+    assert all(r.level == (0 if r.tag_id == HWPTAG_PARA_HEADER else 1) for r in recs)
