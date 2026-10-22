@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-hwpx-reader
 - 마지막 완료: T-20261022-table-markdown
 - 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
-- 현재 단계: S2 / 7  — HWPX 섹션 파서와 리더 (hwpx/body.py, hwpx/reader.py)
+- 현재 단계: S3 / 7  — 합성 HWPX 생성기와 리더 오류·보안 테스트
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-hwpx-reader`
-- 마지막 체크포인트: 2026-10-22 17:54 (S1 DONE)
-- 마지막 커밋: [s1] deps lxml
+- 마지막 체크포인트: 2026-10-22 17:59 (S2 DONE)
+- 마지막 커밋: [s2] hwpx parser
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S2 implementer(opus) 보고 대기 → runner 검증(실제 샘플 3개 기대값 (1,1)(80,31)(32,8)) → reviewer → 커밋 [s2] → S3
+1. S3 implementer(opus) 보고 대기 → runner → reviewer → 커밋 [s3] → S4(detect·convert 디스패치)
 
 ## 차단 중이면
 - 이유: 없음

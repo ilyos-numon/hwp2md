@@ -631,3 +631,6 @@ Stage 1(orchestrator) ──> Stage 2 ──> Stage 3 ──> Stage 4 ──(§7
 ## 9. 예상 비용
 - 예상 단계 수: 7 (+ 조건부 4b) · 서브에이전트 호출: 17회 (implementer 4, test-writer 1, runner 6, reviewer 5, scribe 1; 재시도 여유 +3 = 최대 20) · 주 모델: opus 25% / sonnet 35% / haiku 40%
 - 근거: 전 태스크 실적 7단계 17회(단계마다 runner·reviewer 동반). Stage 1·4b 는 orchestrator 직접이라 호출 0.
+
+## 변경 이력
+- 2026-10-22 17:59 (orchestrator, S2 reviewer 판정): §4.4 `parse_table` 의사코드의 `_int_attr(...) or len(trs)`를 "속성이 없을 때만 tr/tc 수로 대체, 명시적 0은 표 생략(hwp5/body.py와 동일)"으로 수정. §4.7 케이스 13(rowCnt="0" → [])과 모순이던 의사코드 문구 오류. 계약·범위 변경 아님.
