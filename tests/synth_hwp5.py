@@ -25,6 +25,9 @@ from hwp2md.hwp5.records import (
     HWPTAG_TABLE,
 )
 
+HWPTAG_PARA_SHAPE = 0x19
+HWPTAG_STYLE = 0x1A
+
 FIXTURE_PARAGRAPHS: list[str] = ["테스트 문서 제목", "본문 단락 1", "", "본문 단락 2"]
 EXPECTED_MARKDOWN = "테스트 문서 제목\n\n본문 단락 1\n\n본문 단락 2\n"
 
@@ -83,8 +86,14 @@ _INNER_MARGIN = 141
 
 
 @dataclass(frozen=True)
+class SynthHeading:
+    text: str
+    level: int  # 1~7 (개요 1~7). para_shape_id = style_id = level
+
+
+@dataclass(frozen=True)
 class SynthCell:
-    paragraphs: tuple[str, ...]
+    paragraphs: tuple[str | SynthHeading, ...]
     col: int
     row: int
     col_span: int = 1
@@ -98,16 +107,30 @@ class SynthTable:
     cells: tuple[SynthCell, ...]
 
 
-Item = str | SynthTable
+Item = str | SynthTable | SynthHeading
 
 
-def build_paragraph(text: str, *, last: bool, level: int = 0) -> bytes:
+def has_heading(items: Sequence[Item]) -> bool:
+    """items 또는 표 셀 단락에 SynthHeading 이 있으면 True."""
+    for item in items:
+        if isinstance(item, SynthHeading):
+            return True
+        if isinstance(item, SynthTable) and any(
+            isinstance(p, SynthHeading) for c in item.cells for p in c.paragraphs
+        ):
+            return True
+    return False
+
+
+def build_paragraph(
+    text: str, *, last: bool, level: int = 0, para_shape_id: int = 0, style_id: int = 0
+) -> bytes:
     """§4.4-D/E: PARA_HEADER(level), PARA_TEXT·PARA_CHAR_SHAPE·PARA_LINE_SEG(level+1)."""
     text_bytes = text.encode("utf-16-le")
     nchars = len(text_bytes) // 2 + 1
     if last:
         nchars |= _LAST_PARA_BIT
-    para_header = struct.pack("<IIHBBHHHI", nchars, 0, 0, 0, 0, 1, 0, 1, 0)
+    para_header = struct.pack("<IIHBBHHHI", nchars, 0, para_shape_id, style_id, 0, 1, 0, 1, 0)
     return (
         build_record(HWPTAG_PARA_HEADER, level, para_header)
         + build_record(HWPTAG_PARA_TEXT, level + 1, text_bytes + b"\r\x00")
@@ -174,26 +197,79 @@ def build_table_control(table: SynthTable, *, level: int, last: bool) -> bytes:
     for cell in table.cells:
         out += build_record(HWPTAG_LIST_HEADER, level + 2, build_cell_header(cell))
         last_index = len(cell.paragraphs) - 1
-        for i, text in enumerate(cell.paragraphs):
-            out += build_paragraph(text, last=(i == last_index), level=level + 2)
+        for i, p in enumerate(cell.paragraphs):
+            if isinstance(p, SynthHeading):
+                out += build_paragraph(
+                    p.text,
+                    last=(i == last_index),
+                    level=level + 2,
+                    para_shape_id=p.level,
+                    style_id=p.level,
+                )
+            else:
+                out += build_paragraph(p, last=(i == last_index), level=level + 2)
     return out
 
 
 def build_section0(items: Sequence[Item]) -> bytes:
-    """미압축 섹션. str → 본문 단락, SynthTable → 표 컨트롤. 마지막 원소만 last=True."""
+    """미압축 섹션. str → 본문 단락, SynthHeading → 개요 단락, SynthTable → 표 컨트롤.
+
+    마지막 원소만 last=True.
+    """
     last_index = len(items) - 1
-    return b"".join(
-        build_table_control(item, level=0, last=(i == last_index))
-        if isinstance(item, SynthTable)
-        else build_paragraph(item, last=(i == last_index))
-        for i, item in enumerate(items)
+    out = b""
+    for i, item in enumerate(items):
+        last = i == last_index
+        if isinstance(item, SynthTable):
+            out += build_table_control(item, level=0, last=last)
+        elif isinstance(item, SynthHeading):
+            out += build_paragraph(
+                item.text, last=last, para_shape_id=item.level, style_id=item.level
+            )
+        else:
+            out += build_paragraph(item, last=last)
+    return out
+
+
+def build_para_shape(*, outline_level: int) -> bytes:
+    """§4.3-D: PARA_SHAPE payload 54 bytes. 0 → 본문, 1~7 → 개요 L."""
+    attr1 = 0 if outline_level == 0 else (1 << 23) | ((outline_level - 1) << 25)
+    return (
+        struct.pack("<I", attr1)
+        + struct.pack("<6i", 0, 0, 0, 0, 0, 0)
+        + struct.pack("<3H", 0, 0, 0)
+        + struct.pack("<4h", 0, 0, 0, 0)
+        + struct.pack("<III", 0, 0, 0)
     )
 
 
-def build_docinfo() -> bytes:
-    """미압축 DocInfo, §4.4-F."""
+def build_style(index: int) -> bytes:
+    """§4.3-E: STYLE payload. 0 → 바탕글/Normal, 1~7 → 개요 L/Outline L."""
+    if index == 0:
+        ko, en = "바탕글", "Normal"
+    else:
+        ko, en = f"개요 {index}", f"Outline {index}"
+    ko_b = ko.encode("utf-16-le")
+    en_b = en.encode("utf-16-le")
+    return (
+        struct.pack("<H", len(ko_b) // 2)
+        + ko_b
+        + struct.pack("<H", len(en_b) // 2)
+        + en_b
+        + struct.pack("<BBhHHH", 0, index, 1042, index, 0, 0)
+    )
+
+
+def build_docinfo(*, outline: bool = False) -> bytes:
+    """미압축 DocInfo, §4.4-F. outline=True 면 PARA_SHAPE·STYLE 각 8개 추가 (§4.5)."""
     payload = struct.pack("<7HIII", 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
-    return build_record(HWPTAG_DOCUMENT_PROPERTIES, 0, payload)
+    out = build_record(HWPTAG_DOCUMENT_PROPERTIES, 0, payload)
+    if outline:
+        for i in range(8):
+            out += build_record(HWPTAG_PARA_SHAPE, 1, build_para_shape(outline_level=i))
+        for i in range(8):
+            out += build_record(HWPTAG_STYLE, 1, build_style(i))
+    return out
 
 
 def _dir_entry(
@@ -335,7 +411,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
 
 def build_hwp5(paragraphs: Sequence[Item], *, properties: int = 0x1) -> bytes:
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
-    docinfo = build_docinfo()
+    docinfo = build_docinfo(outline=has_heading(paragraphs))
     section0 = build_section0(paragraphs)
     if properties & 0x1:
         docinfo = compress_raw(docinfo)
@@ -390,3 +466,55 @@ FIXTURE_TABLE_MERGED = SynthTable(
 FIXTURE_ITEMS_MERGED: list[Item] = ["제목", FIXTURE_TABLE_MERGED]
 EXPECTED_MARKDOWN_MERGED = "제목\n\n| 머리글 |  |  |\n|---|---|---|\n| 가 | 나\\|다 | 라<br>마 |\n"
 EXPECTED_BLOCKS_MERGED = [Paragraph("제목"), Table([["머리글", "", ""], ["가", "나|다", "라\n마"]])]
+
+FIXTURE_ITEMS_HEADINGS: list[Item] = [
+    SynthHeading("문서 제목", 1),
+    "본문 단락",
+    SynthHeading("1. 사업 개요", 2),
+    FIXTURE_TABLE,
+    SynthHeading("가. 세부 내용", 3),
+    "마지막 단락",
+]
+EXPECTED_MARKDOWN_HEADINGS = (
+    "# 문서 제목\n\n본문 단락\n\n## 1. 사업 개요\n\n"
+    "| 구분 | 내용 |\n|---|---|\n| 지원 규모 | 총 30억 원 |\n\n"
+    "### 가. 세부 내용\n\n마지막 단락\n"
+)
+EXPECTED_BLOCKS_HEADINGS = [
+    Paragraph("문서 제목", 1),
+    Paragraph("본문 단락"),
+    Paragraph("1. 사업 개요", 2),
+    Table([["구분", "내용"], ["지원 규모", "총 30억 원"]]),
+    Paragraph("가. 세부 내용", 3),
+    Paragraph("마지막 단락"),
+]
+EXPECTED_COUNTS_HEADINGS = (2, 1, 3)  # (paragraph_count, table_count, heading_count)
+
+FIXTURE_ITEMS_HEADING_EDGE: list[Item] = [
+    SynthHeading("깊은 수준", 7),
+    SynthHeading("", 1),
+    SynthHeading("두 줄\n제목", 2),
+    "본문",
+]
+EXPECTED_MARKDOWN_HEADING_EDGE = "###### 깊은 수준\n\n## 두 줄 제목\n\n본문\n"
+EXPECTED_BLOCKS_HEADING_EDGE = [
+    Paragraph("깊은 수준", 6),
+    Paragraph("두 줄\n제목", 2),
+    Paragraph("본문"),
+]
+EXPECTED_COUNTS_HEADING_EDGE = (1, 0, 2)
+
+FIXTURE_ITEMS_HEADING_IN_CELL: list[Item] = [
+    SynthHeading("표 제목", 1),
+    SynthTable(
+        rows=1,
+        cols=2,
+        cells=(
+            SynthCell((SynthHeading("셀 제목", 2),), col=0, row=0),
+            SynthCell(("값",), col=1, row=0),
+        ),
+    ),
+]
+EXPECTED_MARKDOWN_HEADING_IN_CELL = "# 표 제목\n\n| 셀 제목 | 값 |\n|---|---|\n"
+EXPECTED_BLOCKS_HEADING_IN_CELL = [Paragraph("표 제목", 1), Table([["셀 제목", "값"]])]
+EXPECTED_COUNTS_HEADING_IN_CELL = (0, 1, 1)

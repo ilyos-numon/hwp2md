@@ -13,7 +13,7 @@
 - 블록 모델: `src/hwp2md/blocks.py` `Paragraph`에 `level: int = 0` 필드 추가(0 본문, 1~6 제목). 기존 `Paragraph("text")` 호출·동등 비교 호환(§4.2).
 - 렌더러: `src/hwp2md/render.py` — `level ≥ 1`인 Paragraph를 `#`×level + 공백 + 텍스트로 렌더(§4.2-C).
 - 변환 결과: `src/hwp2md/convert.py` `ConvertResult.heading_count` 추가, `paragraph_count`는 본문(level 0)만(§4.2-D).
-- HWP 5.0: `DocInfo` 스트림에서 `HWPTAG_PARA_SHAPE`(0x19) 레코드만 해석하는 `src/hwp2md/hwp5/docinfo.py` 신규. `PARA_HEADER`의 `para_shape_id`(UINT16 @12)로 문단 모양을 찾아 개요 비트로 수준 판정(§4.3). `hwp5/body.py`·`hwp5/reader.py` 연결(§4.4). `records.py`에 태그 상수 2줄.
+- HWP 5.0: `DocInfo` 스트림에서 `HWPTAG_PARA_SHAPE`(0x19) 레코드만 해석하는 `src/hwp2md/hwp5/docinfo.py` 신규. `PARA_HEADER`의 `para_shape_id`(UINT16 @8)로 문단 모양을 찾아 개요 비트로 수준 판정(§4.3). `hwp5/body.py`·`hwp5/reader.py` 연결(§4.4). `records.py`에 태그 상수 2줄.
 - HWPX: `Contents/header.xml`의 `hh:paraPr/hh:heading[@type="OUTLINE"]/@level`을 읽는 `src/hwp2md/hwpx/header.py` 신규. `hp:p/@paraPrIDRef`로 연결(§4.6). `hwpx/body.py`·`hwpx/reader.py` 연결(§4.7).
 - 합성 생성기 확장: `tests/synth_hwp5.py`(`SynthHeading`, DocInfo PARA_SHAPE·STYLE 레코드, PARA_HEADER id 지정), `tests/synth_hwpx.py`(header.xml paraPr/heading/styles, `hp:p` paraPrIDRef 지정). **제목이 없는 기존 입력에서는 바이트 불변**(§4.5·§4.8의 sha256으로 검증).
 - CLI 2행: 제목이 1개 이상일 때만 ` · 제목 K개` 추가(§4.12, orchestrator 전용 단계).
@@ -143,7 +143,7 @@ HWPTAG_STYLE = 0x1A  # 26. DocInfo 스타일 (파서는 읽지 않음, fixture�
 
 **E. 생성기용 STYLE payload (파서는 읽지 않는다. 실제 샘플 길이 32/40 과 일치하는 레이아웃)**: `UINT16 n1` + 한글 이름 UTF-16LE(n1 WCHAR) + `UINT16 n2` + 영문 이름 UTF-16LE(n2 WCHAR) + `UINT8 속성 = 0` + `UINT8 다음 스타일 ID = 자기 ID` + `INT16 언어 ID = 1042` + `UINT16 para_shape_id` + `UINT16 char_shape_id = 0` + `UINT16 0`. 이름: ID 0 `"바탕글"`/`"Normal"`(32 bytes), ID L(1~7) `f"개요 {L}"`/`f"Outline {L}"`(40 bytes), para_shape_id = L.
 
-**F. PARA_HEADER payload (22 bytes, 전 태스크 §4.4-D)**: 파서는 `para_shape_id = UINT16 @12`, `style_id = UINT8 @14` 를 읽되 **판정에는 `para_shape_id`만** 쓴다(§7-2 기본값). `len(payload) < 14` → 수준 0(예외 아님).
+**F. PARA_HEADER payload (22 bytes, 전 태스크 §4.4-D)**: 파서는 `para_shape_id = UINT16 @8`, `style_id = UINT8 @10` 를 읽되 **판정에는 `para_shape_id`만** 쓴다(§7-2 기본값). `len(payload) < 10` → 수준 0(예외 아님).
 
 **G. `src/hwp2md/hwp5/docinfo.py` 공개 API**
 ```python
@@ -183,7 +183,7 @@ def parse_docinfo(data: bytes) -> DocInfo:
 # hwp5/body.py — 시그니처 변경(기본값으로 기존 호출 호환). 알고리즘은 전 태스크 §4.3 그대로, 아래 3곳만 추가
 def parse_blocks(records: Iterable[Record], docinfo: DocInfo = EMPTY_DOCINFO) -> list[Block]
 def _heading_level(para_header_payload: bytes, docinfo: DocInfo) -> int:
-    """len(payload) < 14 → 0. para_shape_id = struct.unpack_from("<H", payload, 12)[0]; return docinfo.heading_level(para_shape_id)."""
+    """len(payload) < 10 → 0. para_shape_id = struct.unpack_from("<H", payload, 8)[0]; return docinfo.heading_level(para_shape_id)."""
 def _parse_paragraph(recs, i, level, docinfo) -> tuple[str, int, list[Block], int]:
     """반환 (text, heading_level, trailing, next_i). heading_level = _heading_level(recs[i].payload, docinfo) (i 는 PARA_HEADER)."""
 def _parse_table(recs, i, ctrl_level, docinfo) -> tuple[Table | None, int]
