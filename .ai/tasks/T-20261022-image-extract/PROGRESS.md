@@ -84,3 +84,31 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
 - 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
 - 다음: S3 시작
+
+## [2026-10-23 00:01] S3 | orchestrator | START
+- 한 일: HWP5 리더 BIN_DATA·gso → Image
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
+
+## [2026-10-23 00:04] S3 | implementer(opus) | DONE
+- 한 일: BIN_DATA·BinDataStore·gso → Image, 단위 17
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_bindata.py 
+- 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
+- 다음: S3 리뷰
+- 메모: unit 211 e2e 33 sample1 불변
+
+## [2026-10-23 00:04] S3 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_bindata.py 
+- 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
+
+## [2026-10-23 00:05] S3 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_bindata.py 
+- 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
+
+## [2026-10-23 00:05] S3 | orchestrator | DONE
+- 한 일: HWP5 리더 이미지 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_bindata.py 
+- 커밋: f587f6f [T-20261022-image-extract][s2] tests: synthetic hwp5 images (BIN_DATA, BinData storage, gso picture records)
+- 다음: S4 시작

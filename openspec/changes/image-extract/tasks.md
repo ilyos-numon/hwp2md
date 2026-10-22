@@ -13,9 +13,9 @@
 
 ## 3. HWP 5.0 리더
 
-- [ ] 3.1 `records.py` 상수(`HWPTAG_BIN_DATA`, `HWPTAG_SHAPE_COMPONENT`, `HWPTAG_SHAPE_COMPONENT_PICTURE`, `CTRL_ID_GSO`)와 `docinfo.py`의 `BinDataEntry`·`parse_bin_data`·`DocInfo.bin_data`를 추가하고 `tests/unit/test_hwp5_bindata.py`의 파싱·잘림 케이스가 통과하는지 확인한다
-- [ ] 3.2 `reader.py`에 `Hwp5Package`·`read_hwp5_package`(BinData 스트림 수집)·`BinDataStore.resolve`(스트림 탐색·압축 해제 규칙·캐시)를 추가하고 압축/비압축·누락·LINK 케이스 테스트가 통과하는지 확인한다
-- [ ] 3.3 `body.py`에 `parse_picture_bindata_id`와 `gso` 분기(`_parse_gso`), 셀 단락 `bin_data=None`, flatten의 `Image` 무시를 넣고 `read_blocks`가 fixture 4종에서 `EXPECTED_BLOCKS_IMAGE*`와 같은지 확인한다
+- [x] 3.1 `records.py` 상수(`HWPTAG_BIN_DATA`, `HWPTAG_SHAPE_COMPONENT`, `HWPTAG_SHAPE_COMPONENT_PICTURE`, `CTRL_ID_GSO`)와 `docinfo.py`의 `BinDataEntry`·`parse_bin_data`·`DocInfo.bin_data`를 추가하고 `tests/unit/test_hwp5_bindata.py`의 파싱·잘림 케이스가 통과하는지 확인한다
+- [x] 3.2 `reader.py`에 `Hwp5Package`·`read_hwp5_package`(BinData 스트림 수집)·`BinDataStore.resolve`(스트림 탐색·압축 해제 규칙·캐시)를 추가하고 압축/비압축·누락·LINK 케이스 테스트가 통과하는지 확인한다
+- [x] 3.3 `body.py`에 `parse_picture_bindata_id`와 `gso` 분기(`_parse_gso`), 셀 단락 `bin_data=None`, flatten의 `Image` 무시를 넣고 `read_blocks`가 fixture 4종에서 `EXPECTED_BLOCKS_IMAGE*`와 같은지 확인한다
 
 ## 4. 합성 HWPX fixture
 

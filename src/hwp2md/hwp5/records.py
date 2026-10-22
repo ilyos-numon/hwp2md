@@ -20,6 +20,10 @@ HWPTAG_CTRL_HEADER = 0x47  # 71
 HWPTAG_LIST_HEADER = 0x48  # 72
 HWPTAG_TABLE = 0x4D  # 77
 CTRL_ID_TABLE = b"tbl "[::-1]  # == b" lbt". 파일에는 ctrl_id 4바이트가 역순으로 저장된다
+HWPTAG_BIN_DATA = 0x12  # 18. DocInfo 바이너리 데이터 (ID = 등장 순서, 1부터)
+HWPTAG_SHAPE_COMPONENT = 0x4C  # 76. 개체 요소 (파서는 읽지 않음, fixture가 씀)
+HWPTAG_SHAPE_COMPONENT_PICTURE = 0x55  # 85. 그림 개체 (UINT16 bindata_id @71)
+CTRL_ID_GSO = b"gso "[::-1]  # == b" osg". 그리기 개체 컨트롤
 
 _EXTENDED_SIZE = 0xFFF
 

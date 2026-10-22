@@ -5,20 +5,27 @@ from __future__ import annotations
 import struct
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from typing import Protocol
 
-from ..blocks import Block, Paragraph, Table
+from ..blocks import Block, Image, Paragraph, Table
 from ..errors import Hwp2mdError
 from .docinfo import EMPTY_DOCINFO, DocInfo
 from .records import (
+    CTRL_ID_GSO,
     CTRL_ID_TABLE,
     HWPTAG_CTRL_HEADER,
     HWPTAG_LIST_HEADER,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_TEXT,
+    HWPTAG_SHAPE_COMPONENT_PICTURE,
     HWPTAG_TABLE,
     Record,
     decode_para_text,
 )
+
+
+class ImageResolver(Protocol):
+    def resolve(self, bindata_id: int) -> Image | None: ...
 
 
 @dataclass(frozen=True)
@@ -51,7 +58,19 @@ def parse_cell_header(payload: bytes) -> CellHeader:
     return CellHeader(col=col, row=row, col_span=col_span, row_span=row_span)
 
 
-def parse_blocks(records: Iterable[Record], docinfo: DocInfo = EMPTY_DOCINFO) -> list[Block]:
+def parse_picture_bindata_id(payload: bytes) -> int:
+    """len(payload) < 73 → Hwp2mdError("truncated SHAPE_COMPONENT_PICTURE record")."""
+    if len(payload) < 73:
+        raise Hwp2mdError("truncated SHAPE_COMPONENT_PICTURE record")
+    (bindata_id,) = struct.unpack_from("<H", payload, 71)
+    return int(bindata_id)
+
+
+def parse_blocks(
+    records: Iterable[Record],
+    docinfo: DocInfo = EMPTY_DOCINFO,
+    bin_data: ImageResolver | None = None,
+) -> list[Block]:
     """§4.3 알고리즘. 섹션 하나의 레코드 시퀀스 → 블록 목록."""
     recs = list(records)
     blocks: list[Block] = []
@@ -59,7 +78,7 @@ def parse_blocks(records: Iterable[Record], docinfo: DocInfo = EMPTY_DOCINFO) ->
     while i < len(recs):
         r = recs[i]
         if r.tag_id == HWPTAG_PARA_HEADER and r.level == 0:
-            text, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo)
+            text, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo, bin_data)
             if text:
                 blocks.append(Paragraph(text, heading))
             blocks.extend(trailing)
@@ -77,7 +96,11 @@ def _heading_level(para_header_payload: bytes, docinfo: DocInfo) -> int:
 
 
 def _parse_paragraph(
-    recs: Sequence[Record], i: int, level: int, docinfo: DocInfo
+    recs: Sequence[Record],
+    i: int,
+    level: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None = None,
 ) -> tuple[str, int, list[Block], int]:
     heading = _heading_level(recs[i].payload, docinfo)
     i += 1
@@ -96,13 +119,18 @@ def _parse_paragraph(
             table, i = _parse_table(recs, i, level + 1, docinfo)
             if table is not None:
                 trailing.append(table)
+        elif (
+            r.tag_id == HWPTAG_CTRL_HEADER and r.level == level + 1 and r.payload[:4] == CTRL_ID_GSO
+        ):
+            images, i = _parse_gso(recs, i, r.level, bin_data)
+            trailing.extend(images)
         elif r.tag_id == HWPTAG_CTRL_HEADER and r.level == level + 1:
             # 표가 아닌 컨트롤: 안쪽 단락을 그대로 흘려보낸다
             ctrl_level = r.level
             i += 1
             while i < len(recs) and recs[i].level > ctrl_level:
                 if recs[i].tag_id == HWPTAG_PARA_HEADER and recs[i].level == ctrl_level + 1:
-                    t2, h2, tr2, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo)
+                    t2, h2, tr2, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, bin_data)
                     if t2:
                         trailing.append(Paragraph(t2, h2))
                     trailing.extend(tr2)
@@ -111,6 +139,24 @@ def _parse_paragraph(
         else:
             i += 1
     return text, heading, trailing, i
+
+
+def _parse_gso(
+    recs: Sequence[Record], i: int, ctrl_level: int, bin_data: ImageResolver | None
+) -> tuple[list[Image], int]:
+    """gso 서브트리 안의 모든 SHAPE_COMPONENT_PICTURE 를 순서대로 Image 로."""
+    i += 1
+    images: list[Image] = []
+    while i < len(recs) and recs[i].level > ctrl_level:
+        r = recs[i]
+        if r.tag_id == HWPTAG_SHAPE_COMPONENT_PICTURE:
+            bid = parse_picture_bindata_id(r.payload)
+            if bin_data is not None:
+                image = bin_data.resolve(bid)
+                if image is not None:
+                    images.append(image)
+        i += 1
+    return images, i
 
 
 def _parse_table(
@@ -131,7 +177,7 @@ def _parse_table(
             i += 1
         elif r.tag_id == HWPTAG_PARA_HEADER and r.level == ctrl_level + 1 and current is not None:
             # 셀 단락은 텍스트만 쓴다 (수준은 버린다)
-            text, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo)
+            text, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, None)
             if text:
                 current[1].append(text)
             for b in trailing:
