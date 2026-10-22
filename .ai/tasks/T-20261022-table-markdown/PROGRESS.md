@@ -166,3 +166,26 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
 - 커밋: f0d000c [T-20261022-table-markdown][s3] feat: read_blocks/render_blocks, markdown tables, ConvertResult.table_count
 - 다음: S5 시작 (implementer opus: decisions.md·README)
+
+## [2026-10-22 14:16] S5 | orchestrator | START
+- 한 일: 결정 기록·README 현재 지원 갱신
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c4dafbe [T-20261022-table-markdown][s4] feat(cli): report table count on summary line
+
+## [2026-10-22 14:17] S5 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: c4dafbe [T-20261022-table-markdown][s4] feat(cli): report table count on summary line
+
+## [2026-10-22 14:17] S5 | implementer(opus) | DONE
+- 한 일: decisions.md +9 (§4.9 2항목), README 1줄 교체. grep 5/1/1, §4.9 diff 0, sanitize OK
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: c4dafbe [T-20261022-table-markdown][s4] feat(cli): report table count on summary line
+- 다음: orchestrator 검증·커밋
+- 메모: 로그 logs/s5-docs.log
+
+## [2026-10-22 14:17] S5 | orchestrator | DONE
+- 한 일: 결정 기록·README 검증 통과 (플랜 원문과 diff 0). 문서 단계라 runner/reviewer 생략, orchestrator 직접 검증
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: c4dafbe [T-20261022-table-markdown][s4] feat(cli): report table count on summary line
+- 다음: S6 시작 (test-writer sonnet: E2E 표 4케이스 + 기존 2곳 갱신)

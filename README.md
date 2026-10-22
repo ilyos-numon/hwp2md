@@ -34,4 +34,4 @@ uv sync                               # .venv 생성 + 개발 의존성 설치
 uv run hwp2md input.hwp -o out/       # out/input.md 생성
 uv run pytest tests/unit tests/e2e -q # 테스트
 ```
-현재 지원: HWP 5.0 바이너리의 본문 단락 텍스트. 표·이미지·각주·HWPX는 진행 중.
+현재 지원: HWP 5.0 바이너리의 본문 단락 텍스트와 표(Markdown 표, 병합 셀은 빈 칸, 셀 내 단락은 <br>). 이미지·각주·HWPX는 진행 중.
