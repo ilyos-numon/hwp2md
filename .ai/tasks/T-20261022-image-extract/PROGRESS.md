@@ -188,3 +188,14 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
 - 커밋: 5f047a9 [T-20261022-image-extract][s5] hwpx: content.hpf manifest + BinData entries + hp:pic -> Image, cross-format parity
 - 다음: S7 시작
+
+## [2026-10-23 00:12] S7 | orchestrator | START
+- 한 일: CLI 2행·3행 이미지
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: bb1c380 [T-20261022-image-extract][s6] docs: image extraction decisions, README, fixtures guide
+
+## [2026-10-23 00:12] S7 | orchestrator | DONE
+- 한 일: CLI 2행·3행 이미지 (예정 E2E 실패 2개, S8 해소) 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: bb1c380 [T-20261022-image-extract][s6] docs: image extraction decisions, README, fixtures guide
+- 다음: S8 시작

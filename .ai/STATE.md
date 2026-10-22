@@ -7,10 +7,10 @@
 - 현재 태스크: T-20261022-image-extract
 - 마지막 완료: T-20261022-heading-levels
 - 플랜: `.ai/tasks/T-20261022-image-extract/PLAN.md` (상태: APPROVED)
-- 현재 단계: S7 / 9  — CLI 2행·3행 이미지
+- 현재 단계: S8 / 9  — E2E 테스트 작성·실행
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-image-extract`
-- 마지막 체크포인트: 2026-10-23 00:12 (S6 DONE)
+- 마지막 체크포인트: 2026-10-23 00:12 (S7 DONE)
 - 마지막 커밋: ad99b4d [T-20261022-heading-levels][s8] e2e: heading levels both formats, edge cases, real samples
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
