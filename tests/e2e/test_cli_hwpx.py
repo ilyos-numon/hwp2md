@@ -29,7 +29,7 @@ REAL_HWPX_EXPECTED: dict[str, tuple[int, int]] = {
     "(서식2) 사업실적 및 사업계획 제출 양식.hwpx": (80, 31),
     "브라더 공공기관 보고서 양식.hwpx": (32, 8),
 }
-STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개$")
+STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 \d+개)?$")
 
 
 def _copy_evidence(md: Path, name: str) -> None:

@@ -76,7 +76,7 @@ def test_real_fixture_converts(real_hwp: Path, tmp_path: Path, run_cli: RunCli) 
     result = run_cli([str(real_hwp), "-o", str(out_dir)])
     assert result.returncode == 0, result.stderr
     lines = result.stdout.split("\n")
-    m = re.match(r"^  단락 (\d+)개 · 표 (\d+)개$", lines[1])
+    m = re.match(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 \d+개)?$", lines[1])
     assert m, lines[1]
     table_count = int(m.group(2))
     md = out_dir / f"{real_hwp.stem}.md"
