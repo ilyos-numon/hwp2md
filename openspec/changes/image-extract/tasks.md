@@ -8,8 +8,8 @@
 
 ## 2. 합성 HWP 5.0 fixture
 
-- [ ] 2.1 `SynthImage`·`collect_images`·`build_bin_data`·`build_picture_control`·`build_cfb` BinData 스토리지 확장과 공용 fixture 4종(`FIXTURE_ITEMS_IMAGES`, `_IMAGE_REUSE`, `_IMAGE_IN_CELL`, `_IMAGE_MISSING`)을 추가하고, `tests/unit/test_synth_hwp5.py`의 구조 테스트(BIN_DATA 레코드 필드, `BinData/BIN0001.png` 스트림 바이트, 그림 레코드 offset 71 값, 레코드 level)가 통과하는지 확인한다
-- [ ] 2.2 이미지 없는 기존 fixture 6종의 `build_hwp5` sha256과 `build_docinfo()` 30바이트가 변하지 않았음을 기존 테스트로 확인한다
+- [x] 2.1 `SynthImage`·`collect_images`·`build_bin_data`·`build_picture_control`·`build_cfb` BinData 스토리지 확장과 공용 fixture 4종(`FIXTURE_ITEMS_IMAGES`, `_IMAGE_REUSE`, `_IMAGE_IN_CELL`, `_IMAGE_MISSING`)을 추가하고, `tests/unit/test_synth_hwp5.py`의 구조 테스트(BIN_DATA 레코드 필드, `BinData/BIN0001.png` 스트림 바이트, 그림 레코드 offset 71 값, 레코드 level)가 통과하는지 확인한다
+- [x] 2.2 이미지 없는 기존 fixture 6종의 `build_hwp5` sha256과 `build_docinfo()` 30바이트가 변하지 않았음을 기존 테스트로 확인한다
 
 ## 3. HWP 5.0 리더
 

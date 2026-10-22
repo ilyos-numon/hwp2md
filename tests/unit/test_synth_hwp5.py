@@ -333,3 +333,119 @@ def test_heading_fixture_round_trips_text(tmp_path: Path) -> None:
     assert texts == ["문서 제목", "본문 단락", "1. 사업 개요", "가. 세부 내용", "마지막 단락"]
     tables = [b for b in blocks if isinstance(b, Table)]
     assert tables == [Table([["구분", "내용"], ["지원 규모", "총 30억 원"]])]
+
+
+# --- S2: 이미지 항목·BinData 스토리지 (PLAN §4.9-B) ---
+from synth_hwp5 import (  # noqa: E402
+    CHID_PIC,
+    CTRL_ID_GSO,
+    FIXTURE_IMAGE_JPG,
+    FIXTURE_IMAGE_PNG,
+    FIXTURE_ITEMS_IMAGE_IN_CELL,
+    FIXTURE_ITEMS_IMAGE_MISSING,
+    FIXTURE_ITEMS_IMAGE_REUSE,
+    FIXTURE_ITEMS_IMAGES,
+    JPEG_STUB,
+    PNG_1X1,
+    build_bin_data,
+    build_picture_control,
+    build_picture_record,
+    collect_images,
+)
+
+
+def test_collect_images_order_and_dedupe() -> None:
+    assert collect_images(FIXTURE_ITEMS_IMAGE_IN_CELL) == [FIXTURE_IMAGE_JPG, FIXTURE_IMAGE_PNG]
+    assert collect_images(FIXTURE_ITEMS_IMAGE_REUSE) == [FIXTURE_IMAGE_PNG]
+    assert collect_images(FIXTURE_ITEMS_HEADINGS) == []
+
+
+def test_bin_data_record_layout() -> None:
+    expected = bytes.fromhex("0100 0100 0300 7000 6e00 6700".replace(" ", ""))
+    assert build_bin_data(1, "png") == expected
+    assert len(expected) == 12
+
+
+def test_docinfo_with_images_records() -> None:
+    recs = list(iter_records(build_docinfo(images=[FIXTURE_IMAGE_PNG, FIXTURE_IMAGE_JPG])))
+    assert [r.tag_id for r in recs] == [0x10, 0x12, 0x12]
+    assert [r.level for r in recs] == [0, 1, 1]
+    assert build_docinfo() == build_docinfo(images=())
+    assert len(build_docinfo()) == 30
+
+
+def test_picture_record_offsets() -> None:
+    payload = build_picture_record(7)
+    assert len(payload) == 78
+    assert struct.unpack_from("<H", payload, 71) == (7,)
+    assert payload[:12] == b"\x00" * 12
+
+
+def test_picture_control_record_tree() -> None:
+    recs = list(iter_records(build_picture_control(1, level=0, last=True)))
+    assert [(r.tag_id, r.level) for r in recs] == [
+        (0x42, 0),
+        (0x43, 1),
+        (0x44, 1),
+        (0x45, 1),
+        (0x47, 1),
+        (0x4C, 2),
+        (0x55, 3),
+    ]
+    assert recs[4].payload[:4] == CTRL_ID_GSO
+    assert len(recs[5].payload) == 196
+    assert recs[5].payload[:8] == CHID_PIC * 2
+    assert decode_para_text(recs[1].payload) == ""
+
+
+def _bindata_names(path: Path) -> list[list[str]]:
+    ole = olefile.OleFileIO(str(path))
+    try:
+        return [e for e in ole.listdir() if e[0] == "BinData"]
+    finally:
+        ole.close()
+
+
+def test_bindata_streams_in_cfb(tmp_path: Path) -> None:
+    path = write_hwp5(tmp_path / "i.hwp", FIXTURE_ITEMS_IMAGES)
+    names = _bindata_names(path)
+    assert ["BinData", "BIN0001.png"] in names
+    assert ["BinData", "BIN0002.jpg"] in names
+    assert _inflate(_read_stream(path, "BinData/BIN0001.png")) == PNG_1X1
+    assert _inflate(_read_stream(path, "BinData/BIN0002.jpg")) == JPEG_STUB
+    raw = write_hwp5(tmp_path / "r.hwp", FIXTURE_ITEMS_IMAGES, properties=0)
+    assert _read_stream(raw, "BinData/BIN0001.png") == PNG_1X1
+    assert _read_stream(raw, "BinData/BIN0002.jpg") == JPEG_STUB
+
+
+def test_missing_image_has_record_but_no_stream(tmp_path: Path) -> None:
+    path = write_hwp5(tmp_path / "m.hwp", FIXTURE_ITEMS_IMAGE_MISSING)
+    docinfo = _inflate(_read_stream(path, "DocInfo"))
+    bins = [r for r in iter_records(docinfo) if r.tag_id == 0x12]
+    assert [struct.unpack_from("<H", r.payload, 2)[0] for r in bins] == [1, 2]
+    assert _bindata_names(path) == [["BinData", "BIN0002.png"]]
+
+
+def test_cell_image_paragraph_levels() -> None:
+    section = build_section0(FIXTURE_ITEMS_IMAGE_IN_CELL)
+    pics = [r for r in iter_records(section) if r.tag_id == 0x55]
+    assert [r.level for r in pics] == [5, 3]
+    assert [struct.unpack_from("<H", r.payload, 71)[0] for r in pics] == [1, 2]
+
+
+def test_build_cfb_rejects_unknown_key() -> None:
+    with pytest.raises(ValueError):
+        build_cfb(
+            {
+                "FileHeader": build_file_header(),
+                "DocInfo": build_docinfo(),
+                "BodyText/Section0": build_section0(["a"]),
+                "Other/x": b"",
+            }
+        )
+
+
+def test_image_fixture_round_trips_text(tmp_path: Path) -> None:
+    blocks = read_blocks(write_hwp5(tmp_path / "i.hwp", FIXTURE_ITEMS_IMAGES))
+    texts = [b.text for b in blocks if isinstance(b, Paragraph)]
+    assert texts == ["그림 앞 단락", "1. 결과", "그림 뒤 단락"]

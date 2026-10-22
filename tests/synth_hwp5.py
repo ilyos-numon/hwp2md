@@ -12,7 +12,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from hwp2md.blocks import Paragraph, Table
+from hwp2md.blocks import Image, Paragraph, Table
 from hwp2md.hwp5.records import (
     CTRL_ID_TABLE,
     HWPTAG_CTRL_HEADER,
@@ -27,6 +27,10 @@ from hwp2md.hwp5.records import (
 
 HWPTAG_PARA_SHAPE = 0x19
 HWPTAG_STYLE = 0x1A
+HWPTAG_BIN_DATA = 0x12
+HWPTAG_SHAPE_COMPONENT = 0x4C
+HWPTAG_SHAPE_COMPONENT_PICTURE = 0x55
+CTRL_ID_GSO = b"gso "[::-1]  # == b" osg"
 
 FIXTURE_PARAGRAPHS: list[str] = ["테스트 문서 제목", "본문 단락 1", "", "본문 단락 2"]
 EXPECTED_MARKDOWN = "테스트 문서 제목\n\n본문 단락 1\n\n본문 단락 2\n"
@@ -52,6 +56,7 @@ FATSECT = 0xFFFFFFFD
 NOSTREAM = 0xFFFFFFFF
 
 _STREAM_KEYS = ("FileHeader", "DocInfo", "BodyText/Section0")
+_BINDATA_PREFIX = "BinData/"
 _TYPE_EMPTY = 0
 _TYPE_STORAGE = 1
 _TYPE_STREAM = 2
@@ -92,8 +97,15 @@ class SynthHeading:
 
 
 @dataclass(frozen=True)
+class SynthImage:
+    data: bytes
+    ext: str  # "png" 등 소문자, 점 없음
+    missing: bool = False  # True → 참조만 쓰고 바이너리 본체(스트림)는 쓰지 않는다
+
+
+@dataclass(frozen=True)
 class SynthCell:
-    paragraphs: tuple[str | SynthHeading, ...]
+    paragraphs: tuple[str | SynthHeading | SynthImage, ...]
     col: int
     row: int
     col_span: int = 1
@@ -107,7 +119,25 @@ class SynthTable:
     cells: tuple[SynthCell, ...]
 
 
-Item = str | SynthTable | SynthHeading
+Item = str | SynthTable | SynthHeading | SynthImage
+
+
+def collect_images(items: Sequence[Item]) -> list[SynthImage]:
+    """문서 순서로 처음 보는 SynthImage 만 모은다. 바이너리 항목 k = index + 1 (§4.5)."""
+    found: list[SynthImage] = []
+
+    def add(x: object) -> None:
+        if isinstance(x, SynthImage) and x not in found:
+            found.append(x)
+
+    for item in items:
+        if isinstance(item, SynthTable):
+            for c in item.cells:
+                for p in c.paragraphs:
+                    add(p)
+        else:
+            add(item)
+    return found
 
 
 def has_heading(items: Sequence[Item]) -> bool:
@@ -173,7 +203,66 @@ def build_cell_header(cell: SynthCell) -> bytes:
     )
 
 
-def build_table_control(table: SynthTable, *, level: int, last: bool) -> bytes:
+_PIC_W, _PIC_H = 8196, 3382
+CHID_PIC = b"$pic"[::-1]  # == b"cip$"
+_SHAPE_COMPONENT_LEN = 196  # chid0(4)+chid(4)+188 zero bytes. 파서는 읽지 않는다
+_PIC_BINDATA_ID_OFFSET = 71
+
+
+def build_bin_data(storage_id: int, ext: str) -> bytes:
+    """§4.3-B: EMBEDDING, 압축 비트 0(문서 기본). "png" → 12 bytes."""
+    return struct.pack("<HHH", 0x0001, storage_id, len(ext)) + ext.encode("utf-16-le")
+
+
+def build_ctrl_header_gso() -> bytes:
+    """§4.5: 그리기 개체 CTRL_HEADER payload 44 bytes."""
+    return CTRL_ID_GSO + struct.pack("<IiiIIiHHHHII", 0, 0, 0, _PIC_W, _PIC_H, 0, 0, 0, 0, 0, 0, 0)
+
+
+def build_shape_component_pic() -> bytes:
+    """§4.5: SHAPE_COMPONENT payload 196 bytes."""
+    return CHID_PIC + CHID_PIC + b"\x00" * (_SHAPE_COMPONENT_LEN - 8)
+
+
+def build_picture_record(bindata_id: int) -> bytes:
+    """§4.4/§4.5: SHAPE_COMPONENT_PICTURE payload 78 bytes, bindata_id @71."""
+    return (
+        struct.pack("<IiI", 0, 0, 0)
+        + struct.pack("<8i", 0, 0, _PIC_W, 0, _PIC_W, _PIC_H, 0, _PIC_H)
+        + struct.pack("<4i", 0, 0, 0, 0)
+        + struct.pack("<4H", 0, 0, 0, 0)
+        + struct.pack("<bbBH", 0, 0, 0, bindata_id)
+        + struct.pack("<BI", 0, 0)
+    )
+
+
+def build_picture_control(bindata_id: int, *, level: int, last: bool) -> bytes:
+    """§4.4-A: 자리표시자 단락 + CTRL_HEADER(gso) + SHAPE_COMPONENT + SHAPE_COMPONENT_PICTURE."""
+    placeholder = (
+        struct.pack("<H", _CTRL_CHAR_EXTENDED)
+        + CTRL_ID_GSO
+        + b"\x00" * 8
+        + struct.pack("<H", _CTRL_CHAR_EXTENDED)
+        + b"\r\x00"
+    )
+    nchars = len(placeholder) // 2
+    if last:
+        nchars |= _LAST_PARA_BIT
+    para_header = struct.pack("<IIHBBHHHI", nchars, _TABLE_PLACEHOLDER_MASK, 0, 0, 0, 1, 0, 1, 0)
+    return (
+        build_record(HWPTAG_PARA_HEADER, level, para_header)
+        + build_record(HWPTAG_PARA_TEXT, level + 1, placeholder)
+        + build_record(HWPTAG_PARA_CHAR_SHAPE, level + 1, struct.pack("<II", 0, 0))
+        + build_record(HWPTAG_PARA_LINE_SEG, level + 1, b"\x00" * 36)
+        + build_record(HWPTAG_CTRL_HEADER, level + 1, build_ctrl_header_gso())
+        + build_record(HWPTAG_SHAPE_COMPONENT, level + 2, build_shape_component_pic())
+        + build_record(HWPTAG_SHAPE_COMPONENT_PICTURE, level + 3, build_picture_record(bindata_id))
+    )
+
+
+def build_table_control(
+    table: SynthTable, *, level: int, last: bool, images: Sequence[SynthImage] = ()
+) -> bytes:
     """§4.4-F: 자리표시자 단락 + CTRL_HEADER + TABLE + [LIST_HEADER + 셀 단락]×k."""
     placeholder = (
         struct.pack("<H", _CTRL_CHAR_EXTENDED)
@@ -206,22 +295,30 @@ def build_table_control(table: SynthTable, *, level: int, last: bool) -> bytes:
                     para_shape_id=p.level,
                     style_id=p.level,
                 )
+            elif isinstance(p, SynthImage):
+                out += build_picture_control(
+                    images.index(p) + 1, level=level + 2, last=(i == last_index)
+                )
             else:
                 out += build_paragraph(p, last=(i == last_index), level=level + 2)
     return out
 
 
-def build_section0(items: Sequence[Item]) -> bytes:
+def build_section0(items: Sequence[Item], images: Sequence[SynthImage] | None = None) -> bytes:
     """미압축 섹션. str → 본문 단락, SynthHeading → 개요 단락, SynthTable → 표 컨트롤.
 
     마지막 원소만 last=True.
     """
+    if images is None:
+        images = collect_images(items)
     last_index = len(items) - 1
     out = b""
     for i, item in enumerate(items):
         last = i == last_index
         if isinstance(item, SynthTable):
-            out += build_table_control(item, level=0, last=last)
+            out += build_table_control(item, level=0, last=last, images=images)
+        elif isinstance(item, SynthImage):
+            out += build_picture_control(images.index(item) + 1, level=0, last=last)
         elif isinstance(item, SynthHeading):
             out += build_paragraph(
                 item.text, last=last, para_shape_id=item.level, style_id=item.level
@@ -260,10 +357,15 @@ def build_style(index: int) -> bytes:
     )
 
 
-def build_docinfo(*, outline: bool = False) -> bytes:
-    """미압축 DocInfo, §4.4-F. outline=True 면 PARA_SHAPE·STYLE 각 8개 추가 (§4.5)."""
+def build_docinfo(*, outline: bool = False, images: Sequence[SynthImage] = ()) -> bytes:
+    """미압축 DocInfo, §4.4-F·§4.5.
+
+    images 마다 BIN_DATA(level 1), outline=True 면 PARA_SHAPE·STYLE 각 8개.
+    """
     payload = struct.pack("<7HIII", 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
     out = build_record(HWPTAG_DOCUMENT_PROPERTIES, 0, payload)
+    for k, img in enumerate(images, start=1):
+        out += build_record(HWPTAG_BIN_DATA, 1, build_bin_data(k, img.ext))
     if outline:
         for i in range(8):
             out += build_record(HWPTAG_PARA_SHAPE, 1, build_para_shape(outline_level=i))
@@ -306,9 +408,19 @@ def _dir_entry(
 
 
 def build_cfb(streams: Mapping[str, bytes]) -> bytes:
-    """키: "FileHeader", "DocInfo", "BodyText/Section0" 정확히 3개. §4.4-G (v3, 512-byte 섹터)."""
-    if set(streams) != set(_STREAM_KEYS):
-        raise ValueError(f"streams must have exactly the keys {sorted(_STREAM_KEYS)}")
+    """§4.4-G, §4.5 (v3, 512-byte 섹터).
+
+    키: "FileHeader", "DocInfo", "BodyText/Section0" 필수 + 선택 "BinData/<NAME>".
+    """
+    bin_keys = [k for k in streams if k.startswith(_BINDATA_PREFIX)]
+    if set(streams) - set(bin_keys) != set(_STREAM_KEYS) or any(
+        not k[len(_BINDATA_PREFIX) :] or "/" in k[len(_BINDATA_PREFIX) :] for k in bin_keys
+    ):
+        raise ValueError(
+            f"streams must have exactly the keys {sorted(_STREAM_KEYS)}"
+            " plus optional BinData/<NAME>"
+        )
+    bin_keys.sort(key=lambda k: (len(k), k[len(_BINDATA_PREFIX) :].upper()))
     for key, data in streams.items():
         if len(data) >= _MINI_CUTOFF:
             raise ValueError(f"stream {key!r} is {len(data)} bytes; fixture supports < 4096")
@@ -317,7 +429,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
     ministream = bytearray()
     minifat: list[int] = []
     mini_start: dict[str, int] = {}
-    for key in _STREAM_KEYS:
+    for key in (*_STREAM_KEYS, *bin_keys):
         data = streams[key]
         count = math.ceil(len(data) / _MINI_SECTOR_SIZE)
         if count == 0:
@@ -331,7 +443,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
     if len(minifat) > _FAT_ENTRIES:
         raise ValueError("too many mini sectors for a single MiniFAT sector")
 
-    entries_count = 5
+    entries_count = 5 + (1 + len(bin_keys) if bin_keys else 0)
     dir_sectors = math.ceil(entries_count * _DIR_ENTRY_SIZE / _SECTOR_SIZE)
     minifat_sector = 1 + dir_sectors
     ministream_first = minifat_sector + 1
@@ -362,6 +474,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
         _dir_entry(
             "DocInfo",
             _TYPE_STREAM,
+            left=5 if bin_keys else NOSTREAM,
             start=mini_start["DocInfo"],
             size=len(streams["DocInfo"]),
         ),
@@ -378,6 +491,18 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
             size=len(streams["BodyText/Section0"]),
         ),
     ]
+    if bin_keys:
+        entries.append(_dir_entry("BinData", _TYPE_STORAGE, child=6))
+        for j, key in enumerate(bin_keys):
+            entries.append(
+                _dir_entry(
+                    key[len(_BINDATA_PREFIX) :],
+                    _TYPE_STREAM,
+                    right=7 + j if j < len(bin_keys) - 1 else NOSTREAM,
+                    start=mini_start[key],
+                    size=len(streams[key]),
+                )
+            )
     slots = dir_sectors * _ENTRIES_PER_SECTOR
     entries.extend(_dir_entry("", _TYPE_EMPTY) for _ in range(slots - len(entries)))
     dir_bytes = b"".join(entries)
@@ -411,18 +536,23 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
 
 def build_hwp5(paragraphs: Sequence[Item], *, properties: int = 0x1) -> bytes:
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
-    docinfo = build_docinfo(outline=has_heading(paragraphs))
-    section0 = build_section0(paragraphs)
+    images = collect_images(paragraphs)
+    docinfo = build_docinfo(outline=has_heading(paragraphs), images=images)
+    section0 = build_section0(paragraphs, images)
     if properties & 0x1:
         docinfo = compress_raw(docinfo)
         section0 = compress_raw(section0)
-    return build_cfb(
-        {
-            "FileHeader": build_file_header(properties=properties),
-            "DocInfo": docinfo,
-            "BodyText/Section0": section0,
-        }
-    )
+    streams = {
+        "FileHeader": build_file_header(properties=properties),
+        "DocInfo": docinfo,
+        "BodyText/Section0": section0,
+    }
+    for k, img in enumerate(images, start=1):
+        if img.missing:
+            continue
+        data = compress_raw(img.data) if properties & 0x1 else img.data
+        streams[f"{_BINDATA_PREFIX}BIN{k:04X}.{img.ext}"] = data
+    return build_cfb(streams)
 
 
 def write_hwp5(path: Path, paragraphs: Sequence[Item], *, properties: int = 0x1) -> Path:
@@ -518,3 +648,104 @@ FIXTURE_ITEMS_HEADING_IN_CELL: list[Item] = [
 EXPECTED_MARKDOWN_HEADING_IN_CELL = "# 표 제목\n\n| 셀 제목 | 값 |\n|---|---|\n"
 EXPECTED_BLOCKS_HEADING_IN_CELL = [Paragraph("표 제목", 1), Table([["셀 제목", "값"]])]
 EXPECTED_COUNTS_HEADING_IN_CELL = (0, 1, 1)
+
+PNG_1X1: bytes = bytes.fromhex(
+    "89504e470d0a1a0a0000000d4948445200000001000000010802000000907753de"
+    "0000000c4944415478da63f8cfc0000003010100f70341430000000049454e44ae426082"
+)  # 69 bytes, 1×1 RGB PNG
+JPEG_STUB: bytes = b"\xff\xd8\xff\xe0" + bytes(range(16)) + b"\xff\xd9"  # 22 bytes, 유효 JPEG 아님
+FIXTURE_IMAGE_PNG = SynthImage(PNG_1X1, "png")
+FIXTURE_IMAGE_JPG = SynthImage(JPEG_STUB, "jpg")
+
+# 모든 EXPECTED_MARKDOWN_IMAGE* 는 입력 파일 stem 이 "doc" 일 때(doc.hwp / doc.hwpx → doc_images/)
+FIXTURE_ITEMS_IMAGES: list[Item] = [
+    "그림 앞 단락",
+    FIXTURE_IMAGE_PNG,
+    SynthHeading("1. 결과", 2),
+    FIXTURE_IMAGE_JPG,
+    "그림 뒤 단락",
+]
+EXPECTED_BLOCKS_IMAGES = [
+    Paragraph("그림 앞 단락"),
+    Image("img_001.png", PNG_1X1),
+    Paragraph("1. 결과", 2),
+    Image("img_002.jpg", JPEG_STUB),
+    Paragraph("그림 뒤 단락"),
+]
+EXPECTED_MARKDOWN_IMAGES = (
+    "그림 앞 단락\n\n![그림 1](doc_images/img_001.png)\n\n## 1. 결과\n\n"
+    "![그림 2](doc_images/img_002.jpg)\n\n그림 뒤 단락\n"
+)
+EXPECTED_COUNTS_IMAGES = (2, 0, 1, 2)  # (paragraph, table, heading, image)
+EXPECTED_IMAGE_FILES_IMAGES = ("img_001.png", "img_002.jpg")
+
+FIXTURE_ITEMS_IMAGE_REUSE: list[Item] = [FIXTURE_IMAGE_PNG, "중간 단락", FIXTURE_IMAGE_PNG]
+EXPECTED_BLOCKS_IMAGE_REUSE = [
+    Image("img_001.png", PNG_1X1),
+    Paragraph("중간 단락"),
+    Image("img_001.png", PNG_1X1),
+]
+EXPECTED_MARKDOWN_IMAGE_REUSE = (
+    "![그림 1](doc_images/img_001.png)\n\n중간 단락\n\n![그림 2](doc_images/img_001.png)\n"
+)
+EXPECTED_COUNTS_IMAGE_REUSE = (1, 0, 0, 2)
+EXPECTED_IMAGE_FILES_IMAGE_REUSE = ("img_001.png",)
+
+FIXTURE_ITEMS_IMAGE_IN_CELL: list[Item] = [
+    SynthTable(
+        rows=1,
+        cols=2,
+        cells=(
+            SynthCell((FIXTURE_IMAGE_JPG, "값"), col=0, row=0),
+            SynthCell(("나",), col=1, row=0),
+        ),
+    ),
+    FIXTURE_IMAGE_PNG,
+]  # 바이너리 항목: 1 = JPG(셀), 2 = PNG. 셀 이미지는 해석되지 않으므로 PNG 가 img_001
+EXPECTED_BLOCKS_IMAGE_IN_CELL = [Table([["값", "나"]]), Image("img_001.png", PNG_1X1)]
+EXPECTED_MARKDOWN_IMAGE_IN_CELL = "| 값 | 나 |\n|---|---|\n\n![그림 1](doc_images/img_001.png)\n"
+EXPECTED_COUNTS_IMAGE_IN_CELL = (0, 1, 0, 1)
+EXPECTED_IMAGE_FILES_IMAGE_IN_CELL = ("img_001.png",)
+
+FIXTURE_ITEMS_IMAGE_MISSING: list[Item] = [
+    "앞",
+    SynthImage(b"", "png", missing=True),
+    FIXTURE_IMAGE_PNG,
+    "뒤",
+]
+EXPECTED_BLOCKS_IMAGE_MISSING = [Paragraph("앞"), Image("img_001.png", PNG_1X1), Paragraph("뒤")]
+EXPECTED_MARKDOWN_IMAGE_MISSING = "앞\n\n![그림 1](doc_images/img_001.png)\n\n뒤\n"
+EXPECTED_COUNTS_IMAGE_MISSING = (2, 0, 0, 1)
+EXPECTED_IMAGE_FILES_IMAGE_MISSING = ("img_001.png",)
+
+# (items, blocks, markdown, counts, files). ids ["images", "reuse", "in_cell", "missing"]
+IMAGE_FIXTURES = [
+    (
+        FIXTURE_ITEMS_IMAGES,
+        EXPECTED_BLOCKS_IMAGES,
+        EXPECTED_MARKDOWN_IMAGES,
+        EXPECTED_COUNTS_IMAGES,
+        EXPECTED_IMAGE_FILES_IMAGES,
+    ),
+    (
+        FIXTURE_ITEMS_IMAGE_REUSE,
+        EXPECTED_BLOCKS_IMAGE_REUSE,
+        EXPECTED_MARKDOWN_IMAGE_REUSE,
+        EXPECTED_COUNTS_IMAGE_REUSE,
+        EXPECTED_IMAGE_FILES_IMAGE_REUSE,
+    ),
+    (
+        FIXTURE_ITEMS_IMAGE_IN_CELL,
+        EXPECTED_BLOCKS_IMAGE_IN_CELL,
+        EXPECTED_MARKDOWN_IMAGE_IN_CELL,
+        EXPECTED_COUNTS_IMAGE_IN_CELL,
+        EXPECTED_IMAGE_FILES_IMAGE_IN_CELL,
+    ),
+    (
+        FIXTURE_ITEMS_IMAGE_MISSING,
+        EXPECTED_BLOCKS_IMAGE_MISSING,
+        EXPECTED_MARKDOWN_IMAGE_MISSING,
+        EXPECTED_COUNTS_IMAGE_MISSING,
+        EXPECTED_IMAGE_FILES_IMAGE_MISSING,
+    ),
+]

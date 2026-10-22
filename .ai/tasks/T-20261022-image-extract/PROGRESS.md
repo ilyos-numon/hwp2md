@@ -51,3 +51,36 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/blocks.py src/hwp2md/convert.py src/hwp2md/hwp5/body.py src/hwp2md/hwpx/body.py src/hwp2md/images.py src/hwp2md/render.py tests/unit/test_images.py 
 - 커밋: ec3b8a9 [T-20261022-image-extract][plan] approved (§7 기본값)
 - 다음: S2 시작
+
+## [2026-10-22 23:59] S2 | orchestrator | START
+- 한 일: 합성 HWP5 생성기 이미지
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+
+## [2026-10-22 23:59] S2 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+
+## [2026-10-23 00:01] S2 | implementer(opus) | DONE
+- 한 일: SynthImage·BIN_DATA·BinData 스트림·gso 레코드·fixture 4종, 단위 10
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+- 다음: S2 리뷰
+- 메모: synth 38 passed(플랜 33은 parametrize 미산입 오기), unit 194
+
+## [2026-10-23 00:01] S2 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+
+## [2026-10-23 00:01] S2 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS; PICTURE bindata id @71 스펙 기억 기준 일치
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+
+## [2026-10-23 00:01] S2 | orchestrator | DONE
+- 한 일: 합성 HWP5 생성기 이미지 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 2e036b9 [T-20261022-image-extract][s1] blocks/render/convert: Image block, images dir, ConvertResult image fields
+- 다음: S3 시작
