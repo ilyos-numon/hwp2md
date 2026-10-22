@@ -75,3 +75,45 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/__init__.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_hwpx_body.py 
 - 커밋: 2bff126 [T-20261022-hwpx-reader][s1] deps: lxml>=5 runtime, lxml-stubs dev
 - 다음: S3 시작 (implementer opus: synth_hwpx.py·리더 오류/보안 테스트)
+
+## [2026-10-22 17:59] S3 | orchestrator | START
+- 한 일: 합성 HWPX 생성기와 리더 오류·보안 테스트 (synth_hwpx.py)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+
+## [2026-10-22 18:01] S3 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+
+## [2026-10-22 18:02] S3 | implementer(opus) | DONE
+- 한 일: synth_hwpx.py + test_synth_hwpx.py 9 + test_hwpx_reader.py 9. unit 100 passed, -k entity 2 passed, mypy 13 OK, ruff OK, src·synth_hwp5 변경 0, zip mimetype 첫 엔트리 STORED 6개
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+- 다음: runner → reviewer
+- 메모: §4.7 케이스9: lxml 6.1.3 XMLParser에 resolve_entities 속성 없음 → 동작 기반 검사(내부 엔티티가 _Entity 노드로 남음)로 대체, 이름 유지 — reviewer 판정 후 변경 이력 대상. synth_hwpx docstring noqa E501
+
+## [2026-10-22 18:03] S3 | runner(haiku) | DONE
+- 한 일: 검증: mypy OK(13), ruff OK(26 files), unit 100 passed, entity 2 passed, zip 'mimetype 0 6', src·synth_hwp5 diff 0
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+- 다음: reviewer 판정 대기
+- 메모: 로그 logs/s3-*.log
+
+## [2026-10-22 18:03] S3 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+
+## [2026-10-22 18:04] S3 | reviewer(sonnet) | DONE
+- 한 일: PASS — 9기준 OK (§4.6 API·XML 템플릿·zip 구조·테스트 9+9·엔티티 보안·src 불변·익명화). 케이스9 동작 기반 대체 수용 → 변경 이력 추가
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+- 다음: orchestrator 마감
+- 메모: S4: 같은 fixture를 write_hwp5/write_hwpx에 넣으면 convert().markdown 동일해야 함. INLINE fixture는 synth_hwpx.py에 있음
+
+## [2026-10-22 18:04] S3 | orchestrator | DONE
+- 한 일: 합성 HWPX 생성기·리더 테스트 검증 통과 (runner·reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
+- 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
+- 다음: S4 시작 (implementer opus: detect.py·convert.py·__init__.py)

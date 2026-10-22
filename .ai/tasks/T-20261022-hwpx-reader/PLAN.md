@@ -634,3 +634,4 @@ Stage 1(orchestrator) ──> Stage 2 ──> Stage 3 ──> Stage 4 ──(§7
 
 ## 변경 이력
 - 2026-10-22 17:59 (orchestrator, S2 reviewer 판정): §4.4 `parse_table` 의사코드의 `_int_attr(...) or len(trs)`를 "속성이 없을 때만 tr/tc 수로 대체, 명시적 0은 표 생략(hwp5/body.py와 동일)"으로 수정. §4.7 케이스 13(rowCnt="0" → [])과 모순이던 의사코드 문구 오류. 계약·범위 변경 아님.
+- 2026-10-22 18:04 (orchestrator, S3 reviewer 판정): §4.7 test_make_parser_options — lxml 6.1.3 XMLParser에 `resolve_entities` 속성이 없어 `p.resolve_entities is False` 검사 불가. make_parser()로 `<!ENTITY lol "lol">` 문서를 파싱했을 때 `etree._Entity` 자식 1개가 남는지(text "a", tail "b")와 호출마다 새 인스턴스인지 확인하는 동작 기반 검사로 대체. 보안 계약 불변.

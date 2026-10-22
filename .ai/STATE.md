@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-hwpx-reader
 - 마지막 완료: T-20261022-table-markdown
 - 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
-- 현재 단계: S3 / 7  — 합성 HWPX 생성기와 리더 오류·보안 테스트
+- 현재 단계: S4 / 7  — 포맷 감지와 convert 디스패치 (detect.py, convert.py, __init__.py)
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-hwpx-reader`
-- 마지막 체크포인트: 2026-10-22 17:59 (S2 DONE)
-- 마지막 커밋: [s2] hwpx parser
+- 마지막 체크포인트: 2026-10-22 18:04 (S3 DONE)
+- 마지막 커밋: [s3] synth hwpx
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S3 implementer(opus) 보고 대기 → runner → reviewer → 커밋 [s3] → S4(detect·convert 디스패치)
+1. S4 implementer(opus) 보고 대기 → runner(실제 샘플 CLI 3개) → reviewer → 커밋 [s4] → S5(docs). Stage 4b는 기본값이라 건너뜀
 
 ## 차단 중이면
 - 이유: 없음
