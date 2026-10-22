@@ -7,10 +7,10 @@
 - 현재 태스크: T-20261022-heading-levels
 - 마지막 완료: T-20261022-hwpx-reader
 - 플랜: `.ai/tasks/T-20261022-heading-levels/PLAN.md` (상태: APPROVED)
-- 현재 단계: S4 / 9  — 합성 HWPX 생성기 header.xml paraPr
+- 현재 단계: S5 / 9  — HWPX header.xml 파서·리더 연결·두 포맷 동일성
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-heading-levels`
-- 마지막 체크포인트: 2026-10-22 23:03 (S3 DONE)
+- 마지막 체크포인트: 2026-10-22 23:05 (S4 DONE)
 - 마지막 커밋: 5211ab2 [T-20261022-hwpx-reader][done] (main에 ff 병합 완료)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
