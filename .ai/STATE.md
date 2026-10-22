@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-table-markdown
 - 마지막 완료: T-20261022-stack-cli-smoke
 - 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: APPROVED)
-- 현재 단계: S0 / 7  — 플랜 작성 완료, 사용자 승인 대기
+- 현재 단계: S2 / 7  — 합성 생성기 표 확장 (synth_hwp5.py)
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-table-markdown`
-- 마지막 체크포인트: 2026-10-22 13:55 (S0 DONE)
-- 마지막 커밋: b97d73b [T-20261022-stack-cli-smoke][s9] docs: RESULT
+- 마지막 체크포인트: 2026-10-22 14:00 (S1 DONE)
+- 마지막 커밋: [s1] block model and table parser
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자 §7 답변 반영 → PLAN.md APPROVED → 커밋 → /implement (Stage 1 implementer opus: blocks.py·hwp5/body.py)
+1. S2 implementer(opus) 보고 대기 → runner 검증 → reviewer → 커밋 [s2] → S3(reader·render·convert)
 
 ## 차단 중이면
 - 이유: 
