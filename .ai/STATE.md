@@ -6,9 +6,9 @@
 
 - 현재 태스크: T-20261022-image-extract
 - 마지막 완료: T-20261022-heading-levels
-- 플랜: `.ai/tasks/T-20261022-image-extract/PLAN.md` (상태: DRAFT)
-- 현재 단계: S0 / 0 — 없음
-- 상태: AWAITING_APPROVAL
+- 플랜: `.ai/tasks/T-20261022-image-extract/PLAN.md` (상태: APPROVED)
+- 현재 단계: S1 / 9  — 블록 모델·이미지 헬퍼·렌더·변환 결과
+- 상태: RUNNING
 - 브랜치: `ai/T-20261022-image-extract`
 - 마지막 체크포인트: 2026-10-22 23:54 (S0 DONE)
 - 마지막 커밋: ad99b4d [T-20261022-heading-levels][s8] e2e: heading levels both formats, edge cases, real samples
