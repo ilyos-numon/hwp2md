@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ..blocks import Block, Paragraph, Table
 from ..errors import Hwp2mdError
+from .docinfo import EMPTY_DOCINFO, DocInfo
 from .records import (
     CTRL_ID_TABLE,
     HWPTAG_CTRL_HEADER,
@@ -50,7 +51,7 @@ def parse_cell_header(payload: bytes) -> CellHeader:
     return CellHeader(col=col, row=row, col_span=col_span, row_span=row_span)
 
 
-def parse_blocks(records: Iterable[Record]) -> list[Block]:
+def parse_blocks(records: Iterable[Record], docinfo: DocInfo = EMPTY_DOCINFO) -> list[Block]:
     """§4.3 알고리즘. 섹션 하나의 레코드 시퀀스 → 블록 목록."""
     recs = list(records)
     blocks: list[Block] = []
@@ -58,16 +59,27 @@ def parse_blocks(records: Iterable[Record]) -> list[Block]:
     while i < len(recs):
         r = recs[i]
         if r.tag_id == HWPTAG_PARA_HEADER and r.level == 0:
-            text, trailing, i = _parse_paragraph(recs, i, level=0)
+            text, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo)
             if text:
-                blocks.append(Paragraph(text))
+                blocks.append(Paragraph(text, heading))
             blocks.extend(trailing)
         else:
             i += 1
     return blocks
 
 
-def _parse_paragraph(recs: Sequence[Record], i: int, level: int) -> tuple[str, list[Block], int]:
+def _heading_level(para_header_payload: bytes, docinfo: DocInfo) -> int:
+    """len(payload) < 10 → 0. para_shape_id = UINT16 @8."""
+    if len(para_header_payload) < 10:
+        return 0
+    (para_shape_id,) = struct.unpack_from("<H", para_header_payload, 8)
+    return docinfo.heading_level(para_shape_id)
+
+
+def _parse_paragraph(
+    recs: Sequence[Record], i: int, level: int, docinfo: DocInfo
+) -> tuple[str, int, list[Block], int]:
+    heading = _heading_level(recs[i].payload, docinfo)
     i += 1
     text = ""
     trailing: list[Block] = []
@@ -81,7 +93,7 @@ def _parse_paragraph(recs: Sequence[Record], i: int, level: int) -> tuple[str, l
             and r.level == level + 1
             and r.payload[:4] == CTRL_ID_TABLE
         ):
-            table, i = _parse_table(recs, i, ctrl_level=level + 1)
+            table, i = _parse_table(recs, i, level + 1, docinfo)
             if table is not None:
                 trailing.append(table)
         elif r.tag_id == HWPTAG_CTRL_HEADER and r.level == level + 1:
@@ -90,18 +102,20 @@ def _parse_paragraph(recs: Sequence[Record], i: int, level: int) -> tuple[str, l
             i += 1
             while i < len(recs) and recs[i].level > ctrl_level:
                 if recs[i].tag_id == HWPTAG_PARA_HEADER and recs[i].level == ctrl_level + 1:
-                    t2, tr2, i = _parse_paragraph(recs, i, level=ctrl_level + 1)
+                    t2, h2, tr2, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo)
                     if t2:
-                        trailing.append(Paragraph(t2))
+                        trailing.append(Paragraph(t2, h2))
                     trailing.extend(tr2)
                 else:
                     i += 1
         else:
             i += 1
-    return text, trailing, i
+    return text, heading, trailing, i
 
 
-def _parse_table(recs: Sequence[Record], i: int, ctrl_level: int) -> tuple[Table | None, int]:
+def _parse_table(
+    recs: Sequence[Record], i: int, ctrl_level: int, docinfo: DocInfo
+) -> tuple[Table | None, int]:
     i += 1
     header: TableHeader | None = None
     cells: list[tuple[CellHeader, list[str]]] = []
@@ -116,7 +130,8 @@ def _parse_table(recs: Sequence[Record], i: int, ctrl_level: int) -> tuple[Table
             cells.append(current)
             i += 1
         elif r.tag_id == HWPTAG_PARA_HEADER and r.level == ctrl_level + 1 and current is not None:
-            text, trailing, i = _parse_paragraph(recs, i, level=ctrl_level + 1)
+            # 셀 단락은 텍스트만 쓴다 (수준은 버린다)
+            text, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo)
             if text:
                 current[1].append(text)
             for b in trailing:

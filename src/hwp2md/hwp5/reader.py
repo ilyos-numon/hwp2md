@@ -13,6 +13,7 @@ import olefile
 from ..blocks import Block, Paragraph
 from ..errors import NotHwpFileError, UnsupportedHwpError
 from .body import parse_blocks
+from .docinfo import parse_docinfo
 from .records import iter_records
 
 HWP5_SIGNATURE = b"HWP Document File" + b"\x00" * 15  # 32 bytes
@@ -56,8 +57,8 @@ def _inflate(data: bytes) -> bytes:
     return d.decompress(data) + d.flush()
 
 
-def read_sections(path: Path) -> list[bytes]:
-    """BodyText/Section<N> 스트림을 N 오름차순으로 (압축이면 해제해서) 반환."""
+def read_streams(path: Path) -> tuple[bytes, list[bytes]]:
+    """(DocInfo 바이트 — 압축이면 해제, 없으면 b"" ; BodyText/Section<N> N 오름차순)."""
     if not olefile.isOleFile(str(path)):
         raise NotHwpFileError(f"not an OLE compound file: {path}")
     ole = olefile.OleFileIO(str(path))
@@ -69,6 +70,10 @@ def read_sections(path: Path) -> list[bytes]:
             raise UnsupportedHwpError(f"encrypted document: {path}")
         if header.distribution:
             raise UnsupportedHwpError(f"distribution document: {path}")
+        docinfo = b""
+        if ole.exists("DocInfo"):
+            raw = _read_stream(ole, "DocInfo")
+            docinfo = _inflate(raw) if header.compressed else raw
         sections: list[bytes] = []
         n = 0
         while ole.exists(f"BodyText/Section{n}"):
@@ -79,14 +84,21 @@ def read_sections(path: Path) -> list[bytes]:
         ole.close()
     if not sections:
         raise NotHwpFileError(f"BodyText/Section0 stream missing: {path}")
-    return sections
+    return docinfo, sections
+
+
+def read_sections(path: Path) -> list[bytes]:
+    """호환 래퍼: BodyText/Section<N> 스트림을 N 오름차순으로 (압축이면 해제해서) 반환."""
+    return read_streams(path)[1]
 
 
 def read_blocks(path: Path) -> list[Block]:
     """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다."""
+    docinfo_raw, sections = read_streams(path)
+    docinfo = parse_docinfo(docinfo_raw)
     blocks: list[Block] = []
-    for section in read_sections(path):
-        blocks.extend(parse_blocks(iter_records(section)))
+    for section in sections:
+        blocks.extend(parse_blocks(iter_records(section), docinfo))
     return blocks
 
 

@@ -10,6 +10,8 @@ from ..errors import Hwp2mdError
 
 HWPTAG_BEGIN = 0x10
 HWPTAG_DOCUMENT_PROPERTIES = 0x10  # DocInfo 첫 레코드 (파서는 읽지 않음, fixture가 씀)
+HWPTAG_PARA_SHAPE = 0x19  # 25. DocInfo 문단 모양 (ID = 등장 순서)
+HWPTAG_STYLE = 0x1A  # 26. DocInfo 스타일 (파서는 읽지 않음, fixture가 씀)
 HWPTAG_PARA_HEADER = 0x42  # 66
 HWPTAG_PARA_TEXT = 0x43  # 67
 HWPTAG_PARA_CHAR_SHAPE = 0x44  # 68
