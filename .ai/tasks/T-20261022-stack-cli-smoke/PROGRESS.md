@@ -244,3 +244,47 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
 - 커밋: a0df507 [T-20261022-stack-cli-smoke][s6] feat(cli): hwp2md INPUT -o OUT_DIR
 - 다음: S8 시작 (test-writer sonnet: E2E 6케이스)
+
+## [2026-10-22 13:00] S8 | orchestrator | START
+- 한 일: E2E 테스트 작성·실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+
+## [2026-10-22 13:01] S8 | test-writer(sonnet) | DONE
+- 한 일: tests/e2e/conftest.py·test_cli_convert.py(6케이스)·tests/fixtures/.gitkeep. 로컬 5 passed 1 skipped, ruff OK(I001 --fix), skip 문자열 0, unit 35 passed
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+- 다음: runner E2E 실행 블록 → reviewer
+- 메모: ruff가 synth_hwp5를 서드파티로 분류(빈 줄 삽입, 설정 변경 없음). 로그 logs/s8-e2e-writer.log
+
+## [2026-10-22 13:02] S8 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+
+## [2026-10-22 13:03] S8 | runner(haiku) | RETRY
+- 한 일: E2E 실행 블록 exit=127: macOS zsh에 'timeout' 명령 없음 (command not found). 테스트 미실행, lint OK, skip 문자열 0
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+- 다음: runner 재호출: 'timeout 600' 제거, Bash 도구 timeout 600000ms 사용
+- 메모: 환경 문제(테스트·구현 아님). RETRY 1/3
+
+## [2026-10-22 13:03] S8 | reviewer(sonnet) | DONE
+- 한 일: PASS(테스트 코드) — 8기준 중 7 OK, 기준7은 직접 실행으로 5 passed 1 skipped + sample.md==EXPECTED_MARKDOWN(cmp) 확인. 태스크 증거 파일은 runner 재실행 결과로 충족 예정
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+- 다음: runner 재실행 결과(e2e.log exit=0, screenshots/sample.md) 확인 후 마감
+- 메모: 실제 샘플 없어 케이스 6 skipped 1건 → RESULT에 기재
+
+## [2026-10-22 13:04] S8 | runner(haiku) | DONE
+- 한 일: E2E 재실행(timeout 명령 제거): e2e.log exit=0, 5 passed 1 skipped, screenshots/sample.md 58B 생성
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+- 다음: orchestrator 마감
+- 메모: 증거 == EXPECTED_MARKDOWN 바이트 일치(orchestrator 확인). 이전 실패 로그 e2e.prev.log
+
+## [2026-10-22 13:04] S8 | orchestrator | DONE
+- 한 일: E2E 작성·실행 완료 (test-writer·reviewer PASS, runner exit=0, 증거 확인)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
+- 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
+- 다음: S9 시작 (reviewer sonnet 최종 리뷰 → scribe haiku RESULT)

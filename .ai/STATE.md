@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
 - 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: APPROVED)
-- 현재 단계: S8 / 9  — E2E 테스트 작성·실행
+- 현재 단계: S9 / 9  — 리뷰·결과 기록
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 13:00 (S7 DONE)
-- 마지막 커밋: [s7] docs
+- 마지막 체크포인트: 2026-10-22 13:04 (S8 DONE)
+- 마지막 커밋: [s8] e2e
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S8 test-writer(sonnet) 보고 대기 → runner(haiku) E2E 실행 블록(PLAN Stage 8) → reviewer → 커밋 [s8] → S9
+1. S9 reviewer(sonnet) 최종 리뷰(§2 S1~S10 판정) → scribe(haiku) RESULT.md → gate.sh → 커밋 [s9] → 마무리(scribe STATE IDLE, [done] 커밋)
 
 ## 차단 중이면
 - 이유: 
