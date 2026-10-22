@@ -37,3 +37,26 @@
 - 한 일: 도구 호출 45회 경과
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 2e7a7fc [T-20261022-heading-levels][plan] approved (defaults), handoff for later start
+
+## [2026-10-22 22:56] S1 | orchestrator | START
+- 한 일: 블록 모델 level 필드·제목 렌더·heading_count
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: abcc6b4 [T-20261022-heading-levels][plan] approved, start
+
+## [2026-10-22 22:57] S1 | implementer(opus) | DONE
+- 한 일: Paragraph.level·_render_paragraph·heading_count, 단위 7개
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/blocks.py src/hwp2md/convert.py src/hwp2md/render.py tests/unit/test_render_heading.py 
+- 커밋: abcc6b4 [T-20261022-heading-levels][plan] approved, start
+- 다음: S2
+- 메모: mypy14 OK, unit120, e2e21
+
+## [2026-10-22 22:57] S1 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS, findings 없음
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/blocks.py src/hwp2md/convert.py src/hwp2md/render.py tests/unit/test_render_heading.py 
+- 커밋: abcc6b4 [T-20261022-heading-levels][plan] approved, start
+
+## [2026-10-22 22:57] S1 | orchestrator | DONE
+- 한 일: 블록 모델 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/blocks.py src/hwp2md/convert.py src/hwp2md/render.py tests/unit/test_render_heading.py 
+- 커밋: abcc6b4 [T-20261022-heading-levels][plan] approved, start
+- 다음: S2 시작

@@ -18,6 +18,7 @@ class ConvertResult:
     output: Path
     paragraph_count: int
     table_count: int
+    heading_count: int
     markdown: str
 
 
@@ -36,7 +37,10 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
         raise FileNotFoundError(str(path))
     blocks = read_blocks(source)
     markdown = render_blocks(blocks)
-    paragraph_count = sum(isinstance(b, Paragraph) and bool(b.text) for b in blocks)
+    paragraph_count = sum(
+        isinstance(b, Paragraph) and bool(b.text) and b.level == 0 for b in blocks
+    )
+    heading_count = sum(isinstance(b, Paragraph) and bool(b.text) and b.level >= 1 for b in blocks)
     table_count = sum(isinstance(b, Table) for b in blocks)
     target_dir = Path(out_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -48,5 +52,6 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
         output=output,
         paragraph_count=paragraph_count,
         table_count=table_count,
+        heading_count=heading_count,
         markdown=markdown,
     )
