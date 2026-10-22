@@ -170,3 +170,47 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
 - 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
 - 다음: S6 시작 (implementer opus: cli.py 전용 단계)
+
+## [2026-10-22 12:13] S6 | orchestrator | START
+- 한 일: CLI 진입점 cli.py
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+
+## [2026-10-22 12:54] S6 | implementer(opus) | RETRY
+- 한 일: 1차 호출이 API rate limit(session limit, 12:50 리셋)으로 시작 직후 종료. cli.py 미생성, 로그 없음
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+- 다음: 12:54 같은 프롬프트로 implementer(opus) 재호출
+- 메모: limit → 수동 재호출 (RETRY 1/3)
+
+## [2026-10-22 12:55] S6 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+
+## [2026-10-22 12:56] S6 | implementer(opus) | DONE
+- 한 일: src/hwp2md/cli.py 작성 (재호출 성공). --version/성공 2줄/exit 2·3·1 전부 §4.5 일치, ruff·mypy(8 files) OK, unit 35 passed
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+- 다음: runner 검증(stderr 분리 확인 포함) → reviewer
+- 메모: except 순서 NotHwp→Unsupported→FileNotFound→Hwp2mdError→Exception. 로그는 stderr를 stdout에 합쳐 저장 → runner가 2>와 1>로 분리 확인. 로그 logs/s6-cli.log
+
+## [2026-10-22 12:57] S6 | runner(haiku) | DONE
+- 한 일: 검증: --version OK, S2 성공 2줄+exit0+파일 바이트 일치(orchestrator 재확인), S3 exit2, S4 exit3(md 미생성), encrypted exit3, no-args exit2, stderr 분리 확인, ruff·mypy(8 files) OK, unit 35 passed
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+- 다음: reviewer 판정 대기
+- 메모: 로그 logs/s6-runner.log
+
+## [2026-10-22 12:58] S6 | reviewer(sonnet) | DONE
+- 한 일: PASS — 8기준 OK (쓰기범위·§4.3 시그니처·§4.5 인자/출력/종료코드/메시지·stdlib만·로그 일치·익명화)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+- 다음: orchestrator 마감
+- 메모: E2E: 성공 경로는 str(Path(out_dir)/'sample.md')와 비교, 인자 없음은 접두+exit만 단언, PYTHONIOENCODING=utf-8 필요(§4.6 conftest)
+
+## [2026-10-22 12:58] S6 | orchestrator | DONE
+- 한 일: CLI 진입점 검증 통과 (runner·reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 17a6f6c [T-20261022-stack-cli-smoke][s5] feat: HWP 5.0 reader, markdown renderer, convert API
+- 다음: S7 시작 (scribe haiku: decisions.md·README)
