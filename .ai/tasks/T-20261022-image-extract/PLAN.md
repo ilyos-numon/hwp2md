@@ -1,7 +1,7 @@
 # PLAN — T-20261022-image-extract hwp2md 이미지 추출 (HWP 5.0·HWPX → out/<stem>_images/ + 상대 경로 링크)
 
 > 작성: planner fable · 2026-10-22 23:40 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: main `3e8248d` · 브랜치 `ai/T-20261022-image-extract` · 현재 단위 171 · E2E 33 통과(합계 204) · mypy 16 source files · ruff format 36 files
 

@@ -43,4 +43,4 @@
 
 ## 9. 리뷰·기록
 
-- [ ] 9.1 reviewer가 diff와 증거 파일(PNG를 직접 열어 확인)을 성공 기준 표와 대조하고, scribe가 `RESULT.md`·`.ai/STATE.md`를 기록한다
+- [x] 9.1 reviewer가 diff와 증거 파일(PNG를 직접 열어 확인)을 성공 기준 표와 대조하고, scribe가 `RESULT.md`·`.ai/STATE.md`를 기록한다

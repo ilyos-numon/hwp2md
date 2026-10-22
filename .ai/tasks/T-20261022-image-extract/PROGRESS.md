@@ -221,3 +221,25 @@
 - 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-image-extract/screenshots/\353\270\214\353\235\274\353\215\224 tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py 
 - 커밋: 8b44d6b [T-20261022-image-extract][s7] cli: image count and image dir lines
 - 다음: S9 시작
+
+## [2026-10-23 00:14] S9 | orchestrator | START
+- 한 일: 리뷰·결과 기록
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
+
+## [2026-10-23 00:14] S9 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
+
+## [2026-10-23 00:15] S9 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS, §2 S1~S10 PASS
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
+- 메모: 증거 md의 이미지 폴더는 screenshots에 미복사(별도 png로 복사됨)
+
+## [2026-10-23 00:15] S9 | orchestrator | DONE
+- 한 일: 태스크 완료, gate·validate 통과
+- 변경 파일(미커밋, .ai 제외): openspec/changes/image-extract/tasks.md 
+- 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
+- 다음: 사용자 RESULT 검토 → main 병합
