@@ -38,3 +38,19 @@
 - 변경 파일(미커밋, .ai 제외): pyproject.toml uv.lock 
 - 커밋: f151c33 [T-20261022-stack-cli-smoke][plan] approved
 - 다음: S2 시작 (CLAUDE.md 명령 블록, orchestrator 직접)
+
+## [2026-10-22 12:00] S2 | orchestrator | START
+- 한 일: CLAUDE.md 명령 블록·전용 파일 추가분·.gitignore
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2b392a3 [T-20261022-stack-cli-smoke][s1] build: pyproject.toml (hatchling, olefile, dev tools)
+
+## [2026-10-22 12:00] S2 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): .gitignore CLAUDE.md 
+- 커밋: 2b392a3 [T-20261022-stack-cli-smoke][s1] build: pyproject.toml (hatchling, olefile, dev tools)
+
+## [2026-10-22 12:01] S2 | orchestrator | DONE
+- 한 일: CLAUDE.md 명령 블록 §4.7 치환, 전용 파일 추가분 §4.8, .gitignore 2줄. 검증: 채워 넣을 것 0, 명령 6줄, fixtures ignore 1
+- 변경 파일(미커밋, .ai 제외): .gitignore CLAUDE.md 
+- 커밋: 2b392a3 [T-20261022-stack-cli-smoke][s1] build: pyproject.toml (hatchling, olefile, dev tools)
+- 다음: S3 시작 (implementer opus: records 파서·에러·뼈대)

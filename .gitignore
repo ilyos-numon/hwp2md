@@ -47,3 +47,7 @@ out/
 test-results/
 playwright-report/
 *.pyc
+
+# real HWP samples (license unverified) and E2E evidence
+tests/fixtures/*.hwp
+tests/e2e/screenshots/

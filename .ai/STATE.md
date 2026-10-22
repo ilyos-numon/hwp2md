@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
 - 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: APPROVED)
-- 현재 단계: S2 / 9  — CLAUDE.md 명령 블록·전용 파일 추가분·.gitignore (orchestrator 직접)
+- 현재 단계: S3 / 9  — hwp5 레코드 파서·에러 타입·패키지 뼈대
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 12:00 (S1 DONE)
-- 마지막 커밋: [s1] pyproject.toml
+- 마지막 체크포인트: 2026-10-22 12:01 (S2 DONE)
+- 마지막 커밋: [s2] CLAUDE.md 명령 블록
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S2: CLAUDE.md 명령 블록을 PLAN §4.7로, 추가분 §4.8, .gitignore 2줄 → 커밋 [s2] → S3 implementer(opus)
+1. S3 implementer(opus) 보고 대기 → runner 검증 → reviewer → src/.gitkeep 삭제 → 커밋 [s3] → S4
 
 ## 차단 중이면
 - 이유: 

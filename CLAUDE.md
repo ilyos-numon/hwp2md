@@ -20,18 +20,19 @@ MVP 착수 전. README.md의 MVP 범위만 구현한다.
 
 ## 명령 (에이전트가 그대로 실행한다 — 스택 확정 후 채운다. (none)은 그 검증 생략)
 ```
-INSTALL_CMD: (채워 넣을 것)
-DEV_CMD: (채워 넣을 것)
-DEV_URL: http://localhost:PORT
-DEV_READY: (채워 넣을 것)
+INSTALL_CMD: uv sync
+DEV_CMD: (none)
+DEV_URL: (none)
+DEV_READY: (none)
 BUILD_CMD: (none)
-LINT_CMD: (채워 넣을 것)
-TYPECHECK_CMD: (채워 넣을 것)
-TEST_CMD: (채워 넣을 것)
-E2E_CMD: (채워 넣을 것)
-E2E_ONE: (채워 넣을 것)
+LINT_CMD: uv run ruff check src tests && uv run ruff format --check src tests
+TYPECHECK_CMD: uv run mypy src
+TEST_CMD: uv run pytest tests/unit -q
+E2E_CMD: uv run pytest tests/e2e -q
+E2E_ONE: uv run pytest {file} -q
 E2E_DIR: tests/e2e
 ```
 
 ## 이 프로젝트의 orchestrator 전용 파일 (추가분)
-- (스택 확정 후 진입점·라우터·마이그레이션 인덱스 경로를 적는다)
+- `src/hwp2md/cli.py` (CLI 진입점. 변경은 그 파일만 갖는 별도 단계로)
+- `pyproject.toml` 의 `[project.scripts]` (상위 목록에 이미 포함, 재확인용)
