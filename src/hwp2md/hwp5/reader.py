@@ -10,8 +10,10 @@ from typing import Any
 
 import olefile
 
+from ..blocks import Block, Paragraph
 from ..errors import NotHwpFileError, UnsupportedHwpError
-from .records import HWPTAG_PARA_TEXT, decode_para_text, iter_records
+from .body import parse_blocks
+from .records import iter_records
 
 HWP5_SIGNATURE = b"HWP Document File" + b"\x00" * 15  # 32 bytes
 FILE_HEADER_SIZE = 256
@@ -80,14 +82,14 @@ def read_sections(path: Path) -> list[bytes]:
     return sections
 
 
-def read_paragraphs(path: Path) -> list[str]:
-    """각 섹션의 HWPTAG_PARA_TEXT 레코드를 디코드. level 무시, 빈 문자열 제외."""
-    paragraphs: list[str] = []
+def read_blocks(path: Path) -> list[Block]:
+    """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다."""
+    blocks: list[Block] = []
     for section in read_sections(path):
-        for record in iter_records(section):
-            if record.tag_id != HWPTAG_PARA_TEXT:
-                continue
-            text = decode_para_text(record.payload)
-            if text:
-                paragraphs.append(text)
-    return paragraphs
+        blocks.extend(parse_blocks(iter_records(section)))
+    return blocks
+
+
+def read_paragraphs(path: Path) -> list[str]:
+    """호환 래퍼: 본문 Paragraph 블록의 비어 있지 않은 텍스트만 (표 셀 텍스트 제외)."""
+    return [b.text for b in read_blocks(path) if isinstance(b, Paragraph) and b.text]

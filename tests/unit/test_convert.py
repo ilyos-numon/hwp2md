@@ -4,6 +4,8 @@ import pytest
 
 import synth_hwp5
 from hwp2md import ConvertResult, NotHwpFileError, UnsupportedHwpError, convert
+from hwp2md import render as render_mod
+from hwp2md.blocks import Paragraph, Table
 from hwp2md.hwp5 import reader
 from hwp2md.hwp5.reader import parse_file_header, read_paragraphs
 from hwp2md.render import render_markdown
@@ -84,3 +86,56 @@ def test_render_markdown_empty() -> None:
 
 def test_render_markdown_skips_empty_paragraphs() -> None:
     assert render_markdown(["a", "", "b"]) == "a\n\nb\n"
+
+
+def test_convert_fixture_with_table(tmp_path: Path) -> None:
+    src = write_hwp5(tmp_path / "table.hwp", synth_hwp5.FIXTURE_ITEMS_WITH_TABLE)
+    result = convert(src, tmp_path / "out")
+    assert result.markdown == synth_hwp5.EXPECTED_MARKDOWN_WITH_TABLE
+    assert result.paragraph_count == 2
+    assert result.table_count == 1
+    assert result.output.read_bytes() == synth_hwp5.EXPECTED_MARKDOWN_WITH_TABLE.encode("utf-8")
+
+
+def test_convert_fixture_with_merged_table(tmp_path: Path) -> None:
+    src = write_hwp5(tmp_path / "merged.hwp", synth_hwp5.FIXTURE_ITEMS_MERGED)
+    result = convert(src, tmp_path / "out")
+    assert result.markdown == synth_hwp5.EXPECTED_MARKDOWN_MERGED
+    assert result.paragraph_count == 1
+    assert result.table_count == 1
+
+
+def test_convert_paragraph_fixture_has_no_tables(tmp_path: Path) -> None:
+    src = write_hwp5(tmp_path / "sample.hwp", FIXTURE_PARAGRAPHS)
+    result = convert(src, tmp_path / "out")
+    assert result.table_count == 0
+    assert result.markdown == EXPECTED_MARKDOWN
+
+
+def test_render_blocks_empty_and_skips_empty_paragraph() -> None:
+    assert render_mod.render_blocks([]) == ""
+    assert render_mod.render_blocks([Paragraph(""), Paragraph("a")]) == "a\n"
+
+
+def test_render_blocks_table_escapes_pipe_and_newline() -> None:
+    assert (
+        render_mod.render_blocks([Table([["x|y", "l1\nl2"]])])
+        == "| x\\|y | l1<br>l2 |\n|---|---|\n"
+    )
+
+
+def test_render_markdown_wrapper_unchanged() -> None:
+    assert render_markdown(["a", "", "b"]) == "a\n\nb\n"
+
+
+def test_read_blocks_fixture_with_table(tmp_path: Path) -> None:
+    src = write_hwp5(tmp_path / "table.hwp", synth_hwp5.FIXTURE_ITEMS_WITH_TABLE)
+    assert reader.read_blocks(src) == synth_hwp5.EXPECTED_BLOCKS_WITH_TABLE
+    assert read_paragraphs(src) == ["표 앞 단락", "표 뒤 단락"]
+
+
+def test_public_exports_include_blocks() -> None:
+    import hwp2md
+
+    for name in ("Block", "Paragraph", "Table"):
+        assert name in hwp2md.__all__
