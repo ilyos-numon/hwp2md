@@ -172,3 +172,19 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_bindata.py 
 - 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
 - 다음: S6 시작
+
+## [2026-10-23 00:11] S6 | orchestrator | START
+- 한 일: 문서·결정 기록
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 5f047a9 [T-20261022-image-extract][s5] hwpx: content.hpf manifest + BinData entries + hp:pic -> Image, cross-format parity
+
+## [2026-10-23 00:12] S6 | implementer(opus) | DONE
+- 한 일: decisions 3건·README 2곳·fixtures README 1절
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: 5f047a9 [T-20261022-image-extract][s5] hwpx: content.hpf manifest + BinData entries + hp:pic -> Image, cross-format parity
+
+## [2026-10-23 00:12] S6 | orchestrator | DONE
+- 한 일: 문서·결정 기록(diff 직접 대조) 검증 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: 5f047a9 [T-20261022-image-extract][s5] hwpx: content.hpf manifest + BinData entries + hp:pic -> Image, cross-format parity
+- 다음: S7 시작

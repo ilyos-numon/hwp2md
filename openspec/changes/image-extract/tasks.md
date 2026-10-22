@@ -30,7 +30,7 @@
 
 ## 6. 문서
 
-- [ ] 6.1 `docs/decisions.md`에 결정 3건(이미지 블록·파일명·링크 규칙 / 제외 범위 / BinData 해석·압축 규칙), `README.md` "현재 지원"과 실행 예시의 `_images/` 설명, `tests/fixtures/README.md`에 이미지 기대값 안내를 적고 `sanitize-check.sh`가 OK인지 확인한다
+- [x] 6.1 `docs/decisions.md`에 결정 3건(이미지 블록·파일명·링크 규칙 / 제외 범위 / BinData 해석·압축 규칙), `README.md` "현재 지원"과 실행 예시의 `_images/` 설명, `tests/fixtures/README.md`에 이미지 기대값 안내를 적고 `sanitize-check.sh`가 OK인지 확인한다
 
 ## 7. CLI
 
