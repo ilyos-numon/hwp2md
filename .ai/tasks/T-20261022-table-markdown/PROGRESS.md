@@ -148,3 +148,21 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
 - 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
 - 다음: S4 시작 (implementer opus: cli.py 2행 표 개수)
+
+## [2026-10-22 14:14] S4 | orchestrator | START
+- 한 일: CLI 2행에 표 개수 (cli.py 전용 단계)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f0d000c [T-20261022-table-markdown][s3] feat: read_blocks/render_blocks, markdown tables, ConvertResult.table_count
+
+## [2026-10-22 14:16] S4 | implementer(opus) | DONE
+- 한 일: cli.py 2행 '단락 N개 · 표 M개' (1 insertion/1 deletion). §2 S1~S5 전부 기대 일치(바이트 비교 True, 실제 샘플 118·8 / 47·0), unit 64, E2E 의도된 3 failed만
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: f0d000c [T-20261022-table-markdown][s3] feat: read_blocks/render_blocks, markdown tables, ConvertResult.table_count
+- 다음: orchestrator 검증·커밋
+- 메모: U+00B7 구분자 od 확인. 로그 logs/s4-cli.log
+
+## [2026-10-22 14:16] S4 | orchestrator | DONE
+- 한 일: cli.py 1줄 변경 검증 통과 (diff·S1 바이트·실제 샘플 표 8·E2E 3 failed 의도 확인). 1줄 전용 파일 단계라 runner/reviewer 생략, orchestrator 직접 검증
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: f0d000c [T-20261022-table-markdown][s3] feat: read_blocks/render_blocks, markdown tables, ConvertResult.table_count
+- 다음: S5 시작 (implementer opus: decisions.md·README)

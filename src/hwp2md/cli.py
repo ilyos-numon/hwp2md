@@ -46,7 +46,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except Exception as exc:  # noqa: BLE001 - CLI 경계: traceback 없이 종료 코드 1
         return _error(str(exc), 1)
     print(f"✓ {Path(input_arg).name} → {result.output}")
-    print(f"  단락 {result.paragraph_count}개")
+    print(f"  단락 {result.paragraph_count}개 · 표 {result.table_count}개")
     return 0
 
 
