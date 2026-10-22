@@ -42,7 +42,7 @@ REAL_EXPECTED: dict[str, tuple[int, int, int]] = {  # (단락, 표, 제목) §4.
     "브라더 공공기관 보고서 양식.hwpx": (32, 8, 0),
 }
 REAL_HEADING_LEVELS: dict[str, dict[int, int]] = {}  # 제목 있는 실제 샘플 추가 시 채운다
-STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 (\d+)개)?$")
+STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 (\d+)개)?(?: · 이미지 \d+개)?$")
 HEADING_LINE = re.compile(r"^(#{1,6}) \S")
 
 
