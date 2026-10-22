@@ -4,11 +4,15 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from lxml import etree
 
 from ..blocks import Block, Paragraph, Table
 from .header import EMPTY_HEADER, HeaderInfo
+
+if TYPE_CHECKING:
+    from .bindata import BinItemStore
 
 NS_HP = "http://www.hancom.co.kr/hwpml/2011/paragraph"
 HP_P = f"{{{NS_HP}}}p"
@@ -20,6 +24,10 @@ HP_TC = f"{{{NS_HP}}}tc"
 HP_SUBLIST = f"{{{NS_HP}}}subList"
 HP_CELL_ADDR = f"{{{NS_HP}}}cellAddr"
 HP_CELL_SPAN = f"{{{NS_HP}}}cellSpan"
+NS_HC = "http://www.hancom.co.kr/hwpml/2011/core"
+HP_PIC = f"{{{NS_HP}}}pic"
+HP_CONTAINER = f"{{{NS_HP}}}container"
+HC_IMG = f"{{{NS_HC}}}img"
 # hp:t 의 자식 인라인 요소 → 텍스트. 없는 태그는 "" (뒤따르는 tail 텍스트는 유지)
 INLINE_TEXT: dict[str, str] = {
     f"{{{NS_HP}}}tab": " ",
@@ -48,7 +56,11 @@ def text_of_t(t: etree._Element) -> str:
     return "".join(parts)
 
 
-def parse_paragraph(p: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> list[Block]:
+def parse_paragraph(
+    p: etree._Element,
+    header: HeaderInfo = EMPTY_HEADER,
+    bin_items: BinItemStore | None = None,
+) -> list[Block]:
     level = header.heading_level(_int_attr(p, "paraPrIDRef"))
     blocks: list[Block] = []
     buf: list[str] = []
@@ -58,6 +70,21 @@ def parse_paragraph(p: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> lis
         buf.clear()
         if text:
             blocks.append(Paragraph(text, level))
+
+    def append_image(pic: etree._Element) -> None:
+        if bin_items is None:
+            return
+        img = pic.find(HC_IMG)
+        if img is None:
+            return
+        ref = img.get("binaryItemIDRef")
+        if not ref:
+            return
+        image = bin_items.resolve(ref)
+        if image is None:
+            return
+        flush()
+        blocks.append(image)
 
     for run in p.iterchildren(HP_RUN):
         for child in run:
@@ -70,7 +97,12 @@ def parse_paragraph(p: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> lis
                 table = parse_table(child)
                 if table is not None:
                     blocks.append(table)
-            # 그 외(secPr, ctrl, 각주, pic, ...)는 무시
+            elif child.tag == HP_PIC:
+                append_image(child)
+            elif child.tag == HP_CONTAINER:
+                for pic in child.iter(HP_PIC):
+                    append_image(pic)
+            # 그 외(secPr, ctrl, 각주, rect, ...)는 무시
     flush()
     return blocks
 
@@ -159,8 +191,12 @@ def _int_attr(el: etree._Element | None, name: str) -> int | None:
         return None
 
 
-def parse_section(root: etree._Element, header: HeaderInfo = EMPTY_HEADER) -> list[Block]:
+def parse_section(
+    root: etree._Element,
+    header: HeaderInfo = EMPTY_HEADER,
+    bin_items: BinItemStore | None = None,
+) -> list[Block]:
     blocks: list[Block] = []
     for p in root.iterchildren(HP_P):
-        blocks.extend(parse_paragraph(p, header))
+        blocks.extend(parse_paragraph(p, header, bin_items))
     return blocks
