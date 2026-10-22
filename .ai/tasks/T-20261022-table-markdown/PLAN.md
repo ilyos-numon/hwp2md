@@ -1,7 +1,7 @@
 # PLAN — T-20261022-table-markdown HWP 5.0 표(HWPTAG_TABLE) → Markdown 표 변환
 
 > 작성: planner(fable) · 2026-10-22 13:50 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. 아래 경로는 전부 이 디렉터리 기준 상대경로다. BASE=`6e24c12` (브랜치 `ai/T-20261022-table-markdown`).
 > HWP 버전은 hex(`0x05000006`)로만 적는다. 점으로 이어진 4마디 버전 표기는 플랜·코드·문서 어디에도 쓰지 않는다 (익명화 검사의 IPv4 패턴에 걸림).

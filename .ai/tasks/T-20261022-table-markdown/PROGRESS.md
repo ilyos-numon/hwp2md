@@ -226,3 +226,27 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
 - 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
 - 다음: S7 시작 (reviewer sonnet 최종 리뷰 → scribe haiku RESULT)
+
+## [2026-10-22 14:21] S7 | orchestrator | START
+- 한 일: 리뷰·결과 기록
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e8f5754 [T-20261022-table-markdown][s6] test(e2e): markdown table conversion, merged cells, truncated input
+
+## [2026-10-22 14:22] S7 | reviewer(sonnet) | DONE
+- 한 일: 최종 PASS — §2 S1~S10 전부 PASS(직접 실행). OUT OK, 계약 5개 이름 존재, 기존 테스트 불변, sanitize OK. 실제 샘플: 표 8(1×1 '표준근로계약서' 헤더만), 빈 칸 21, <br> 19
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e8f5754 [T-20261022-table-markdown][s6] test(e2e): markdown table conversion, merged cells, truncated input
+- 다음: scribe RESULT.md
+- 메모: 비고: 다중 섹션 테스트 없음(공백). 중첩 표 평탄화. S2 RETRY 원인은 orchestrator 검증 항목
+
+## [2026-10-22 14:22] S7 | orchestrator | DONE
+- 한 일: 태스크 완료, gate 통과 (GATE PASS 6/6), 최종 리뷰 PASS 10/10
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e8f5754 [T-20261022-table-markdown][s6] test(e2e): markdown table conversion, merged cells, truncated input
+- 다음: 사용자 RESULT 검토 → main 병합
+- 메모: scribe가 RESULT.md·PLAN DONE·STATE IDLE 재작성 후 [s7]·[done] 커밋
+
+## [2026-10-22 14:22] S7 | hook | AUTO
+- 한 일: 도구 호출 150회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e8f5754 [T-20261022-table-markdown][s6] test(e2e): markdown table conversion, merged cells, truncated input
