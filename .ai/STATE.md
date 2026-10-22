@@ -6,9 +6,9 @@
 
 - 현재 태스크: T-20261022-hwpx-reader
 - 마지막 완료: T-20261022-table-markdown
-- 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: DRAFT)
+- 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
 - 현재 단계: S0 / 7  — 플랜 작성 완료, 사용자 승인 대기
-- 상태: AWAITING_APPROVAL
+- 상태: RUNNING
 - 브랜치: `ai/T-20261022-hwpx-reader`
 - 마지막 체크포인트: 2026-10-22 17:51 (S0 DONE)
 - 마지막 커밋: 0a346b8 [T-20261022-table-markdown][done] (main에 ff 병합 완료)

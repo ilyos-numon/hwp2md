@@ -1,7 +1,7 @@
 # PLAN — T-20261022-hwpx-reader HWPX(zip/XML) 입력 지원: 본문 단락·표 → 같은 Markdown
 
 > 작성: planner(fable) · 2026-10-22 14:55 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: DRAFT)
+> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. 아래 경로는 전부 이 디렉터리 기준 상대경로다. BASE=`e13ae706b1f56e8d4cb4460e6cb6e2f38e0c21dc` (브랜치 `ai/T-20261022-hwpx-reader`, main과 동일).
 > 버전 문자열은 점 3개짜리(IPv4 패턴)로 쓰지 않는다. lxml·lxml-stubs의 구체 버전 번호는 플랜·코드·문서 어디에도 적지 않는다(`lxml>=5`처럼 하한만).
@@ -608,12 +608,12 @@ Stage 1(orchestrator) ──> Stage 2 ──> Stage 3 ──> Stage 4 ──(§7
 병렬 묶음 없음. 모든 단계가 공유 트리에서 순차로 실행되므로 worktree 격리 불필요. 각 단계 시작 시 orchestrator가 `git rev-parse HEAD > .ai/tasks/T-20261022-hwpx-reader/.base-s<n>` 저장.
 
 ## 7. 사용자에게 확인받을 것 (플랜 승인 시 한 번에)
-- [ ] 1. lxml 타입 검사 방식: **기본값 (a) `lxml-stubs`를 dev 의존성으로** (lxml 프로젝트가 관리하는 공식 스텁, mypy strict에 바로 붙음). 대안 (b) `types-lxml`(더 세밀한 오버로드, 서드파티) — Stage 1 명령만 `uv add --dev types-lxml` 로 바뀜. 대안 (c) `[[tool.mypy.overrides]] module="lxml.*" ignore_missing_imports=true` — 스텁 없이 진행하되 reader·body 에 `cast` 가 늘어남(비권장).
-- [ ] 2. 포맷 아님 에러 문구: **기본값 유지 `not an HWP 5.0 file: {input}`** (cli.py 변경 없음, 기존 E2E 불변). 대안: `not an HWP/HWPX file: {input}` 로 변경 — Stage 4b(orchestrator 1줄) 실행 + Stage 6에서 `test_cli_convert.py` 58행 1곳 수정 + §4.8-6 기대 문구 변경.
-- [ ] 3. 머리말·꼬리말·쪽번호·각주·미주·도형 안의 단락: **기본값 무시** (HWPX는 `hp:ctrl`/`hp:footNote`/`hp:endNote`/도형 요소 전체를 건너뜀. 이유: 머리말·쪽번호가 본문 사이에 끼면 청킹 잡음이고, 각주·그림은 자기 태스크가 따로 있다. HWP 5.0 쪽 "흘려보냄"과 다르지만 실제 샘플 5개(hwp 2 + hwpx 3) 어디서도 결과 차이가 없다). 대안: 일관성을 위해 흘려보냄 — §4.4 `parse_paragraph` 의 "그 외" 분기에서 `hp:ctrl`·`hp:footNote`·`hp:endNote` 아래 `.//hp:subList/hp:p` 를 재귀 `parse_paragraph` 해 현재 위치에 끼워 넣고, 단위 테스트 16번 기대를 `[Paragraph("본문"), Paragraph("머리말"), Paragraph("각주")]` 로, §4.9 셋째 항목 문구 변경. §4.11 기대 숫자는 변하지 않음.
-- [ ] 4. `hp:lineBreak`(강제 줄바꿈) 처리: **기본값 `"\n"`** (HWP 5.0 코드 10과 동일. 본문 단락에서는 Markdown 소프트 줄바꿈으로 남고, 표 셀에서는 렌더러가 `<br>` 로 바꿈 — 두 포맷 동일 출력). 대안: 공백 한 칸 — `INLINE_TEXT` 의 lineBreak 값과 `EXPECTED_BLOCKS_INLINE`/`EXPECTED_MARKDOWN_INLINE`, 단위 테스트 4번 기대 변경. HWP 5.0 과 결과가 달라지므로 비권장.
-- [ ] 5. 실제 샘플 폴더: **기본값 `tests/fixtures/unsupported/hwpx/` → `tests/fixtures/hwpx/` 로 이동** (지원하게 되므로 폴더 이름을 맞춤. gitignore 대상이라 git 변경 없음). 대안: 그대로 두기 — Stage 1 의 mv 생략, §4.8 `REAL_HWPX_DIR` 를 `fixtures/unsupported/hwpx` 로, §4.10 fixtures README 문구를 그 경로로.
-- 기본값: 답이 없으면 5개 모두 기본값으로 진행한다 (Stage 4b 는 건너뛴다).
+- [x] 1. lxml 타입 검사 방식: **기본값 (a) `lxml-stubs`를 dev 의존성으로** (lxml 프로젝트가 관리하는 공식 스텁, mypy strict에 바로 붙음). 대안 (b) `types-lxml`(더 세밀한 오버로드, 서드파티) — Stage 1 명령만 `uv add --dev types-lxml` 로 바뀜. 대안 (c) `[[tool.mypy.overrides]] module="lxml.*" ignore_missing_imports=true` — 스텁 없이 진행하되 reader·body 에 `cast` 가 늘어남(비권장).
+- [x] 2. 포맷 아님 에러 문구: **기본값 유지 `not an HWP 5.0 file: {input}`** (cli.py 변경 없음, 기존 E2E 불변). 대안: `not an HWP/HWPX file: {input}` 로 변경 — Stage 4b(orchestrator 1줄) 실행 + Stage 6에서 `test_cli_convert.py` 58행 1곳 수정 + §4.8-6 기대 문구 변경.
+- [x] 3. 머리말·꼬리말·쪽번호·각주·미주·도형 안의 단락: **기본값 무시** (HWPX는 `hp:ctrl`/`hp:footNote`/`hp:endNote`/도형 요소 전체를 건너뜀. 이유: 머리말·쪽번호가 본문 사이에 끼면 청킹 잡음이고, 각주·그림은 자기 태스크가 따로 있다. HWP 5.0 쪽 "흘려보냄"과 다르지만 실제 샘플 5개(hwp 2 + hwpx 3) 어디서도 결과 차이가 없다). 대안: 일관성을 위해 흘려보냄 — §4.4 `parse_paragraph` 의 "그 외" 분기에서 `hp:ctrl`·`hp:footNote`·`hp:endNote` 아래 `.//hp:subList/hp:p` 를 재귀 `parse_paragraph` 해 현재 위치에 끼워 넣고, 단위 테스트 16번 기대를 `[Paragraph("본문"), Paragraph("머리말"), Paragraph("각주")]` 로, §4.9 셋째 항목 문구 변경. §4.11 기대 숫자는 변하지 않음.
+- [x] 4. `hp:lineBreak`(강제 줄바꿈) 처리: **기본값 `"\n"`** (HWP 5.0 코드 10과 동일. 본문 단락에서는 Markdown 소프트 줄바꿈으로 남고, 표 셀에서는 렌더러가 `<br>` 로 바꿈 — 두 포맷 동일 출력). 대안: 공백 한 칸 — `INLINE_TEXT` 의 lineBreak 값과 `EXPECTED_BLOCKS_INLINE`/`EXPECTED_MARKDOWN_INLINE`, 단위 테스트 4번 기대 변경. HWP 5.0 과 결과가 달라지므로 비권장.
+- [x] 5. 실제 샘플 폴더: **기본값 `tests/fixtures/unsupported/hwpx/` → `tests/fixtures/hwpx/` 로 이동** (지원하게 되므로 폴더 이름을 맞춤. gitignore 대상이라 git 변경 없음). 대안: 그대로 두기 — Stage 1 의 mv 생략, §4.8 `REAL_HWPX_DIR` 를 `fixtures/unsupported/hwpx` 로, §4.10 fixtures README 문구를 그 경로로.
+- 결정 (2026-10-22, 사용자): 5개 모두 기본값. 승인됨. Stage 4b 건너뜀.
 
 ## 8. 리스크
 | 리스크 | 가능성 | 대응 |
