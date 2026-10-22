@@ -23,11 +23,23 @@ def _render_table(table: Table) -> str:
     return "\n".join(lines)
 
 
+def _render_paragraph(p: Paragraph) -> str:
+    """level <= 0 → p.text 그대로(현재 동작).
+    level >= 1 → text = p.text.replace("\n", " ").strip(); text 가 "" 이면 "" (블록 생략);
+                 아니면 "#" * min(p.level, 6) + " " + text."""
+    if p.level <= 0:
+        return p.text
+    text = p.text.replace("\n", " ").strip()
+    if not text:
+        return ""
+    return "#" * min(p.level, 6) + " " + text
+
+
 def render_blocks(blocks: Sequence[Block]) -> str:
     """블록 문자열 중 비어 있지 않은 것을 '\\n\\n' 으로 join 하고 끝에 '\\n' 1개. 전부 비면 ''."""
     parts: list[str] = []
     for block in blocks:
-        text = block.text if isinstance(block, Paragraph) else _render_table(block)
+        text = _render_paragraph(block) if isinstance(block, Paragraph) else _render_table(block)
         if text:
             parts.append(text)
     if not parts:
