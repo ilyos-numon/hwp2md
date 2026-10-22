@@ -14,7 +14,7 @@
 - 마지막 커밋: 0a346b8 [T-20261022-table-markdown][done] (main에 ff 병합 완료)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. RESULT.md 검토 → `ai/T-20261022-table-markdown`을 main에 병합 → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 HWPX)
+1. RESULT.md 검토(병합은 완료) → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 HWPX — fixtures/unsupported/hwpx 샘플 3개 있음)
 
 ## 차단 중이면
 - 이유: 없음
