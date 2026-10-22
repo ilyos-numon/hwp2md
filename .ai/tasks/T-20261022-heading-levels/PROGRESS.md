@@ -242,3 +242,25 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
 - 커밋: f6bb4a8 [T-20261022-heading-levels][s6] docs: heading decisions (para shape source, clamp, CLI), README
 - 다음: S8 시작
+
+## [2026-10-22 23:08] S8 | orchestrator | START
+- 한 일: E2E 테스트 작성·실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f949dff [T-20261022-heading-levels][s7] cli: append heading count when present
+
+## [2026-10-22 23:09] S8 | hook | AUTO
+- 한 일: 도구 호출 210회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f949dff [T-20261022-heading-levels][s7] cli: append heading count when present
+
+## [2026-10-22 23:10] S8 | test-writer(sonnet) | DONE
+- 한 일: test_cli_heading.py 8케이스(12건)+정규식 2줄
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py 
+- 커밋: f949dff [T-20261022-heading-levels][s7] cli: append heading count when present
+- 메모: e2e 33 passed
+
+## [2026-10-22 23:10] S8 | orchestrator | DONE
+- 한 일: E2E 33 passed 재실행 확인, heading_hwp5/hwpx 바이트 동일
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py 
+- 커밋: f949dff [T-20261022-heading-levels][s7] cli: append heading count when present
+- 다음: S9 리뷰
