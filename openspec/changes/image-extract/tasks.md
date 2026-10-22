@@ -38,8 +38,8 @@
 
 ## 8. E2E
 
-- [ ] 8.1 `tests/e2e/test_cli_image.py`(두 포맷 성공·재사용·셀 제외·누락·2행 불변·비압축·실제 샘플 5개)를 작성하고 기존 E2E 정규식 3줄(`test_cli_convert.py:79`, `test_cli_heading.py:45`, `test_cli_hwpx.py:32`)에 `(?: · 이미지 \d+개)?`를 추가한다
-- [ ] 8.2 `uv run pytest tests/e2e -q`가 45 passed·failed 0이고 증거 파일(`image_hwp5.md`, `image_hwpx.md`, 실제 샘플 `.md` 5개, `img_001.png`)이 `ILLY_SHOT_DIR`에 있는지 확인한다
+- [x] 8.1 `tests/e2e/test_cli_image.py`(두 포맷 성공·재사용·셀 제외·누락·2행 불변·비압축·실제 샘플 5개)를 작성하고 기존 E2E 정규식 3줄(`test_cli_convert.py:79`, `test_cli_heading.py:45`, `test_cli_hwpx.py:32`)에 `(?: · 이미지 \d+개)?`를 추가한다
+- [x] 8.2 `uv run pytest tests/e2e -q`가 45 passed·failed 0이고 증거 파일(`image_hwp5.md`, `image_hwpx.md`, 실제 샘플 `.md` 5개, `img_001.png`)이 `ILLY_SHOT_DIR`에 있는지 확인한다
 
 ## 9. 리뷰·기록
 

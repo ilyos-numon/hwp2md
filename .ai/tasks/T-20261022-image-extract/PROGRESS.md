@@ -199,3 +199,25 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
 - 커밋: bb1c380 [T-20261022-image-extract][s6] docs: image extraction decisions, README, fixtures guide
 - 다음: S8 시작
+
+## [2026-10-23 00:12] S8 | orchestrator | START
+- 한 일: E2E 테스트 작성·실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8b44d6b [T-20261022-image-extract][s7] cli: image count and image dir lines
+
+## [2026-10-23 00:12] S8 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8b44d6b [T-20261022-image-extract][s7] cli: image count and image dir lines
+
+## [2026-10-23 00:14] S8 | test-writer(sonnet) | DONE
+- 한 일: test_cli_image.py 13건 + 정규식 3줄
+- 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-image-extract/screenshots/\353\270\214\353\235\274\353\215\224 tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py 
+- 커밋: 8b44d6b [T-20261022-image-extract][s7] cli: image count and image dir lines
+- 메모: e2e 46 passed
+
+## [2026-10-23 00:14] S8 | orchestrator | DONE
+- 한 일: E2E 46 passed 재실행, hwp5/hwpx 증거 동일 검증 통과
+- 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-image-extract/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-image-extract/screenshots/\353\270\214\353\235\274\353\215\224 tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py 
+- 커밋: 8b44d6b [T-20261022-image-extract][s7] cli: image count and image dir lines
+- 다음: S9 시작
