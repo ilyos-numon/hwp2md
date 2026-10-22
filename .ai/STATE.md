@@ -7,10 +7,10 @@
 - 현재 태스크: T-20261022-image-extract
 - 마지막 완료: T-20261022-heading-levels
 - 플랜: `.ai/tasks/T-20261022-image-extract/PLAN.md` (상태: APPROVED)
-- 현재 단계: S1 / 9  — 블록 모델·이미지 헬퍼·렌더·변환 결과
+- 현재 단계: S2 / 9  — 합성 HWP5 생성기 이미지
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-image-extract`
-- 마지막 체크포인트: 2026-10-22 23:54 (S0 DONE)
+- 마지막 체크포인트: 2026-10-22 23:59 (S1 DONE)
 - 마지막 커밋: ad99b4d [T-20261022-heading-levels][s8] e2e: heading levels both formats, edge cases, real samples
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)

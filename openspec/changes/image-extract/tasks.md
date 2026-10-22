@@ -2,9 +2,9 @@
 
 ## 1. 블록 모델·이미지 네이밍·렌더·변환 결과
 
-- [ ] 1.1 `Image(file_name, data)` 블록과 `images.py`(`image_dir_name`, `sniff_ext`, `normalize_ext`, `ImageNamer`)를 추가하고 `tests/unit/test_images.py`의 네이밍·확장자 케이스가 통과하는지 확인한다
-- [ ] 1.2 `render_blocks(blocks, *, image_dir="")`가 `Image`를 `![그림 N](dir/file)`(공백 → `%20`)로 렌더하도록 바꾸고 렌더 단위 테스트(순번·빈 image_dir·공백 경로)가 통과하는지 확인한다
-- [ ] 1.3 `convert()`가 고유 `file_name`마다 `<out>/<stem>_images/`에 파일을 쓰고 `ConvertResult.image_count/image_dir/image_files`를 채우도록 바꾸고, 이미지 없는 기존 fixture에서 폴더가 생기지 않고 `image_count == 0`인 테스트와 기존 단위 테스트 171개가 통과하는지 확인한다
+- [x] 1.1 `Image(file_name, data)` 블록과 `images.py`(`image_dir_name`, `sniff_ext`, `normalize_ext`, `ImageNamer`)를 추가하고 `tests/unit/test_images.py`의 네이밍·확장자 케이스가 통과하는지 확인한다
+- [x] 1.2 `render_blocks(blocks, *, image_dir="")`가 `Image`를 `![그림 N](dir/file)`(공백 → `%20`)로 렌더하도록 바꾸고 렌더 단위 테스트(순번·빈 image_dir·공백 경로)가 통과하는지 확인한다
+- [x] 1.3 `convert()`가 고유 `file_name`마다 `<out>/<stem>_images/`에 파일을 쓰고 `ConvertResult.image_count/image_dir/image_files`를 채우도록 바꾸고, 이미지 없는 기존 fixture에서 폴더가 생기지 않고 `image_count == 0`인 테스트와 기존 단위 테스트 171개가 통과하는지 확인한다
 
 ## 2. 합성 HWP 5.0 fixture
 

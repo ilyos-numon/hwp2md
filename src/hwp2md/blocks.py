@@ -24,4 +24,10 @@ class Table:
         return len(self.rows[0]) if self.rows else 0
 
 
-Block = Paragraph | Table
+@dataclass(frozen=True)
+class Image:
+    file_name: str  # "img_001.png" — 리더가 부여. 같은 원본(바이너리 항목)은 같은 file_name
+    data: bytes  # 원본 바이트 (변환 없음)
+
+
+Block = Paragraph | Table | Image

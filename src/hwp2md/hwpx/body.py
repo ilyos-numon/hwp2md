@@ -118,7 +118,7 @@ def _cell_text(tc: etree._Element) -> str:
         for b in parse_paragraph(p):
             if isinstance(b, Paragraph):
                 parts.append(b.text)
-            else:
+            elif isinstance(b, Table):
                 flat = " ".join(c for row in b.rows for c in row if c)
                 if flat:
                     parts.append(flat)
