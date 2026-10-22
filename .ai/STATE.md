@@ -6,9 +6,9 @@
 
 - 현재 태스크: T-20261022-table-markdown
 - 마지막 완료: T-20261022-stack-cli-smoke
-- 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: DRAFT)
+- 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: APPROVED)
 - 현재 단계: S0 / 7  — 플랜 작성 완료, 사용자 승인 대기
-- 상태: AWAITING_APPROVAL
+- 상태: RUNNING
 - 브랜치: `ai/T-20261022-table-markdown`
 - 마지막 체크포인트: 2026-10-22 13:55 (S0 DONE)
 - 마지막 커밋: b97d73b [T-20261022-stack-cli-smoke][s9] docs: RESULT
