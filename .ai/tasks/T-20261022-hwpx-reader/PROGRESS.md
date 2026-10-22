@@ -117,3 +117,40 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_hwpx_reader.py tests/unit/test_synth_hwpx.py 
 - 커밋: 3ab729b [T-20261022-hwpx-reader][s2] feat(hwpx): section parser and reader (lxml, secure parser, blocks)
 - 다음: S4 시작 (implementer opus: detect.py·convert.py·__init__.py)
+
+## [2026-10-22 18:04] S4 | orchestrator | START
+- 한 일: 포맷 감지와 convert 디스패치 (detect.py, convert.py, __init__.py)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+
+## [2026-10-22 18:07] S4 | implementer(opus) | DONE
+- 한 일: detect.py(내용 기반 판정)·convert.py 디스패치·__init__ export·test_detect.py·test_cross_format.py. unit 113 passed, mypy 14 OK, ruff OK, 실제 HWPX 3개 CLI (1,1)(80,31)(32,8) exit0, 기존 E2E 11 passed, cli.py 불변
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+- 다음: runner → reviewer
+- 메모: corrupt zip 케이스 추가(중앙 디렉터리 시그니처 훼손). 로그 logs/s4-*.log
+
+## [2026-10-22 18:08] S4 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+
+## [2026-10-22 18:08] S4 | runner(haiku) | DONE
+- 한 일: 검증: mypy OK(14), ruff OK(29 files), unit 113 passed, 실제 HWPX 3개 CLI (1,1)(80,31)(32,8) exit0, 구분선 1/31/8, 기존 E2E 11 passed, not-hwp exit3 문구 불변, suffix 0
+- 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-hwpx-reader/screenshots/\353\270\214\353\235\274\353\215\224 src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+- 다음: reviewer 판정 대기
+- 메모: 증거 .md 3개 screenshots/에 저장. 로그 logs/s4-*.log
+
+## [2026-10-22 18:09] S4 | reviewer(sonnet) | DONE
+- 한 일: PASS — 10기준 OK (§4.2 판정·문구, §4.5, 테스트 13개, 실제 샘플 증거 직접 확인: 구분선 1/31/8, 병합 빈 칸, 머리말·그림 미혼입)
+- 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-hwpx-reader/screenshots/\353\270\214\353\235\274\353\215\224 src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+- 다음: orchestrator 마감
+- 메모: 서식 박스(제목·목차)도 표로 변환됨 → README 문구 후보. detect 문구 'not an HWP 5.0 or HWPX file'은 convert 내부, CLI stderr는 'not an HWP 5.0 file' 유지 — S6 E2E에서 구분
+
+## [2026-10-22 18:09] S4 | orchestrator | DONE
+- 한 일: 포맷 감지·convert 디스패치 검증 통과 (runner·reviewer PASS). Stage 4b는 §7-2 기본값이라 건너뜀
+- 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-hwpx-reader/screenshots/\353\270\214\353\235\274\353\215\224 src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
+- 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
+- 다음: S5 시작 (implementer opus: decisions·README·fixtures README)

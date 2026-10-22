@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-hwpx-reader
 - 마지막 완료: T-20261022-table-markdown
 - 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
-- 현재 단계: S4 / 7  — 포맷 감지와 convert 디스패치 (detect.py, convert.py, __init__.py)
+- 현재 단계: S5 / 7  — 결정 기록·README·fixtures README 갱신
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-hwpx-reader`
-- 마지막 체크포인트: 2026-10-22 18:04 (S3 DONE)
-- 마지막 커밋: [s3] synth hwpx
+- 마지막 체크포인트: 2026-10-22 18:09 (S4 DONE)
+- 마지막 커밋: [s4] detect+dispatch
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S4 implementer(opus) 보고 대기 → runner(실제 샘플 CLI 3개) → reviewer → 커밋 [s4] → S5(docs). Stage 4b는 기본값이라 건너뜀
+1. S5 implementer(opus) 보고 대기 → reviewer(sonnet, runner 생략) → 커밋 [s5] → S6 test-writer E2E
 
 ## 차단 중이면
 - 이유: 없음

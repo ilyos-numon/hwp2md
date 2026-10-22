@@ -5,8 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from .blocks import Paragraph, Table
-from .hwp5.reader import read_blocks
+from .blocks import Block, Paragraph, Table
+from .detect import detect_format
+from .hwp5.reader import read_blocks as read_hwp5_blocks
+from .hwpx.reader import read_blocks as read_hwpx_blocks
 from .render import render_blocks
 
 
@@ -17,6 +19,14 @@ class ConvertResult:
     paragraph_count: int
     table_count: int
     markdown: str
+
+
+def read_blocks(path: Path) -> list[Block]:
+    """포맷을 감지해 리더를 고른다.
+    "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks. 예외는 그대로 전파."""
+    if detect_format(path) == "hwpx":
+        return read_hwpx_blocks(path)
+    return read_hwp5_blocks(path)
 
 
 def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
