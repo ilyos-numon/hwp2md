@@ -106,3 +106,45 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
 - 커밋: 4f1b92f [T-20261022-table-markdown][s1] feat(hwp5): block model and table record parser
 - 다음: S3 시작 (implementer opus: read_blocks·render_blocks·table_count)
+
+## [2026-10-22 14:09] S3 | orchestrator | START
+- 한 일: reader·render·convert 연결 (read_blocks, render_blocks, table_count)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+
+## [2026-10-22 14:11] S3 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+
+## [2026-10-22 14:12] S3 | implementer(opus) | DONE
+- 한 일: read_blocks·render_blocks·ConvertResult.table_count·__init__ export·test_convert 8케이스. unit 64 passed, mypy OK, ruff OK. 실제 샘플 form2000…: 단락 118·표 8·구분선 8, form2100…0268: 표 0
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+- 다음: runner 검증 → reviewer
+- 메모: reader에서 미사용 import 2개 제거. 테스트는 기존 import 줄 불변 위해 'from hwp2md import render as render_mod' 추가(가독성은 reviewer 판단). 로그 logs/s3-*.log
+
+## [2026-10-22 14:13] S3 | runner(haiku) | DONE
+- 한 일: 검증: mypy OK, ruff OK, unit 64 passed, 실제 샘플 118단락·표 8·구분선 8 / 표 0, __all__ 9개(Block·Paragraph·Table 포함), grep OUT 0
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+- 다음: reviewer 판정 대기
+- 메모: 로그 logs/s3-*.log
+
+## [2026-10-22 14:13] S3 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+
+## [2026-10-22 14:14] S3 | reviewer(sonnet) | DONE
+- 한 일: PASS — 9기준 OK. 실제 샘플 직접 확인: 표 8(열 수 1,1,1,1,1,6,2,3), 병합 빈 칸 29, <br> 56, 1×1 '표준근로계약서' 표 존재; 표 0 샘플 OK
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+- 다음: orchestrator 마감
+- 메모: E2E는 구분선 수·table_count로 단언(본문 인용 금지). 다중 섹션 전용 테스트 없음(알려진 공백)
+
+## [2026-10-22 14:14] S3 | orchestrator | DONE
+- 한 일: reader·render·convert 연결 검증 통과 (runner·reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 8ba2788 [T-20261022-table-markdown][s2] test: synthetic HWP 5.0 table fixtures (tbl ctrl, TABLE, LIST_HEADER cells)
+- 다음: S4 시작 (implementer opus: cli.py 2행 표 개수)
