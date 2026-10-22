@@ -4,13 +4,21 @@ version = "0.1.0"
 description = "Convert HWP 5.0 documents to Markdown without Hancom Office"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["olefile>=0.46"]
+dependencies = [
+    "lxml>=5",
+    "olefile>=0.46",
+]
 
 [project.scripts]
 hwp2md = "hwp2md.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "lxml-stubs>=0.5.1",
+]
 
 [build-system]
 requires = ["hatchling>=1.25"]
