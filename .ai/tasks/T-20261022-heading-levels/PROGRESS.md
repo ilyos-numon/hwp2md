@@ -231,3 +231,14 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
 - 커밋: a6285ea [T-20261022-heading-levels][s5] hwpx: header.xml OUTLINE paraPr -> Paragraph.level, cross-format parity
 - 다음: S7 시작
+
+## [2026-10-22 23:08] S7 | orchestrator | START
+- 한 일: CLI 2행 제목 K개
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f6bb4a8 [T-20261022-heading-levels][s6] docs: heading decisions (para shape source, clamp, CLI), README
+
+## [2026-10-22 23:08] S7 | orchestrator | DONE
+- 한 일: cli.py 2행 제목 K개 (3줄), 실제 샘플 5개 2행 불변, e2e 21 unit 171
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: f6bb4a8 [T-20261022-heading-levels][s6] docs: heading decisions (para shape source, clamp, CLI), README
+- 다음: S8 시작
