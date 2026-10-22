@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
 - 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: APPROVED)
-- 현재 단계: S5 / 9  — hwp5 리더·Markdown 렌더·convert API
+- 현재 단계: S6 / 9  — CLI 진입점 cli.py
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 12:09 (S4 DONE)
-- 마지막 커밋: [s4] synthetic fixture generator
+- 마지막 체크포인트: 2026-10-22 12:13 (S5 DONE)
+- 마지막 커밋: [s5] reader, renderer, convert API
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S5 implementer(opus) 보고 대기 → runner 검증 → reviewer → 커밋 [s5] → S6 (cli.py 전용 단계)
+1. S6 implementer(opus) 보고 대기 → runner 검증(§2 S1~S4 명령) → reviewer → 커밋 [s6] → S7 scribe(docs)
 
 ## 차단 중이면
 - 이유: 

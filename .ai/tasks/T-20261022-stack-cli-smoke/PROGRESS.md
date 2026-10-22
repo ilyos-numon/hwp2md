@@ -128,3 +128,45 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
 - 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
 - 다음: S5 시작 (implementer opus: reader·render·convert)
+
+## [2026-10-22 12:09] S5 | orchestrator | START
+- 한 일: hwp5 리더·Markdown 렌더·convert API
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+
+## [2026-10-22 12:09] S5 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+
+## [2026-10-22 12:11] S5 | implementer(opus) | DONE
+- 한 일: reader.py·render.py·convert.py·__init__ export·test_convert.py 15케이스, unit 35 passed, mypy 7 files OK
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+- 다음: runner 검증 → reviewer
+- 메모: ConvertResult(source, output, paragraph_count, markdown). 예외: FileNotFoundError / NotHwpFileError / UnsupportedHwpError / Hwp2mdError(상위). __init__ import 순서를 __version__ 위로(ruff E402). 로그 logs/s5-*.log
+
+## [2026-10-22 12:12] S5 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+
+## [2026-10-22 12:12] S5 | runner(haiku) | DONE
+- 한 일: 검증: mypy OK(7 files), ruff OK(11 files), unit 35 passed, import '0.1.0 convert', grep lxml|hwpx 0건
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+- 다음: reviewer 판정 대기
+- 메모: 로그 logs/s5-{typecheck,lint,test,import,grep}.log
+
+## [2026-10-22 12:13] S5 | reviewer(sonnet) | DONE
+- 한 일: PASS — 10기준 OK (§4.3 API·§4.4-A/B·예외 매핑·mypy strict·테스트 (a)~(h)+시그니처 동일성·OUT 없음·익명화)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+- 다음: orchestrator 마감
+- 메모: cli: NotHwpFileError/UnsupportedHwpError(3) → FileNotFoundError(2) → Hwp2mdError(1) 순. 깨진 OLE의 OSError는 reader가 변환 안 함(범위 밖) → cli 일반 예외 처리(1). ConvertResult.output은 out_dir 상대경로 유지
+
+## [2026-10-22 12:13] S5 | orchestrator | DONE
+- 한 일: 리더·렌더·convert API 검증 통과 (runner·reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/render.py tests/unit/test_convert.py 
+- 커밋: 42210a1 [T-20261022-stack-cli-smoke][s4] test: synthetic HWP 5.0 fixture generator (CFB writer)
+- 다음: S6 시작 (implementer opus: cli.py 전용 단계)

@@ -1,0 +1,93 @@
+"""HWP 5.0 OLE container reader: FileHeader, BodyText sections, paragraphs."""
+
+from __future__ import annotations
+
+import struct
+import zlib
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import olefile
+
+from ..errors import NotHwpFileError, UnsupportedHwpError
+from .records import HWPTAG_PARA_TEXT, decode_para_text, iter_records
+
+HWP5_SIGNATURE = b"HWP Document File" + b"\x00" * 15  # 32 bytes
+FILE_HEADER_SIZE = 256
+
+_PROP_COMPRESSED = 0x1
+_PROP_ENCRYPTED = 0x2
+_PROP_DISTRIBUTION = 0x4
+
+
+@dataclass(frozen=True)
+class FileHeader:
+    version: tuple[int, int, int, int]  # (MM, nn, PP, rr)
+    compressed: bool  # properties bit 0
+    encrypted: bool  # properties bit 1
+    distribution: bool  # properties bit 2
+
+
+def parse_file_header(raw: bytes) -> FileHeader:
+    """len(raw) != 256 또는 raw[:32] != HWP5_SIGNATURE → NotHwpFileError."""
+    if len(raw) != FILE_HEADER_SIZE:
+        raise NotHwpFileError(f"FileHeader must be {FILE_HEADER_SIZE} bytes, got {len(raw)}")
+    if raw[:32] != HWP5_SIGNATURE:
+        raise NotHwpFileError("FileHeader signature mismatch")
+    (v,) = struct.unpack("<I", raw[32:36])
+    (properties,) = struct.unpack("<I", raw[36:40])
+    return FileHeader(
+        version=((v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF),
+        compressed=bool(properties & _PROP_COMPRESSED),
+        encrypted=bool(properties & _PROP_ENCRYPTED),
+        distribution=bool(properties & _PROP_DISTRIBUTION),
+    )
+
+
+def _read_stream(ole: Any, name: str) -> bytes:
+    return bytes(ole.openstream(name).read())
+
+
+def _inflate(data: bytes) -> bytes:
+    d = zlib.decompressobj(-15)
+    return d.decompress(data) + d.flush()
+
+
+def read_sections(path: Path) -> list[bytes]:
+    """BodyText/Section<N> 스트림을 N 오름차순으로 (압축이면 해제해서) 반환."""
+    if not olefile.isOleFile(str(path)):
+        raise NotHwpFileError(f"not an OLE compound file: {path}")
+    ole = olefile.OleFileIO(str(path))
+    try:
+        if not ole.exists("FileHeader"):
+            raise NotHwpFileError(f"FileHeader stream missing: {path}")
+        header = parse_file_header(_read_stream(ole, "FileHeader"))
+        if header.encrypted:
+            raise UnsupportedHwpError(f"encrypted document: {path}")
+        if header.distribution:
+            raise UnsupportedHwpError(f"distribution document: {path}")
+        sections: list[bytes] = []
+        n = 0
+        while ole.exists(f"BodyText/Section{n}"):
+            data = _read_stream(ole, f"BodyText/Section{n}")
+            sections.append(_inflate(data) if header.compressed else data)
+            n += 1
+    finally:
+        ole.close()
+    if not sections:
+        raise NotHwpFileError(f"BodyText/Section0 stream missing: {path}")
+    return sections
+
+
+def read_paragraphs(path: Path) -> list[str]:
+    """각 섹션의 HWPTAG_PARA_TEXT 레코드를 디코드. level 무시, 빈 문자열 제외."""
+    paragraphs: list[str] = []
+    for section in read_sections(path):
+        for record in iter_records(section):
+            if record.tag_id != HWPTAG_PARA_TEXT:
+                continue
+            text = decode_para_text(record.payload)
+            if text:
+                paragraphs.append(text)
+    return paragraphs
