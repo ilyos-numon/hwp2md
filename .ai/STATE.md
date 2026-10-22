@@ -11,7 +11,7 @@
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-table-markdown`
 - 마지막 체크포인트: 2026-10-22 14:22 (S7 AUTO)
-- 마지막 커밋: [s6] e2e tables
+- 마지막 커밋: 4c123c7 [T-20261022-table-markdown][s7] docs: RESULT
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
 1. S7 reviewer(sonnet) 최종 리뷰(§2 S1~S10) → scribe(haiku) RESULT.md·PLAN DONE·STATE IDLE → gate.sh → 커밋 [s7]·[done] → main 병합
