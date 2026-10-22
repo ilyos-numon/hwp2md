@@ -140,3 +140,35 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
 - 커밋: bd4be5e [T-20261022-image-extract][s3] hwp5: BIN_DATA + BinData streams + gso picture -> Image block
 - 다음: S5 시작
+
+## [2026-10-23 00:07] S5 | orchestrator | START
+- 한 일: HWPX 리더 hp:pic → Image·교차 포맷
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+
+## [2026-10-23 00:08] S5 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+
+## [2026-10-23 00:11] S5 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_bindata.py 
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+
+## [2026-10-23 00:11] S5 | implementer(opus) | DONE
+- 한 일: hwpx/bindata.py·reader·body 이미지, cross-format
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_bindata.py 
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+- 메모: unit 240, 브라더 sha 일치
+
+## [2026-10-23 00:11] S5 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_bindata.py 
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+
+## [2026-10-23 00:11] S5 | orchestrator | DONE
+- 한 일: HWPX 리더 이미지 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_bindata.py 
+- 커밋: 5be26ae [T-20261022-image-extract][s4] tests: synthetic hwpx images (hp:pic/hc:img, manifest items, BinData entries)
+- 다음: S6 시작

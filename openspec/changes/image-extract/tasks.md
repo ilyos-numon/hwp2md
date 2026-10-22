@@ -24,9 +24,9 @@
 
 ## 5. HWPX 리더
 
-- [ ] 5.1 `hwpx/bindata.py`(`parse_manifest`, `BinItemStore.resolve`)와 `reader.py`의 `HwpxPackage`·`read_hwpx_package`(BinData 엔트리 수집, 50MB 상한)를 추가하고 `tests/unit/test_hwpx_bindata.py`의 manifest·fallback·누락·과대 케이스가 통과하는지 확인한다
-- [ ] 5.2 `body.py`가 `hp:pic`·`hp:container` 안 `hp:pic`을 `Image`로 바꾸고 `hp:ctrl`·셀 안은 제외하도록 바꾸고, `read_blocks`가 fixture 4종에서 `EXPECTED_BLOCKS_IMAGE*`와 같은지 확인한다
-- [ ] 5.3 `tests/unit/test_cross_format.py`에 이미지 fixture 4종의 두 포맷 Markdown·카운트·파일 바이트 동일성 테스트를 추가하고 통과하는지 확인한다
+- [x] 5.1 `hwpx/bindata.py`(`parse_manifest`, `BinItemStore.resolve`)와 `reader.py`의 `HwpxPackage`·`read_hwpx_package`(BinData 엔트리 수집, 50MB 상한)를 추가하고 `tests/unit/test_hwpx_bindata.py`의 manifest·fallback·누락·과대 케이스가 통과하는지 확인한다
+- [x] 5.2 `body.py`가 `hp:pic`·`hp:container` 안 `hp:pic`을 `Image`로 바꾸고 `hp:ctrl`·셀 안은 제외하도록 바꾸고, `read_blocks`가 fixture 4종에서 `EXPECTED_BLOCKS_IMAGE*`와 같은지 확인한다
+- [x] 5.3 `tests/unit/test_cross_format.py`에 이미지 fixture 4종의 두 포맷 Markdown·카운트·파일 바이트 동일성 테스트를 추가하고 통과하는지 확인한다
 
 ## 6. 문서
 

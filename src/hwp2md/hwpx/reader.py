@@ -4,12 +4,20 @@ from __future__ import annotations
 
 import re
 import zipfile
+from dataclasses import dataclass
 from pathlib import Path
 
 from lxml import etree
 
 from ..blocks import Block
 from ..errors import Hwp2mdError, NotHwpFileError
+from .bindata import (
+    BIN_DATA_PREFIX,
+    HWPX_CONTENT_HPF,
+    MAX_IMAGE_BYTES,
+    BinItemStore,
+    parse_manifest,
+)
 from .body import parse_section
 from .header import EMPTY_HEADER, parse_header, parse_header_xml
 
@@ -39,8 +47,15 @@ def section_names(zf: zipfile.ZipFile) -> list[str]:
     return [name for _, name in sorted(found)]
 
 
-def read_package(path: Path) -> tuple[bytes | None, list[bytes]]:
-    """(header.xml 바이트 — 엔트리 없으면 None ; 섹션 바이트 목록)."""
+@dataclass(frozen=True)
+class HwpxPackage:
+    header: bytes | None  # Contents/header.xml
+    sections: list[bytes]
+    manifest: bytes | None  # Contents/content.hpf
+    bin_data: dict[str, bytes]  # "BinData/" 로 시작하는 파일 엔트리 전부 (키 = 엔트리 전체 이름)
+
+
+def read_hwpx_package(path: Path) -> HwpxPackage:
     try:
         zf = zipfile.ZipFile(path)
     except zipfile.BadZipFile as exc:
@@ -52,13 +67,34 @@ def read_package(path: Path) -> tuple[bytes | None, list[bytes]]:
             if size > MAX_SECTION_BYTES:
                 raise Hwp2mdError(f"section XML too large: {name} ({size} bytes)")
             out.append(zf.read(name))
+        names = zf.namelist()
         header: bytes | None = None
-        if HWPX_HEADER in zf.namelist():
+        if HWPX_HEADER in names:
             size = zf.getinfo(HWPX_HEADER).file_size
             if size > MAX_SECTION_BYTES:
                 raise Hwp2mdError(f"header XML too large: {size} bytes")
             header = zf.read(HWPX_HEADER)
-        return header, out
+        manifest: bytes | None = None
+        if HWPX_CONTENT_HPF in names:
+            size = zf.getinfo(HWPX_CONTENT_HPF).file_size
+            if size > MAX_SECTION_BYTES:
+                raise Hwp2mdError(f"manifest XML too large: {size} bytes")
+            manifest = zf.read(HWPX_CONTENT_HPF)
+        bin_data: dict[str, bytes] = {}
+        for name in names:
+            if not name.startswith(BIN_DATA_PREFIX) or name.endswith("/"):
+                continue
+            size = zf.getinfo(name).file_size
+            if size > MAX_IMAGE_BYTES:
+                raise Hwp2mdError(f"binary item too large: {name} ({size} bytes)")
+            bin_data[name] = zf.read(name)
+        return HwpxPackage(header=header, sections=out, manifest=manifest, bin_data=bin_data)
+
+
+def read_package(path: Path) -> tuple[bytes | None, list[bytes]]:
+    """(header.xml 바이트 — 엔트리 없으면 None ; 섹션 바이트 목록)."""
+    pkg = read_hwpx_package(path)
+    return pkg.header, pkg.sections
 
 
 def read_sections(path: Path) -> list[bytes]:
@@ -76,9 +112,11 @@ def parse_section_xml(data: bytes) -> etree._Element:
 
 
 def read_blocks(path: Path) -> list[Block]:
-    header_raw, sections = read_package(path)
-    info = EMPTY_HEADER if header_raw is None else parse_header(parse_header_xml(header_raw))
+    pkg = read_hwpx_package(path)
+    info = EMPTY_HEADER if pkg.header is None else parse_header(parse_header_xml(pkg.header))
+    manifest = parse_manifest(pkg.manifest) if pkg.manifest is not None else {}
+    store = BinItemStore(manifest, pkg.bin_data)
     blocks: list[Block] = []
-    for data in sections:
-        blocks.extend(parse_section(parse_section_xml(data), info))
+    for data in pkg.sections:
+        blocks.extend(parse_section(parse_section_xml(data), info, store))
     return blocks
