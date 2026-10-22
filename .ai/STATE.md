@@ -9,7 +9,7 @@
 - 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: APPROVED)
 - 현재 단계: S7 / 7  — 리뷰·결과 기록
 - 상태: RUNNING
-- 브랜치: `ai/T-20261022-table-markdown`
+- 브랜치: `main`
 - 마지막 체크포인트: 2026-10-22 14:22 (S7 AUTO)
 - 마지막 커밋: 4c123c7 [T-20261022-table-markdown][s7] docs: RESULT
 
