@@ -176,3 +176,37 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwpx.py tests/unit/test_synth_hwpx.py 
 - 커밋: 0906b09 [T-20261022-heading-levels][s3] hwp5: DocInfo PARA_SHAPE outline level -> Paragraph.level
 - 다음: S5 시작
+
+## [2026-10-22 23:05] S5 | orchestrator | START
+- 한 일: HWPX header.xml 파서·리더 연결
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+
+## [2026-10-22 23:06] S5 | hook | AUTO
+- 한 일: 도구 호출 165회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py src/hwp2md/hwpx/header.py 
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+
+## [2026-10-22 23:07] S5 | implementer(opus) | DONE
+- 한 일: hwpx/header.py·reader/body 연결·단위 10+2
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_header.py 
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+- 다음: S5 리뷰
+- 메모: unit 171, 실제 HWPX 1 0/80 0/32 0. resolve_entities 속성 미노출 → 동작 기반 테스트
+
+## [2026-10-22 23:07] S5 | hook | AUTO
+- 한 일: 도구 호출 180회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_header.py 
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+
+## [2026-10-22 23:07] S5 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS; E-8 동작 기반 대체는 약화 아님
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_header.py 
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+- 메모: lxml 6 resolve_entities 속성 없음 — _Entity 비공개 타입 의존
+
+## [2026-10-22 23:07] S5 | orchestrator | DONE
+- 한 일: HWPX header 파서 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_header.py 
+- 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
+- 다음: S6 시작
