@@ -9,12 +9,12 @@
 - 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: DONE)
 - 현재 단계: S0 / 0  — 없음
 - 상태: IDLE
-- 브랜치: `ai/T-20261022-hwpx-reader`
+- 브랜치: `main`
 - 마지막 체크포인트: 2026-10-22 18:17 · S7 orchestrator DONE
-- 마지막 커밋: ac0b636 [T-20261022-hwpx-reader][s7] docs: RESULT
+- 마지막 커밋: 5211ab2 [T-20261022-hwpx-reader][done] (main에 ff 병합 완료)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. RESULT.md 검토 → `ai/T-20261022-hwpx-reader`를 main에 병합 → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 제목 계층)
+1. RESULT.md 검토(병합은 완료) → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 제목 계층)
 
 ## 차단 중이면
 - 이유: 
