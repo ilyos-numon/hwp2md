@@ -154,3 +154,26 @@
 - 변경 파일(미커밋, .ai 제외): ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2351) ".ai/tasks/T-20261022-hwpx-reader/screenshots/(\354\204\234\354\213\2352) ".ai/tasks/T-20261022-hwpx-reader/screenshots/\353\270\214\353\235\274\353\215\224 src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/detect.py tests/unit/test_cross_format.py tests/unit/test_detect.py 
 - 커밋: 71c5304 [T-20261022-hwpx-reader][s3] test: synthetic HWPX generator, reader error and entity-safety tests
 - 다음: S5 시작 (implementer opus: decisions·README·fixtures README)
+
+## [2026-10-22 18:09] S5 | orchestrator | START
+- 한 일: 결정 기록·README·fixtures README 갱신
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 616857c [T-20261022-hwpx-reader][s4] feat: content-based format detection and hwp5/hwpx dispatch in convert
+
+## [2026-10-22 18:10] S5 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 616857c [T-20261022-hwpx-reader][s4] feat: content-based format detection and hwp5/hwpx dispatch in convert
+
+## [2026-10-22 18:11] S5 | implementer(opus) | DONE
+- 한 일: decisions.md +3항목(§4.9), README 2곳(+2/-1), fixtures README 전체 교체. grep 8/4/1/0, 플랜 원문 diff 0, sanitize OK
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: 616857c [T-20261022-hwpx-reader][s4] feat: content-based format detection and hwp5/hwpx dispatch in convert
+- 다음: orchestrator 검증·커밋
+- 메모: implementer가 발견: decisions.md 22행 잔여 펜스(전 태스크 19e4bdf). 이번 복사도 플랜 닫는 펜스(407행) 포함 → orchestrator가 22·35행 삭제
+
+## [2026-10-22 18:11] S5 | orchestrator | DONE
+- 한 일: 문서 3개 검증 통과. 잔여 코드 펜스 2줄 제거(전 태스크 잔재 1 + 이번 행 범위 오류 1). 문서 단계라 runner 생략, orchestrator 직접 검증(플랜의 reviewer도 생략 — grep·diff로 결정적 확인)
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: 616857c [T-20261022-hwpx-reader][s4] feat: content-based format detection and hwp5/hwpx dispatch in convert
+- 다음: S6 시작 (test-writer sonnet: tests/e2e/test_cli_hwpx.py)

@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-hwpx-reader
 - 마지막 완료: T-20261022-table-markdown
 - 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
-- 현재 단계: S5 / 7  — 결정 기록·README·fixtures README 갱신
+- 현재 단계: S6 / 7  — E2E 테스트 작성·실행
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-hwpx-reader`
-- 마지막 체크포인트: 2026-10-22 18:09 (S4 DONE)
-- 마지막 커밋: [s4] detect+dispatch
+- 마지막 체크포인트: 2026-10-22 18:11 (S5 DONE)
+- 마지막 커밋: [s5] docs hwpx
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S5 implementer(opus) 보고 대기 → reviewer(sonnet, runner 생략) → 커밋 [s5] → S6 test-writer E2E
+1. S6 test-writer(sonnet) 보고 대기 → runner E2E(§4.13 블록, timeout 명령 없이) → reviewer → 커밋 [s6] → S7
 
 ## 차단 중이면
 - 이유: 없음
