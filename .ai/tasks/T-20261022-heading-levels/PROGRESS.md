@@ -210,3 +210,24 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py src/hwp2md/hwpx/reader.py tests/unit/test_cross_format.py tests/unit/test_hwpx_header.py 
 - 커밋: d76e0c1 [T-20261022-heading-levels][s4] tests: synthetic hwpx headings (header.xml paraPr/heading), byte-stability hashes
 - 다음: S6 시작
+
+## [2026-10-22 23:07] S6 | orchestrator | START
+- 한 일: 결정 기록·README·fixtures README
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a6285ea [T-20261022-heading-levels][s5] hwpx: header.xml OUTLINE paraPr -> Paragraph.level, cross-format parity
+
+## [2026-10-22 23:08] S6 | hook | AUTO
+- 한 일: 도구 호출 195회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: a6285ea [T-20261022-heading-levels][s5] hwpx: header.xml OUTLINE paraPr -> Paragraph.level, cross-format parity
+
+## [2026-10-22 23:08] S6 | implementer(opus) | DONE
+- 한 일: decisions 3건·README·fixtures README
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: a6285ea [T-20261022-heading-levels][s5] hwpx: header.xml OUTLINE paraPr -> Paragraph.level, cross-format parity
+
+## [2026-10-22 23:08] S6 | orchestrator | DONE
+- 한 일: 문서 검증 통과 (grep 기준 전부 일치, diff 3파일 직접 확인)
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md tests/fixtures/README.md 
+- 커밋: a6285ea [T-20261022-heading-levels][s5] hwpx: header.xml OUTLINE paraPr -> Paragraph.level, cross-format parity
+- 다음: S7 시작

@@ -35,4 +35,4 @@ uv run hwp2md input.hwp -o out/       # out/input.md 생성
 uv run hwp2md input.hwpx -o out/      # HWPX 도 같은 명령 (포맷은 내용으로 판별)
 uv run pytest tests/unit tests/e2e -q # 테스트
 ```
-현재 지원: HWP 5.0 바이너리와 HWPX(zip/XML) 두 포맷의 본문 단락 텍스트와 표(Markdown 표, 병합 셀은 빈 칸, 셀 내 단락은 <br>). 포맷은 확장자가 아니라 파일 내용으로 판별한다. 이미지·각주는 진행 중.
+현재 지원: HWP 5.0 바이너리와 HWPX(zip/XML) 두 포맷의 본문 단락 텍스트, 제목 계층(개요 1~7수준 → Markdown # ~ ######, 7수준은 ######), 표(Markdown 표, 병합 셀은 빈 칸, 셀 내 단락은 <br>). 포맷은 확장자가 아니라 파일 내용으로 판별한다. 이미지·각주는 진행 중.
