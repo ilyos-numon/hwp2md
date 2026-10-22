@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
 - 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: DRAFT)
-- 현재 단계: S0 / ?  — 플랜 작성 (planner fable)
-- 상태: PLANNING
+- 현재 단계: S0 / 9  — 플랜 작성 완료, 사용자 승인 대기
+- 상태: AWAITING_APPROVAL
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 11:37 (S0 AUTO)
+- 마지막 체크포인트: 2026-10-22 11:53 (S0 DONE)
 - 마지막 커밋: 없음
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. planner 보고 대기 → PLAN.md 셀프체크(plan-standard 10개) → 사용자 승인 요청
+1. 사용자 §7 답변 반영 → PLAN.md 상태 APPROVED → 커밋 → /implement (Stage 1 implementer opus: pyproject.toml)
 
 ## 차단 중이면
 - 이유: 
