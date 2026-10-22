@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
 - 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: APPROVED)
-- 현재 단계: S4 / 9  — 합성 HWP 5.0 생성기 (순수 파이썬 CFB writer)
+- 현재 단계: S5 / 9  — hwp5 리더·Markdown 렌더·convert API
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
-- 마지막 체크포인트: 2026-10-22 12:05 (S3 DONE)
-- 마지막 커밋: [s3] records parser
+- 마지막 체크포인트: 2026-10-22 12:09 (S4 DONE)
+- 마지막 커밋: [s4] synthetic fixture generator
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S4 implementer(opus) 보고 대기 → runner 검증 → reviewer → 커밋 [s4] → S5
+1. S5 implementer(opus) 보고 대기 → runner 검증 → reviewer → 커밋 [s5] → S6 (cli.py 전용 단계)
 
 ## 차단 중이면
 - 이유: 

@@ -91,3 +91,40 @@
 - 변경 파일(미커밋, .ai 제외): src/.gitkeep src/hwp2md/__init__.py src/hwp2md/errors.py src/hwp2md/hwp5/__init__.py src/hwp2md/hwp5/records.py src/hwp2md/py.typed tests/unit/test_hwp5_records.py 
 - 커밋: c29039d [T-20261022-stack-cli-smoke][s2] chore: fill CLAUDE.md command block, ignore real fixtures
 - 다음: S4 시작 (implementer opus: 합성 HWP 5.0 생성기)
+
+## [2026-10-22 12:05] S4 | orchestrator | START
+- 한 일: 합성 HWP 5.0 생성기 (순수 파이썬 CFB writer)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+
+## [2026-10-22 12:07] S4 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+
+## [2026-10-22 12:07] S4 | implementer(opus) | DONE
+- 한 일: tests/synth_hwp5.py(CFB writer+HWP 레코드 빌더)·test_synth_hwp5.py 8케이스, unit 20 passed
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+- 다음: runner 검증 → reviewer
+- 메모: HWP5_SIGNATURE 사본을 synth에 정의(reader.py는 S5). 레이아웃: 섹터0 FAT, 1-2 dir, 3 MiniFAT, 4~ ministream. olefile strict 모드 무결점. 로그 logs/s4-*.log
+
+## [2026-10-22 12:09] S4 | runner(haiku) | DONE
+- 한 일: 검증: mypy OK, ruff OK(7 files), unit 20 passed, olefile listdir 3 스트림+FileHeader 256 (exit 0은 orchestrator가 재확인)
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+- 다음: reviewer 판정 대기
+- 메모: zsh에서 PIPESTATUS 미지원 → 이후 runner 명령은 pipe 없이 exit 캡처
+
+## [2026-10-22 12:09] S4 | reviewer(sonnet) | DONE
+- 한 일: PASS — 10기준 OK (§4.4-A~H 바이트 레이아웃·시그니처·테스트 (a)~(g)·OUT 없음·익명화)
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+- 다음: orchestrator 마감
+- 메모: reader는 미니스트림 순서에 의존 금지. HWP5_SIGNATURE 사본 synth_hwp5.py — S5 reader.py 상수와 값 일치 필요
+
+## [2026-10-22 12:09] S4 | orchestrator | DONE
+- 한 일: 합성 HWP 5.0 생성기 검증 통과 (runner·reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
+- 커밋: 59848cd [T-20261022-stack-cli-smoke][s3] feat(hwp5): record iterator and PARA_TEXT decoder
+- 다음: S5 시작 (implementer opus: reader·render·convert)
