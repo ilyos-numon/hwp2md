@@ -4,18 +4,18 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: T-20261022-table-markdown
-- 마지막 완료: T-20261022-stack-cli-smoke
-- 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: APPROVED)
-- 현재 단계: S7 / 7  — 리뷰·결과 기록
-- 상태: RUNNING
+- 현재 태스크: 없음
+- 마지막 완료: T-20261022-table-markdown
+- 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: DONE)
+- 현재 단계: S0 / 0  — 없음
+- 상태: IDLE
 - 브랜치: `main`
-- 마지막 체크포인트: 2026-10-22 14:22 (S7 AUTO)
-- 마지막 커밋: 4c123c7 [T-20261022-table-markdown][s7] docs: RESULT
+- 마지막 체크포인트: 2026-10-22 14:22 (S7 orchestrator DONE)
+- 마지막 커밋: 0a346b8 [T-20261022-table-markdown][done] (main에 ff 병합 완료)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S7 reviewer(sonnet) 최종 리뷰(§2 S1~S10) → scribe(haiku) RESULT.md·PLAN DONE·STATE IDLE → gate.sh → 커밋 [s7]·[done] → main 병합
+1. RESULT.md 검토 → `ai/T-20261022-table-markdown`을 main에 병합 → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 HWPX)
 
 ## 차단 중이면
-- 이유: 
-- 사용자 결정 필요 사항: 
+- 이유: 없음
+- 사용자 결정 필요 사항: 없음
