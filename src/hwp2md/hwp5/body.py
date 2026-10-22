@@ -138,7 +138,7 @@ def _parse_table(
                 # 셀 안의 중첩 표·컨트롤 단락 → 부모 셀 텍스트로 평탄화
                 if isinstance(b, Paragraph):
                     current[1].append(b.text)
-                else:
+                elif isinstance(b, Table):
                     flat = " ".join(c for row in b.rows for c in row if c)
                     if flat:
                         current[1].append(flat)

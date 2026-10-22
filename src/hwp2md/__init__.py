@@ -1,4 +1,4 @@
-from .blocks import Block, Paragraph, Table
+from .blocks import Block, Image, Paragraph, Table
 from .convert import ConvertResult, convert
 from .detect import DocFormat, detect_format
 from .errors import Hwp2mdError, NotHwpFileError, UnsupportedHwpError
@@ -10,6 +10,7 @@ __all__ = [
     "ConvertResult",
     "DocFormat",
     "Hwp2mdError",
+    "Image",
     "NotHwpFileError",
     "Paragraph",
     "Table",

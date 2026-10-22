@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from .blocks import Block, Paragraph, Table
+from .blocks import Block, Image, Paragraph, Table
 from .detect import detect_format
 from .hwp5.reader import read_blocks as read_hwp5_blocks
 from .hwpx.reader import read_blocks as read_hwpx_blocks
+from .images import image_dir_name
 from .render import render_blocks
 
 
@@ -20,6 +22,28 @@ class ConvertResult:
     table_count: int
     heading_count: int
     markdown: str
+    image_count: int = 0  # Image 블록 수 (링크 수. 같은 파일 재참조도 센다)
+    image_dir: Path | None = (
+        None  # image_files 가 비어 있지 않을 때만 out_dir / image_dir_name(stem)
+    )
+    image_files: tuple[Path, ...] = ()  # 실제로 쓴 파일(고유 file_name 첫 등장 순)
+
+
+def _write_images(blocks: Sequence[Block], target: Path) -> tuple[Path, ...]:
+    """처음 보는 file_name 마다 target / file_name 에 data 를 쓴다.
+    Image 가 0개면 target 을 만들지 않는다."""
+    images = [b for b in blocks if isinstance(b, Image)]
+    if not images:
+        return ()
+    target.mkdir(parents=True, exist_ok=True)
+    written: dict[str, Path] = {}
+    for img in images:
+        if img.file_name in written:
+            continue
+        dest = target / img.file_name
+        dest.write_bytes(img.data)
+        written[img.file_name] = dest
+    return tuple(written.values())
 
 
 def read_blocks(path: Path) -> list[Block]:
@@ -36,7 +60,8 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
     if not source.is_file():
         raise FileNotFoundError(str(path))
     blocks = read_blocks(source)
-    markdown = render_blocks(blocks)
+    image_dir_rel = image_dir_name(source.stem)
+    markdown = render_blocks(blocks, image_dir=image_dir_rel)
     paragraph_count = sum(
         isinstance(b, Paragraph) and bool(b.text) and b.level == 0 for b in blocks
     )
@@ -47,6 +72,8 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
     output = target_dir / f"{source.stem}.md"
     with output.open("w", encoding="utf-8", newline="\n") as f:
         f.write(markdown)
+    files = _write_images(blocks, target_dir / image_dir_rel)
+    image_count = sum(isinstance(b, Image) for b in blocks)
     return ConvertResult(
         source=source,
         output=output,
@@ -54,4 +81,7 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
         table_count=table_count,
         heading_count=heading_count,
         markdown=markdown,
+        image_count=image_count,
+        image_dir=target_dir / image_dir_rel if files else None,
+        image_files=files,
     )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from .blocks import Block, Paragraph, Table
+from .blocks import Block, Image, Paragraph, Table
 
 
 def _render_cell(text: str) -> str:
@@ -35,11 +35,24 @@ def _render_paragraph(p: Paragraph) -> str:
     return "#" * min(p.level, 6) + " " + text
 
 
-def render_blocks(blocks: Sequence[Block]) -> str:
-    """블록 문자열 중 비어 있지 않은 것을 '\\n\\n' 으로 join 하고 끝에 '\\n' 1개. 전부 비면 ''."""
+def _render_image(img: Image, n: int, image_dir: str) -> str:
+    path = f"{image_dir}/{img.file_name}" if image_dir else img.file_name
+    return f"![그림 {n}]({path.replace(' ', '%20')})"
+
+
+def render_blocks(blocks: Sequence[Block], *, image_dir: str = "") -> str:
+    """블록 문자열 중 비어 있지 않은 것을 '\\n\\n' 으로 join 하고 끝에 '\\n' 1개. 전부 비면 ''.
+    Image 블록마다 n 을 1부터 증가(등장 순)."""
     parts: list[str] = []
+    image_n = 0
     for block in blocks:
-        text = _render_paragraph(block) if isinstance(block, Paragraph) else _render_table(block)
+        if isinstance(block, Image):
+            image_n += 1
+            text = _render_image(block, image_n, image_dir)
+        elif isinstance(block, Paragraph):
+            text = _render_paragraph(block)
+        else:
+            text = _render_table(block)
         if text:
             parts.append(text)
     if not parts:
