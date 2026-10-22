@@ -41,7 +41,7 @@
 | S2 | E2E 전체 통과 | `cd /Users/illi/illy-projects/hwp2md && uv run pytest tests/e2e -q` | `33 passed`(기존 21 + 신규 12), failed 0, skipped 0 |
 | S3 | 기존 테스트 회귀 없음 | `cd /Users/illi/illy-projects/hwp2md && uv run pytest tests/unit -q` | `143 passed` 이상(기존 113 + 신규 30 이상), failed 0 |
 | S4 | 린트·포맷·타입 | `cd /Users/illi/illy-projects/hwp2md && uv run ruff check src tests && uv run ruff format --check src tests && uv run mypy src` | `All checks passed!`, `already formatted`, `Success: no issues found in 16 source files` |
-| S5 | 실제 HWP 5.0 샘플 제목 판정 | `cd /Users/illi/illy-projects/hwp2md && uv run hwp2md tests/fixtures/form200005063113.hwp -o /tmp/h2m && grep -cE '^#{1,6} ' /tmp/h2m/form200005063113.md` | stdout 2행 `  단락 100개 · 표 8개 · 제목 18개`, grep → `18` |
+| S5 | 실제 HWP 5.0 샘플 제목 판정 | `cd /Users/illi/illy-projects/hwp2md && uv run hwp2md tests/fixtures/form200005063113.hwp -o /tmp/h2m && grep -cE '^#{1,6} ' /tmp/h2m/form200005063113.md` | stdout 2행 `  단락 118개 · 표 8개`, grep → `0` (S3 정정: 이 샘플의 본문 단락은 개요 문단 모양을 쓰지 않음) |
 | S6 | 실제 샘플 4개 출력 불변(회귀) | §4.16-C 블록 | 2행이 `  단락 47개 · 표 0개`, `  단락 1개 · 표 1개`, `  단락 80개 · 표 31개`, `  단락 32개 · 표 8개`(`제목` 없음), `exit=0` 5회 |
 | S7 | 제목 없는 기존 입력의 합성 바이트 불변 | `cd /Users/illi/illy-projects/hwp2md && uv run pytest tests/unit/test_synth_hwp5.py tests/unit/test_synth_hwpx.py -q -k "unchanged or sha or deterministic"` | failed 0 (§4.5-F·§4.8-E의 sha256 일치) |
 | S8 | 기존 E2E 파일 수정 범위 | `cd /Users/illi/illy-projects/hwp2md && git diff ce0a3f5654351f1d89e11075f8c05fed4a5be775 --stat -- tests/e2e/test_cli_convert.py tests/e2e/test_cli_hwpx.py` | 두 파일 각 `1 +, 1 -` (정규식 1줄씩) |
@@ -434,7 +434,7 @@ EXPECTED_COUNTS_HEADING_IN_CELL = (0, 1, 1)
 **HWP 5.0** (`DocInfo` 압축, PARA_HEADER 전부 22 bytes)
 | 파일 | 버전 | DocInfo 레코드 | PARA_SHAPE 수(길이) | 개요 비트가 선 문단 모양 id → 개요 수준 | 최상위 단락 중 개요 단락(비어 있지 않음) | 표 셀 안 개요 단락 | 현재 (단락, 표) | **기대 (단락, 표, 제목)** |
 |---|---|---|---|---|---|---|---|---|
-| `form200005063113.hwp` | `0x05000006` | 208 (0x19 ×64, 0x1A ×12) | 64 (42 B) | 4→1, 5→2, 6→3, 7→4, 8→5, 9→6, 10→7 | **18**: 수준1 ×6(id 4), 수준2 ×4(id 5), 수준3 ×4(id 6), 수준7 ×4(id 10). 전부 텍스트 있음, 줄바꿈 없음, 최대 63자 | 14 (셀 텍스트로만) | (118, 8) | **(100, 8, 18)** — Markdown 제목 줄 분포 `# `×6, `## `×4, `### `×4, `###### `×4 |
+| `form200005063113.hwp` | `0x05000006` | 208 (0x19 ×64, 0x1A ×12) | 64 (42 B) | 4→1, 5→2, 6→3, 7→4, 8→5, 9→6, 10→7 | **18**: 수준1 ×6(id 4), 수준2 ×4(id 5), 수준3 ×4(id 6), 수준7 ×4(id 10). 전부 텍스트 있음, 줄바꿈 없음, 최대 63자 | 14 (셀 텍스트로만) | (118, 8) | **(118, 8, 0)** — [S3 정정 2026-10-22] planner 조사는 PARA_HEADER @12(글자 모양 수)를 문단 모양 ID로 잘못 읽었다. 스펙 위치 @8로 보면 level 0 단락이 쓰는 문단 모양(0,12~21,33,34,50,51,54,56,57,62,63)은 전부 개요 아님. @12로 걸린 18개는 본문 텍스트("(이하 갑이라 함)…", "· 원,")였다. 제목 0 |
 | `form210001070268.hwp` | `0x05000202` | 55 (0x19 ×13, 0x1A ×14) | 13 (46 B) | 4→1 … 10→7 | 0 (본문 단락의 para_shape_id 는 1·2 만) | 0 | (47, 0) | **(47, 0, 0)** |
 - 두 파일 모두 본문 `style_id`는 전부 0(바탕글) — 스타일로는 판정 불가, 문단 모양으로만 판정 가능(§7-2 근거). STYLE 레코드 이름은 `바탕글/Normal, 본문/Body, 개요 1~7/Outline 1~7, 쪽 번호, 머리말, 각주(, 미주, 메모)`, 길이 26~44.
 - 샘플 1 현재 출력 `.md` 284줄 중 `#`로 시작하는 줄 0 → 제목 줄 수 세기(`^#{1,6} `)가 정확하다.
@@ -462,20 +462,20 @@ EXPECTED_COUNTS_HEADING_IN_CELL = (0, 1, 1)
 **A. 기존 파일 수정 — 정확히 2줄 (Stage 8, test-writer). 다른 글자는 바꾸지 않는다**
 - `tests/e2e/test_cli_convert.py` 79행: `m = re.match(r"^  단락 (\d+)개 · 표 (\d+)개$", lines[1])` → `m = re.match(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 \d+개)?$", lines[1])`
 - `tests/e2e/test_cli_hwpx.py` 32행: `STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개$")` → `STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 \d+개)?$")`
-- 이유: 실제 샘플 `form200005063113.hwp` 2행이 `  단락 100개 · 표 8개 · 제목 18개`가 되어 `$` 앵커 정규식이 깨진다. 그룹 1·2 의미는 불변이므로 기존 단언은 그대로다.
+- 이유: 제목이 있는 실제 샘플(사용자가 나중에 추가)은 2행이 `… · 제목 K개`가 되어 `$` 앵커 정규식이 깨진다(S3 정정 후 현재 실제 샘플 5개는 전부 제목 0이라 지금은 깨지지 않는다). 그룹 1·2 의미는 불변이므로 기존 단언은 그대로다.
 
 **B. `tests/e2e/test_cli_heading.py` 신규 — conftest의 `run_cli` 사용, `synth_hwp5`·`synth_hwpx`에서 import. 케이스 이름 고정**
 ```python
 REAL_HWP5 = sorted(Path(__file__).resolve().parents[1].joinpath("fixtures").glob("*.hwp"))
 REAL_HWPX = sorted(Path(__file__).resolve().parents[1].joinpath("fixtures", "hwpx").glob("*.hwpx"))
 REAL_EXPECTED: dict[str, tuple[int, int, int]] = {           # (단락, 표, 제목) §4.11
-    "form200005063113.hwp": (100, 8, 18),
+    "form200005063113.hwp": (118, 8, 0),
     "form210001070268.hwp": (47, 0, 0),
     "(서식1) 비영리법인 현황 제출 양식.hwpx": (1, 1, 0),
     "(서식2) 사업실적 및 사업계획 제출 양식.hwpx": (80, 31, 0),
     "브라더 공공기관 보고서 양식.hwpx": (32, 8, 0),
 }
-REAL_HEADING_LEVELS: dict[str, dict[int, int]] = {"form200005063113.hwp": {1: 6, 2: 4, 3: 4, 6: 4}}
+REAL_HEADING_LEVELS: dict[str, dict[int, int]] = {}  # 제목 있는 실제 샘플 추가 시 채운다
 STDOUT_LINE2 = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 (\d+)개)?$")
 HEADING_LINE = re.compile(r"^(#{1,6}) \S")
 ```
@@ -494,11 +494,11 @@ HEADING_LINE = re.compile(r"^(#{1,6}) \S")
 ```
 ## 2026-10-22 제목 판정: 문단 모양(PARA_SHAPE/paraPr)의 개요 비트만 본다
 - 결정: HWP 5.0은 `DocInfo`의 `HWPTAG_PARA_SHAPE` 속성1 비트 23~24(머리 모양)가 개요(1)일 때 비트 25~27(수준 0~6)을, HWPX는 `header.xml`의 `hh:paraPr/hh:heading[@type="OUTLINE"]/@level`을 제목 수준으로 쓴다. 단락은 `PARA_HEADER.para_shape_id` / `hp:p/@paraPrIDRef`로 문단 모양을 찾는다. 스타일(`STYLE` 레코드, `hh:style`)의 이름·참조는 판정에 쓰지 않는다. 머리 모양이 번호·글머리표인 단락은 본문으로 둔다(리스트 렌더는 후속).
-- 이유: 한컴은 스타일을 적용하면 단락의 문단 모양 ID를 바꿔 저장하므로 문단 모양이 실제로 렌더되는 속성이다. 실제 샘플 5개 모두 본문 단락의 스타일 ID가 0(바탕글)이고 개요 정보는 문단 모양에만 있었다. 스타일 이름("개요 N"/"Outline N")은 언어·사용자 설정에 따라 바뀔 수 있다.
+- 이유: 한컴은 스타일을 적용하면 단락의 문단 모양 ID를 바꿔 저장하므로 문단 모양이 실제로 렌더되는 속성이다. 실제 샘플 5개 모두 본문 단락의 스타일 ID가 0(바탕글)이고 개요 정보는 문단 모양에만 정의되어 있었다(단, 현재 실제 샘플의 본문 단락은 개요 문단 모양을 쓰지 않아 양성 검증은 합성 fixture로 한다). 스타일 이름("개요 N"/"Outline N")은 언어·사용자 설정에 따라 바뀔 수 있다.
 
 ## 2026-10-22 제목 수준: 개요 1~6 → `#`~`######`, 7 이상은 `######`로 clamp. 블록은 `Paragraph.level`
 - 결정: Markdown 제목 수준 = min(개요 수준 + 1, 6). 별도 `Heading` 블록 대신 `Paragraph`에 `level: int = 0` 필드를 둔다(0 본문). 렌더는 `#`×level + 공백 + 텍스트(내부 줄바꿈은 공백), 빈 텍스트 제목은 생략, 표 셀 안의 개요 단락은 셀 텍스트로만 쓴다. 제목 길이 제한은 두지 않는다.
-- 이유: Markdown은 6수준까지만 있고, 개요 7수준은 실제 샘플에서도 쓰이므로(샘플 1에 4개) 버리는 것보다 가장 낮은 제목으로 두는 쪽이 구조를 보존한다. 제목은 HWP에서도 "개요 속성이 붙은 단락"이라 필드 추가가 모델에 맞고, 기존 `Paragraph("text")` 호출·동등 비교·테스트가 그대로 유효하다.
+- 이유: Markdown은 6수준까지만 있고, 개요 7수준도 문단 모양으로 정의될 수 있으므로(샘플 1 DocInfo에 정의 있음) 버리는 것보다 가장 낮은 제목으로 두는 쪽이 구조를 보존한다. 제목은 HWP에서도 "개요 속성이 붙은 단락"이라 필드 추가가 모델에 맞고, 기존 `Paragraph("text")` 호출·동등 비교·테스트가 그대로 유효하다.
 
 ## 2026-10-22 CLI 2행: 제목이 있을 때만 ` · 제목 K개`를 덧붙이고, 제목은 단락 수에서 분리한다
 - 결정: `paragraph_count`는 본문 단락(level 0)만, `heading_count`는 제목만 센다. CLI 2행은 `단락 N개 · 표 M개`를 유지하고 제목이 1개 이상일 때만 ` · 제목 K개`를 덧붙인다.
@@ -537,13 +537,13 @@ for f in sorted(Path('tests/fixtures').glob('*.hwp')):
     print(f.name, body, heads, dist)
 " > $T/logs/s3-real.log 2>&1; echo "exit=$?" >> $T/logs/s3-real.log; cat $T/logs/s3-real.log
 ```
-기대: `form200005063113.hwp 100 18 {1: 6, 2: 4, 3: 4, 6: 4}` · `form210001070268.hwp 47 0 {}` · `exit=0`
+기대: `form200005063113.hwp 118 0 {}` · `form210001070268.hwp 47 0 {}` · `exit=0`
 **C. 실제 샘플 5개 CLI (Stage 7 검증, Stage 9 reviewer 참고)**
 ```bash
 cd /Users/illi/illy-projects/hwp2md && T=.ai/tasks/T-20261022-heading-levels && mkdir -p $T/logs $T/screenshots && OUT=$(mktemp -d) && \
 for f in tests/fixtures/*.hwp tests/fixtures/hwpx/*.hwpx; do uv run hwp2md "$f" -o "$OUT"; echo "exit=$?"; done > $T/logs/s7-real.log 2>&1; cat $T/logs/s7-real.log; cp "$OUT"/*.md $T/screenshots/
 ```
-기대 2행(파일 순): `  단락 100개 · 표 8개 · 제목 18개`, `  단락 47개 · 표 0개`, `  단락 1개 · 표 1개`, `  단락 80개 · 표 31개`, `  단락 32개 · 표 8개`, `exit=0` 5회.
+기대 2행(파일 순): `  단락 118개 · 표 8개`, `  단락 47개 · 표 0개`, `  단락 1개 · 표 1개`, `  단락 80개 · 표 31개`, `  단락 32개 · 표 8개`, `exit=0` 5회.
 **D. E2E (Stage 8)**
 ```bash
 cd /Users/illi/illy-projects/hwp2md && T=.ai/tasks/T-20261022-heading-levels && mkdir -p $T/logs $T/screenshots && \
@@ -661,7 +661,7 @@ for f in sorted(Path('tests/fixtures/hwpx').glob('*.hwpx')):
 - 병렬 가능: 아니오 · 선행: Stage 6
 - 입력: §4.12
 - 쓰기 범위: `src/hwp2md/cli.py` 49행 `print(...)` 1줄 → §4.12의 3줄
-- 검증: §4.16-C → 기대 2행 5개와 `exit=0` 5회, `.md` 5개가 `screenshots/`에 복사됨. `cd /Users/illi/illy-projects/hwp2md && uv run ruff check src && uv run ruff format --check src && uv run mypy src` → OK. `uv run pytest tests/e2e -q` → **`20 passed, 1 failed`** (`test_real_fixture_converts[form200005063113.hwp]` 의 `$` 정규식 — 예정된 실패, Stage 8 §4.13-A에서 해소. 다른 실패가 있으면 BLOCKED)
+- 검증: §4.16-C → 기대 2행 5개와 `exit=0` 5회, `.md` 5개가 `screenshots/`에 복사됨. `cd /Users/illi/illy-projects/hwp2md && uv run ruff check src && uv run ruff format --check src && uv run mypy src` → OK. `uv run pytest tests/e2e -q` → **`21 passed`** (S3 정정: 실제 샘플 전부 제목 0이라 2행 불변, 예정 실패 없음. 실패가 있으면 BLOCKED)
 - 완료 조건: PROGRESS 기록 + 커밋 `[T-20261022-heading-levels][s7] cli: append heading count when present`
 - 실패 시: `git checkout -- src/hwp2md/cli.py`
 
@@ -685,7 +685,7 @@ for f in sorted(Path('tests/fixtures/hwpx').glob('*.hwpx')):
 - 병렬 가능: 아니오 · 선행: Stage 8
 - 입력: reviewer — `git diff ce0a3f5654351f1d89e11075f8c05fed4a5be775 --stat`, `.ai/tasks/T-20261022-heading-levels/screenshots/heading_hwp5.md`·`heading_hwpx.md`·`form200005063113.md`(Read로 직접 열기), §2 표; scribe — PROGRESS.md 전체, reviewer 보고, §2 표
 - 쓰기 범위: reviewer 없음(읽기 전용) · scribe `/Users/illi/illy-projects/hwp2md/.ai/tasks/T-20261022-heading-levels/RESULT.md`, `/Users/illi/illy-projects/hwp2md/.ai/STATE.md`
-- 검증: reviewer 보고에 §2 S1~S10 각각 PASS/FAIL과 근거 명령 출력 1줄; `heading_hwp5.md`와 `heading_hwpx.md` 바이트 동일(`cmp`), `form200005063113.md`에 `# `로 시작하는 줄 6개·`###### ` 4개를 눈으로 확인; 쓰기 범위 밖 변경 파일 0(`cli.py`·`pyproject.toml`·`uv.lock`·`__init__.py` 변경은 Stage 7의 cli.py 3줄만). scribe: RESULT.md가 record-standard 절(요약·성공 기준 표·못 한 것·결정 사항·후속 제안) 포함, STATE.md 20줄 이내·상태 `DONE` 대기 표기.
+- 검증: reviewer 보고에 §2 S1~S10 각각 PASS/FAIL과 근거 명령 출력 1줄; `heading_hwp5.md`와 `heading_hwpx.md` 바이트 동일(`cmp`), `form200005063113.md`에 `#`로 시작하는 줄 0개 확인(S3 정정); 쓰기 범위 밖 변경 파일 0(`cli.py`·`pyproject.toml`·`uv.lock`·`__init__.py` 변경은 Stage 7의 cli.py 3줄만). scribe: RESULT.md가 record-standard 절(요약·성공 기준 표·못 한 것·결정 사항·후속 제안) 포함, STATE.md 20줄 이내·상태 `DONE` 대기 표기.
 - 완료 조건: RESULT.md 존재 + 커밋 `[T-20261022-heading-levels][s9] docs: RESULT`
 - 실패 시: reviewer FAIL 항목은 해당 Stage 담당에게 재호출(RETRY). 2회 실패 → BLOCKED.
 
@@ -703,7 +703,7 @@ Stage 1(블록·렌더) → Stage 2(hwp5 생성기) → Stage 3(hwp5 DocInfo 파
 - [x] 7-4 CLI 2행: **제목 0개면 생략, 1개 이상이면 ` · 제목 K개` 덧붙임(기존 E2E 정규식 2줄 수정)** vs (B) 항상 ` · 제목 K개` 표기(기존 E2E 문자열 단언 6곳 + 정규식 2곳 = 8줄 수정: `test_cli_convert.py` 26·79행, `test_cli_table.py` 38·51행, `test_cli_hwpx.py` 32·49·62·75행) vs (C) CLI 불변(`heading_count`는 라이브러리 결과에만, 기존 테스트 0줄 수정, Stage 7 생략). 기본값 (A). 또한 제목은 **단락 수에서 분리**(단락 N + 제목 K = Paragraph 블록 수). 제목을 단락 수에 포함하길 원하면 §4.2-D·§4.11 숫자 변경.
 - [x] 7-5 긴 제목·표 안 제목: **길이 제한 없음, 표 셀 안 개요 단락은 셀 텍스트로만** 기본값. 대안: N자(예 100자) 초과는 본문 처리 — 실제 샘플 1의 제목은 최대 63자라 기대값 불변이지만 규칙이 하나 늘어 §4.2-B에 추가.
 - [x] 7-6 HWPX `hp:switch` 안의 heading: **`hp:case` 쪽(최신 앱 기준, OUTLINE level 7·8 → clamp 6)** vs `hp:default` 쪽(NONE → 본문). 기본값 case. 실제 샘플에서는 참조하는 단락이 없어 기대값 불변.
-- [x] 7-7 실제 양성 샘플: HWP 5.0은 샘플 1(제목 18개)로 양성 검증이 되지만 HWPX 실제 샘플 3개는 전부 제목 0개. **합성 HWPX fixture로 양성 검증, 실제 HWPX 양성 샘플은 사용자가 `tests/fixtures/hwpx/`에 넣고 `REAL_EXPECTED`에 기대값 추가(fixtures README 안내)** 기본값. 샘플을 지금 넣어 주면 planner가 §4.11에 기대값을 추가한다.
+- [x] 7-7 실제 양성 샘플: [S3 정정: 샘플 1도 실제 제목 0개 — 양성 검증은 두 포맷 모두 합성 fixture] HWP 5.0은 샘플 1(제목 18개)로 양성 검증이 되지만 HWPX 실제 샘플 3개는 전부 제목 0개. **합성 HWPX fixture로 양성 검증, 실제 HWPX 양성 샘플은 사용자가 `tests/fixtures/hwpx/`에 넣고 `REAL_EXPECTED`에 기대값 추가(fixtures README 안내)** 기본값. 샘플을 지금 넣어 주면 planner가 §4.11에 기대값을 추가한다.
 - 결정 (2026-10-22, 사용자): 7개 모두 기본값. 승인됨. 실행은 사용자가 "계속해"라고 할 때 시작(한도 초기화 대기).
 
 ## 8. 리스크

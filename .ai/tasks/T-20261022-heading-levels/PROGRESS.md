@@ -98,3 +98,48 @@
 - 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_synth_hwp5.py 
 - 커밋: ca0355f [T-20261022-heading-levels][s1] blocks: Paragraph.level, heading render, heading_count
 - 다음: S3 시작
+
+## [2026-10-22 23:00] S3 | orchestrator | START
+- 한 일: HWP5 DocInfo 파서·본문·리더 연결
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+
+## [2026-10-22 23:01] S3 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwp5/docinfo.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+
+## [2026-10-22 23:01] S3 | implementer(opus) | PARTIAL
+- 한 일: 구현·단위 145·e2e 21 통과. 실제 샘플1 @8 기준 제목 0개(기대 18)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwp5/docinfo.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+- 다음: orchestrator: PARA_HEADER 오프셋 계약(@8 vs @12) 결정
+
+## [2026-10-22 23:03] S3 | implementer(opus) | PARTIAL
+- 한 일: docinfo.py·body/reader 연결·단위 12건, unit 145
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwp5/docinfo.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+- 다음: sample1 기대값 판단 대기
+- 메모: @8에서 sample1 = 118 0 {}; @12 일치만 계획값과 맞음
+
+## [2026-10-22 23:03] S3 | orchestrator | RETRY
+- 한 일: @12 매치 18개가 본문임을 진단 → @8 유지, PLAN §2·§4.11·§4.13·§4.14·S7·S9 기대값 정정, .ai/decisions 기록
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwp5/docinfo.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+- 다음: S3 검증
+
+## [2026-10-22 23:03] S3 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwp5/docinfo.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+
+## [2026-10-22 23:03] S3 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS, 실제 샘플 level>0 0개 확인
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+
+## [2026-10-22 23:03] S3 | orchestrator | DONE
+- 한 일: HWP5 DocInfo 파서 검증 통과 (샘플1 기대값 정정)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py tests/unit/test_hwp5_docinfo.py 
+- 커밋: 0442c71 [T-20261022-heading-levels][s2] tests: synthetic hwp5 headings (PARA_SHAPE/STYLE docinfo), byte-stability hashes
+- 다음: S4 시작
