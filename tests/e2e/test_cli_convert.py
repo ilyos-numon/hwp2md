@@ -23,7 +23,7 @@ def test_convert_synthetic_success(synthetic_hwp: Path, tmp_path: Path, run_cli:
     assert result.returncode == 0, result.stderr
     lines = result.stdout.split("\n")
     assert lines[0] == f"✓ sample.hwp → {out_dir / 'sample.md'}"
-    assert lines[1] == "  단락 3개"
+    assert lines[1] == "  단락 3개 · 표 0개"
     md = out_dir / "sample.md"
     assert md.read_text(encoding="utf-8") == EXPECTED_MARKDOWN
 
@@ -67,14 +67,24 @@ def test_encrypted_flag_exit_3(tmp_path: Path, run_cli: RunCli) -> None:
     assert "unsupported HWP file" in result.stderr
 
 
+REAL_FIXTURE_MIN_TABLES = {"form200005063113.hwp": 1}  # 표가 확인된 샘플만
+
+
 @pytest.mark.parametrize("real_hwp", REAL_FIXTURES, ids=lambda p: p.name)
 def test_real_fixture_converts(real_hwp: Path, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"
     result = run_cli([str(real_hwp), "-o", str(out_dir)])
-
     assert result.returncode == 0, result.stderr
     lines = result.stdout.split("\n")
-    assert re.match(r"^  단락 \d+개$", lines[1])
+    m = re.match(r"^  단락 (\d+)개 · 표 (\d+)개$", lines[1])
+    assert m, lines[1]
+    table_count = int(m.group(2))
     md = out_dir / f"{real_hwp.stem}.md"
-    assert md.exists()
-    assert len(md.read_text(encoding="utf-8").strip()) > 0
+    content = md.read_text(encoding="utf-8")
+    assert len(content.strip()) > 0
+    separators = [ln for ln in content.split("\n") if re.fullmatch(r"\|(---\|)+", ln)]
+    assert len(separators) == table_count  # 출력된 Markdown 표 수 == CLI 가 보고한 표 수
+    assert table_count >= REAL_FIXTURE_MIN_TABLES.get(real_hwp.name, 0)
+    evidence_dir = Path(os.environ.get("ILLY_SHOT_DIR", "tests/e2e/screenshots"))
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(md, evidence_dir / md.name)
