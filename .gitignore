@@ -49,5 +49,7 @@ playwright-report/
 *.pyc
 
 # real HWP samples (license unverified) and E2E evidence
-tests/fixtures/*.hwp
+tests/fixtures/**
+!tests/fixtures/.gitkeep
+!tests/fixtures/README.md
 tests/e2e/screenshots/
