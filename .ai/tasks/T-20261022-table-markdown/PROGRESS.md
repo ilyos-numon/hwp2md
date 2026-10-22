@@ -189,3 +189,40 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
 - 커밋: c4dafbe [T-20261022-table-markdown][s4] feat(cli): report table count on summary line
 - 다음: S6 시작 (test-writer sonnet: E2E 표 4케이스 + 기존 2곳 갱신)
+
+## [2026-10-22 14:17] S6 | orchestrator | START
+- 한 일: E2E 테스트 작성·실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+
+## [2026-10-22 14:19] S6 | test-writer(sonnet) | DONE
+- 한 일: tests/e2e/test_cli_table.py 4케이스 신규, test_cli_convert.py 2곳 갱신(+15/-5). 로컬 E2E 11 passed, ruff OK(E501 주석 단축), skip 문자열 0, unit 64
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+- 다음: runner E2E 실행 블록 → reviewer
+- 메모: REAL_FIXTURE_MIN_TABLES 주석만 플랜 문구에서 단축(100자 제한). 로그 logs/s6-e2e-writer.log
+
+## [2026-10-22 14:19] S6 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+
+## [2026-10-22 14:20] S6 | runner(haiku) | DONE
+- 한 일: E2E 실행: e2e.log exit=0, 11 passed. 증거 5개(table·merged·sample·실제 2) — orchestrator 바이트 대조: table/merged/sample == EXPECTED_*, 실제 샘플 구분선 8 / 0
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+- 다음: reviewer 판정 대기
+- 메모: lint OK, skip 문자열 0. 이전 로그 e2e.prev.log
+
+## [2026-10-22 14:21] S6 | reviewer(sonnet) | DONE
+- 한 일: PASS — 7기준 OK (§4.7-1 2곳·§4.7-2 4케이스·약화 없음·e2e-standard·증거 바이트 일치·구분선 8·익명화)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+- 다음: orchestrator 마감
+- 메모: S7에서 ruff·mypy 재확인 필요(이 단계는 실행 안 함)
+
+## [2026-10-22 14:21] S6 | orchestrator | DONE
+- 한 일: E2E 작성·실행 완료 (test-writer·reviewer PASS, runner exit=0 11 passed, 증거 확인)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_table.py 
+- 커밋: 19e4bdf [T-20261022-table-markdown][s5] docs: block model and table rendering decisions, README support line
+- 다음: S7 시작 (reviewer sonnet 최종 리뷰 → scribe haiku RESULT)

@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261022-table-markdown
 - 마지막 완료: T-20261022-stack-cli-smoke
 - 플랜: `.ai/tasks/T-20261022-table-markdown/PLAN.md` (상태: APPROVED)
-- 현재 단계: S6 / 7  — E2E 테스트 작성·실행
+- 현재 단계: S7 / 7  — 리뷰·결과 기록
 - 상태: RUNNING
 - 브랜치: `ai/T-20261022-table-markdown`
-- 마지막 체크포인트: 2026-10-22 14:17 (S5 DONE)
-- 마지막 커밋: [s5] docs
+- 마지막 체크포인트: 2026-10-22 14:21 (S6 DONE)
+- 마지막 커밋: [s6] e2e tables
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S6 test-writer(sonnet) 보고 대기 → runner E2E 실행 블록(PLAN Stage 6, timeout 명령 없이) → reviewer → 커밋 [s6] → S7
+1. S7 reviewer(sonnet) 최종 리뷰(§2 S1~S10) → scribe(haiku) RESULT.md·PLAN DONE·STATE IDLE → gate.sh → 커밋 [s7]·[done] → main 병합
 
 ## 차단 중이면
 - 이유: 
