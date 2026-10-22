@@ -288,3 +288,27 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_convert.py tests/fixtures/.gitkeep 
 - 커밋: a37511a [T-20261022-stack-cli-smoke][s7] docs: stack/scope/fixture decisions, README install section
 - 다음: S9 시작 (reviewer sonnet 최종 리뷰 → scribe haiku RESULT)
+
+## [2026-10-22 13:04] S9 | orchestrator | START
+- 한 일: 리뷰·결과 기록
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c601668 [T-20261022-stack-cli-smoke][s8] test(e2e): CLI convert success and failure paths
+
+## [2026-10-22 13:04] S9 | hook | AUTO
+- 한 일: 도구 호출 150회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c601668 [T-20261022-stack-cli-smoke][s8] test(e2e): CLI convert success and failure paths
+
+## [2026-10-22 13:05] S9 | reviewer(sonnet) | DONE
+- 한 일: 최종 PASS — §2 S1~S10 전부 PASS(직접 실행). OUT 범위 OK(lxml/hwpx/footnote 0, HWPTAG_TABLE 상수만). sanitize OK. 증거 sample.md==EXPECTED_MARKDOWN
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c601668 [T-20261022-stack-cli-smoke][s8] test(e2e): CLI convert success and failure paths
+- 다음: scribe RESULT.md
+- 메모: 비고: 실제 한컴 샘플 없음 → test_real_fixture_converts skipped 1. 표 셀·머리말 단락 혼입 위험(§8) 잔존. macOS timeout 명령 부재 → runner 블록 수정
+
+## [2026-10-22 13:05] S9 | orchestrator | DONE
+- 한 일: 태스크 완료, gate 통과 (GATE PASS 6/6), 최종 리뷰 PASS 10/10
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c601668 [T-20261022-stack-cli-smoke][s8] test(e2e): CLI convert success and failure paths
+- 다음: 사용자 RESULT 검토 → main 병합
+- 메모: scribe가 RESULT.md 작성·PLAN DONE·STATE IDLE 재작성 후 [s9]·[done] 커밋

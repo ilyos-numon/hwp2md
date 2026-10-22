@@ -1,7 +1,7 @@
 # PLAN — T-20261022-stack-cli-smoke hwp2md 스택 확정 + CLI 스캐폴드 + HWP 5.0 스모크 변환
 
 > 작성: planner(fable) · 2026-10-22 12:05 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. 아래 경로는 전부 이 디렉터리 기준 상대경로다.
 
