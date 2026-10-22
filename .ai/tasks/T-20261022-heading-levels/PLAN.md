@@ -1,7 +1,7 @@
 # PLAN — T-20261022-heading-levels hwp2md 제목 계층(heading) 지원
 
 > 작성: planner fable · 2026-10-22 18:50 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: `ce0a3f5654351f1d89e11075f8c05fed4a5be775` (main 동일) · 브랜치 `ai/T-20261022-heading-levels` · 현재 단위 113 · E2E 21 통과(합계 134)
 
