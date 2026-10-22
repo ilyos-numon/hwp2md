@@ -4,18 +4,18 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: T-20261022-hwpx-reader
-- 마지막 완료: T-20261022-table-markdown
-- 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: APPROVED)
-- 현재 단계: S7 / 7  — 리뷰·결과 기록
-- 상태: RUNNING
+- 현재 태스크: 없음
+- 마지막 완료: T-20261022-hwpx-reader
+- 플랜: `.ai/tasks/T-20261022-hwpx-reader/PLAN.md` (상태: DONE)
+- 현재 단계: S0 / 0  — 없음
+- 상태: IDLE
 - 브랜치: `ai/T-20261022-hwpx-reader`
-- 마지막 체크포인트: 2026-10-22 18:15 (S6 DONE)
-- 마지막 커밋: [s6] e2e hwpx
+- 마지막 체크포인트: 2026-10-22 18:17 · S7 orchestrator DONE
+- 마지막 커밋: 860ad2d [T-20261022-hwpx-reader][s6] test(e2e): HWPX conversion, disguised extension, cross-format parity, failure paths (이후 [s7]·[done] 커밋 예정)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S7 reviewer(sonnet) 최종 리뷰(§2 S1~S12) → scribe(haiku) RESULT.md·PLAN DONE·.ai/STATE.md IDLE → gate.sh → 커밋 [s7]·[done] → main 병합
+1. RESULT.md 검토 → `ai/T-20261022-hwpx-reader`를 main에 병합 → 다음 태스크 `/plan <목표>` (후보: 이미지 추출 또는 제목 계층)
 
 ## 차단 중이면
-- 이유: 없음
-- 사용자 결정 필요 사항: 없음
+- 이유: 
+- 사용자 결정 필요 사항: 

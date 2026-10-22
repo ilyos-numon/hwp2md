@@ -1,7 +1,7 @@
 # PLAN — T-20261022-hwpx-reader HWPX(zip/XML) 입력 지원: 본문 단락·표 → 같은 Markdown
 
 > 작성: planner(fable) · 2026-10-22 14:55 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. 아래 경로는 전부 이 디렉터리 기준 상대경로다. BASE=`e13ae706b1f56e8d4cb4460e6cb6e2f38e0c21dc` (브랜치 `ai/T-20261022-hwpx-reader`, main과 동일).
 > 버전 문자열은 점 3개짜리(IPv4 패턴)로 쓰지 않는다. lxml·lxml-stubs의 구체 버전 번호는 플랜·코드·문서 어디에도 적지 않는다(`lxml>=5`처럼 하한만).
