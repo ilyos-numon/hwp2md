@@ -10,7 +10,7 @@ from xml.sax.saxutils import escape
 
 from hwp2md.blocks import Paragraph
 from hwp2md.hwpx.reader import HWPX_MIMETYPE, NS_HP, NS_HS
-from synth_hwp5 import Item, SynthCell, SynthTable  # 타입 재사용. 재정의 금지
+from synth_hwp5 import Item, SynthCell, SynthHeading, SynthTable, has_heading  # 재정의 금지
 
 NS_HC = "http://www.hancom.co.kr/hwpml/2011/core"
 NS_HH = "http://www.hancom.co.kr/hwpml/2011/head"
@@ -46,18 +46,35 @@ def text_xml(text: str) -> str:
     return escape(text).replace("\t", "<hp:tab/>").replace("\n", "<hp:lineBreak/>")
 
 
-def paragraph_xml(text: str, *, para_id: int, first: bool = False) -> str:
+def p_attrs(para_pr_id: int) -> str:
+    return (
+        f'paraPrIDRef="{para_pr_id}" styleIDRef="{para_pr_id}" pageBreak="0" columnBreak="0" '
+        'merged="0"'
+    )
+
+
+def paragraph_xml(text: str, *, para_id: int, first: bool = False, para_pr_id: int = 0) -> str:
     if text == "":
         run = '<hp:run charPrIDRef="0"/>'
     else:
         run = f'<hp:run charPrIDRef="0"><hp:t>{text_xml(text)}</hp:t></hp:run>'
-    return f'<hp:p id="{para_id}" {P_ATTRS}>' + (SECPR_RUN if first else "") + run + "</hp:p>"
+    return (
+        f'<hp:p id="{para_id}" {p_attrs(para_pr_id)}>'
+        + (SECPR_RUN if first else "")
+        + run
+        + "</hp:p>"
+    )
 
 
 def cell_xml(cell: SynthCell) -> str:
     return (
         f"<hp:tc {TC_ATTRS}><hp:subList {SUBLIST_ATTRS}>"
-        + "".join(paragraph_xml(t, para_id=0) for t in (cell.paragraphs or ("",)))
+        + "".join(
+            paragraph_xml(t.text, para_id=0, para_pr_id=t.level)
+            if isinstance(t, SynthHeading)
+            else paragraph_xml(t, para_id=0)
+            for t in (cell.paragraphs or ("",))
+        )
         + "</hp:subList>"
         + f'<hp:cellAddr colAddr="{cell.col}" rowAddr="{cell.row}"/>'
         + f'<hp:cellSpan colSpan="{cell.col_span}" rowSpan="{cell.row_span}"/>'
@@ -84,6 +101,8 @@ def section_xml(items: Sequence[Item]) -> bytes:
     body = "".join(
         paragraph_xml(item, para_id=i, first=(i == 0))
         if isinstance(item, str)
+        else paragraph_xml(item.text, para_id=i, first=(i == 0), para_pr_id=item.level)
+        if isinstance(item, SynthHeading)
         else table_xml(item, para_id=i, first=(i == 0))
         for i, item in enumerate(items)
     )
@@ -92,6 +111,47 @@ def section_xml(items: Sequence[Item]) -> bytes:
         + f'<hs:sec xmlns:hp="{NS_HP}" xmlns:hs="{NS_HS}" xmlns:hc="{NS_HC}">'
         + body
         + "</hs:sec>"
+    ).encode("utf-8")
+
+
+def para_pr_xml(i: int) -> str:
+    return (
+        f'<hh:paraPr id="{i}" tabPrIDRef="0" condense="0" fontLineHeight="0" snapToGrid="1" '
+        'suppressLineNumbers="0" checked="0">'
+        '<hh:align horizontal="JUSTIFY" vertical="BASELINE"/>'
+        f'<hh:heading type="{"NONE" if i == 0 else "OUTLINE"}" idRef="0" '
+        f'level="{max(i - 1, 0)}"/></hh:paraPr>'
+    )
+
+
+def style_xml(i: int) -> str:
+    name, eng = ("바탕글", "Normal") if i == 0 else (f"개요 {i}", f"Outline {i}")
+    return (
+        f'<hh:style id="{i}" type="PARA" name="{name}" engName="{eng}" paraPrIDRef="{i}" '
+        f'charPrIDRef="0" nextStyleIDRef="{i}" langID="1042" lockForm="0"/>'
+    )
+
+
+def header_xml(section_count: int, *, outline: bool) -> bytes:
+    n = section_count
+    begin = '<hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/>'
+    if not outline:
+        return (
+            XML_DECL
+            + f'<hh:head xmlns:hh="{NS_HH}" version="1.5" secCnt="{n}">'
+            + begin
+            + "<hh:refList/></hh:head>"
+        ).encode("utf-8")
+    return (
+        XML_DECL
+        + f'<hh:head xmlns:hh="{NS_HH}" xmlns:hp="{NS_HP}" version="1.5" secCnt="{n}">'
+        + begin
+        + '<hh:refList><hh:paraProperties itemCnt="8">'
+        + "".join(para_pr_xml(i) for i in range(8))
+        + "</hh:paraProperties>"
+        + '<hh:styles itemCnt="8">'
+        + "".join(style_xml(i) for i in range(8))
+        + "</hh:styles></hh:refList></hh:head>"
     ).encode("utf-8")
 
 
@@ -129,18 +189,13 @@ def hwpx_entries(
         + "".join(f'<opf:itemref idref="section{i}" linear="yes"/>' for i in range(n))
         + "</opf:spine></opf:package>"
     )
-    header = (
-        XML_DECL
-        + f'<hh:head xmlns:hh="{NS_HH}" version="1.5" secCnt="{n}">'
-        + '<hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/>'
-        + "<hh:refList/></hh:head>"
-    )
+    header = header_xml(n, outline=any(has_heading(s) for s in sections))
     entries: dict[str, bytes] = {
         "mimetype": HWPX_MIMETYPE,
         "version.xml": version.encode("utf-8"),
         "META-INF/container.xml": container.encode("utf-8"),
         "Contents/content.hpf": content.encode("utf-8"),
-        "Contents/header.xml": header.encode("utf-8"),
+        "Contents/header.xml": header,
     }
     for i, sec_items in enumerate(sections):
         entries[f"Contents/section{i}.xml"] = section_xml(sec_items)
