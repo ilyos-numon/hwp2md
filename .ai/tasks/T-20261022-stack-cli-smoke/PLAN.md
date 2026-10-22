@@ -1,7 +1,7 @@
 # PLAN — T-20261022-stack-cli-smoke hwp2md 스택 확정 + CLI 스캐폴드 + HWP 5.0 스모크 변환
 
 > 작성: planner(fable) · 2026-10-22 12:05 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: DRAFT)
+> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. 아래 경로는 전부 이 디렉터리 기준 상대경로다.
 
@@ -507,13 +507,13 @@ Stage 1(pyproject) → Stage 2(CLAUDE.md, orchestrator) → Stage 3(records) →
 병렬 묶음 없음. 상위 규칙(코드 없는 프로젝트의 S1 성격) 대로 전 단계 순차. worktree 격리 불필요.
 
 ## 7. 사용자에게 확인받을 것 (플랜 승인 시 한 번에)
-- [ ] 1. 패키지·환경 관리 도구: **기본값 uv** (`uv sync` / `uv run`). 대안 pip+venv 면 명령 블록을 `python -m venv .venv && .venv/bin/pip install -e . pytest ruff mypy` 계열로 바꾼다 (플랜 §4.7 수정 → 재승인).
-- [ ] 2. 린트·타입체커: **기본값 ruff(check+format) + mypy strict**. 대안 pyright 면 `TYPECHECK_CMD: uv run pyright src`, dev 그룹에 `pyright` 추가.
-- [ ] 3. 샘플 HWP 확보: **기본값 합성 fixture 생성기(tests/synth_hwp5.py)만으로 진행**. 공공기관 실제 샘플 `.hwp` 를 `tests/fixtures/` 에 넣어주면 E2E `test_real_fixture_converts` 가 자동 실행된다. 실제 샘플은 라이선스 확인 전까지 커밋하지 않는다(`.gitignore`). 넣어 줄 파일이 있으면 승인 시 경로를 알려 달라.
-- [ ] 4. Python 최소 버전: **기본값 3.11** (`requires-python >=3.11`; 이 머신에 3.11·3.13 있음). 3.10 지원이 필요하면 `tomllib`·`X | Y` 문법 영향 없음, `target-version` 만 py310 으로.
-- [ ] 5. `lxml` 의존성 선언 시점: **기본값 HWPX 태스크 때 추가** (이번엔 미선언, 결정 기록에만 명시). 지금 선언하려면 Stage 1 `dependencies` 에 `"lxml>=5"` 추가.
-- [ ] 6. 라이선스: **기본값 이번 태스크에서는 `pyproject.toml` 에 license 미기재, LICENSE 파일 없음**. MIT 등 결정되면 다음 태스크에서 추가.
-- 기본값: 위 6개 모두 기본값으로 진행.
+- [x] 1. 패키지·환경 관리 도구: **기본값 uv** (`uv sync` / `uv run`). 대안 pip+venv 면 명령 블록을 `python -m venv .venv && .venv/bin/pip install -e . pytest ruff mypy` 계열로 바꾼다 (플랜 §4.7 수정 → 재승인).
+- [x] 2. 린트·타입체커: **기본값 ruff(check+format) + mypy strict**. 대안 pyright 면 `TYPECHECK_CMD: uv run pyright src`, dev 그룹에 `pyright` 추가.
+- [x] 3. 샘플 HWP 확보: **기본값 합성 fixture 생성기(tests/synth_hwp5.py)만으로 진행**. 공공기관 실제 샘플 `.hwp` 를 `tests/fixtures/` 에 넣어주면 E2E `test_real_fixture_converts` 가 자동 실행된다. 실제 샘플은 라이선스 확인 전까지 커밋하지 않는다(`.gitignore`). 넣어 줄 파일이 있으면 승인 시 경로를 알려 달라.
+- [x] 4. Python 최소 버전: **기본값 3.11** (`requires-python >=3.11`; 이 머신에 3.11·3.13 있음). 3.10 지원이 필요하면 `tomllib`·`X | Y` 문법 영향 없음, `target-version` 만 py310 으로.
+- [x] 5. `lxml` 의존성 선언 시점: **기본값 HWPX 태스크 때 추가** (이번엔 미선언, 결정 기록에만 명시). 지금 선언하려면 Stage 1 `dependencies` 에 `"lxml>=5"` 추가.
+- [x] 6. 라이선스: **기본값 이번 태스크에서는 `pyproject.toml` 에 license 미기재, LICENSE 파일 없음**. MIT 등 결정되면 다음 태스크에서 추가.
+- 결정 (2026-10-22, 사용자): 위 6개 모두 기본값으로 진행. 승인됨.
 
 ## 8. 리스크
 | 리스크 | 가능성 | 대응 |

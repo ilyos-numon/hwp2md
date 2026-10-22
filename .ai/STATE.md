@@ -6,9 +6,9 @@
 
 - 현재 태스크: T-20261022-stack-cli-smoke
 - 마지막 완료: 없음
-- 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: DRAFT)
+- 플랜: `.ai/tasks/T-20261022-stack-cli-smoke/PLAN.md` (상태: APPROVED)
 - 현재 단계: S0 / 9  — 플랜 작성 완료, 사용자 승인 대기
-- 상태: AWAITING_APPROVAL
+- 상태: RUNNING
 - 브랜치: `ai/T-20261022-stack-cli-smoke`
 - 마지막 체크포인트: 2026-10-22 11:53 (S0 DONE)
 - 마지막 커밋: 없음
