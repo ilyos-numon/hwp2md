@@ -1,7 +1,7 @@
 # PLAN — T-20261023-web-preview hwp2md 웹 미리보기 (메모리 변환 API + `hwp2md serve` + 브라우저 전용 Pyodide 모드)
 
 > 작성: planner opus · 2026-10-23 10:00 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: 프로젝트 저장소 브랜치 `ai/T-20261023-web-preview` HEAD `5979e12` · 단위 240 passed · E2E 46 passed · Python 3.12.13 · olefile 0.47
 

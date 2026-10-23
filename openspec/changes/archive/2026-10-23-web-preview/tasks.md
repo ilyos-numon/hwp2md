@@ -45,4 +45,4 @@
 
 ## 10. 리뷰·기록
 
-- [ ] 10.1 reviewer 가 diff·스크린샷·로그를 성공 기준 표와 대조하고 scribe 가 RESULT.md·STATE.md 를 쓴다
+- [x] 10.1 reviewer 가 diff·스크린샷·로그를 성공 기준 표와 대조하고 scribe 가 RESULT.md·STATE.md 를 쓴다
