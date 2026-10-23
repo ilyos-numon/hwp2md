@@ -14,6 +14,7 @@ from ..blocks import (
     Image,
     Inline,
     Link,
+    ListInfo,
     Math,
     Note,
     NoteKind,
@@ -26,6 +27,7 @@ from ..blocks import (
     plain_text,
 )
 from ..equation import to_latex
+from ..numbering import NumberingCounter, NumFormat, apply_template
 from ..ole import chart_xml_to_blocks, ole_to_outcome, unwrap_hwpx_ole
 from ..skips import SkipCounter, SkipKind
 from .header import EMPTY_HEADER, HeaderInfo
@@ -109,17 +111,37 @@ class CellSpec:
 
 @dataclass
 class DocContext:
-    """문서 하나의 읽기 상태. 섹션을 넘어 각주 번호·건너뜀을 이어 간다."""
+    """문서 하나의 읽기 상태. 섹션을 넘어 각주 번호·건너뜀·목록 번호를 이어 간다."""
 
     skips: SkipCounter = field(default_factory=SkipCounter)
     notes: dict[NoteKind, list[Note]] = field(
         default_factory=lambda: {"footnote": [], "endnote": []}
     )
     in_note: bool = False
+    numbering: NumberingCounter = field(default_factory=NumberingCounter)
 
     def note_blocks(self) -> list[Block]:
         """문서 끝에 둘 Note 블록: 각주 번호순, 이어서 미주 번호순."""
         return [*self.notes["footnote"], *self.notes["endnote"]]
+
+    def list_info(self, header: HeaderInfo, para_pr_id: int | None) -> ListInfo | None:
+        """번호·글머리표 paraPr 이면 ListInfo (번호는 카운터를 한 칸 진행), 아니면 None."""
+        shape = None if para_pr_id is None else header.lists.get(para_pr_id)
+        if shape is None:
+            return None
+        if shape.kind == "bullet":
+            return ListInfo("bullet", shape.depth, "")
+        level = shape.depth + 1
+        nd = header.numberings.get(shape.ref)
+        template = nd.templates.get(level) if nd is not None else None
+        if template is None:
+            template = f"^{level}."
+        start = nd.starts.get(level, 1) if nd is not None else 1
+        numbers = self.numbering.next(shape.ref, shape.depth, start)
+        formats: list[NumFormat] = [
+            nd.formats.get(k, "DIGIT") if nd is not None else "DIGIT" for k in range(1, level + 1)
+        ]
+        return ListInfo("number", shape.depth, apply_template(template, numbers, formats))
 
 
 def hyperlink_command_target(command: str) -> str | None:
@@ -164,7 +186,11 @@ def parse_paragraph(
     ctx: DocContext | None = None,
 ) -> list[Block]:
     doc = DocContext() if ctx is None else ctx
-    level = header.heading_level(_int_attr(p, "paraPrIDRef"))
+    para_pr_id = _int_attr(p, "paraPrIDRef")
+    level = header.heading_level(para_pr_id)
+    # 목록 정보는 단락의 첫 비지 않은 Paragraph 에만 붙인다 (번호 카운터도 그때 한 번 진행)
+    is_list = level == 0 and para_pr_id is not None and para_pr_id in header.lists
+    list_done = False
     blocks: list[Block] = []
     buf: list[Inline] = []
     # 열린 하이퍼링크: (beginIDRef 로 맞출 id, 주소, 지금까지 글자)
@@ -193,8 +219,13 @@ def parse_paragraph(
     pending: list[Block] = []
 
     def flush() -> None:
+        nonlocal list_done
         close_link_segment()
-        para = make_paragraph(buf, level)
+        info: ListInfo | None = None
+        if is_list and not list_done and make_paragraph(buf) is not None:
+            info = doc.list_info(header, para_pr_id)
+            list_done = True
+        para = make_paragraph(buf, level, info)
         buf.clear()
         if para is not None:
             blocks.append(para)

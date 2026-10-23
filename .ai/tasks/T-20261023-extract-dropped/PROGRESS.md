@@ -381,3 +381,9 @@
 - 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
 - 다음: S16 커밋
 - 메모: 칸 안 목록 머리 글자 → PLAN §4-D 추가, S18 구현
+
+## [2026-10-23 18:32] S16 | implementer(opus) | DONE
+- 한 일: HWPX header numbering/bullet/paraHead, paraPr heading NUMBER/BULLET(switch 포함) → ListInfo. test_hwpx_lists 24. 실제 HWPX 목록 0(inventory 일치)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py tests/synth_distdoc.py tests/synth_hwpx.py .claude/ tests/unit/test_hwp5_distribution.py tests/unit/test_hwpx_lists.py 
+- 커밋: 6baa303 [T-20261023-extract-dropped][s15] HWP 5.0 번호·글머리표 목록
+- 다음: S17 커밋
