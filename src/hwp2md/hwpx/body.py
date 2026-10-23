@@ -447,6 +447,14 @@ def parse_table(
     return make_table(_place_grid(rows, cols, cells, contents, ()))
 
 
+def _list_head(para: Paragraph) -> list[Inline]:
+    """칸 안 목록 단락의 머리 글자 (§4-D): 글머리표 "- ", 그 밖 "<머리> ". 목록이 아니면 []."""
+    info = para.list_info
+    if info is None:
+        return []
+    return ["- " if info.kind == "bullet" else f"{info.label} "]
+
+
 def _cell_inlines(
     tc: etree._Element,
     ctx: DocContext | None = None,
@@ -464,7 +472,7 @@ def _cell_inlines(
     for p in sub.iterchildren(HP_P):
         for b in parse_paragraph(p, header, bin_items, doc):
             if isinstance(b, Paragraph):
-                parts.append(b.inlines or (b.text,))
+                parts.append((*_list_head(b), *(b.inlines or (b.text,))))
             elif isinstance(b, Table):
                 flat = " ".join(c for row in b.rows for c in row if c)
                 if flat:

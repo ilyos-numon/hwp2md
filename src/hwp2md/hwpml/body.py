@@ -256,10 +256,14 @@ def _picture_blocks(pic: etree._Element, ctx: DocContext) -> list[Block]:
     blocks: list[Block] = []
     img = pic.find("IMAGE")
     ref = img.get("BinItem") if img is not None else None
-    if ref and ctx.resolve_image is not None:
-        image = ctx.resolve_image(ref)
+    if ctx.resolve_image is not None:
+        # 해석기가 세지 않은(외부 연결이 아닌) 해석 불가 참조는 image_missing (HWP 5.0·HWPX 와 같음)
+        before = ctx.skips.items()
+        image = ctx.resolve_image(ref) if ref else None
         if image is not None:
             blocks.append(image)
+        elif ctx.skips.items() == before:
+            ctx.skips.add("image_missing")
     blocks.extend(_caption_blocks(pic, ctx))
     return blocks
 
@@ -325,6 +329,9 @@ def parse_paragraph(p: etree._Element, ctx: DocContext) -> list[Block]:
         close_link_segment()
         buf.append(item)
 
+    # 도형·묶음·OLE 블록: 앵커 단락(다음 flush 의 단락) 뒤에 둔다 (HWP 5.0·HWPX 와 같음)
+    pending: list[Block] = []
+
     def flush() -> None:
         nonlocal list_done
         close_link_segment()
@@ -336,6 +343,8 @@ def parse_paragraph(p: etree._Element, ctx: DocContext) -> list[Block]:
         buf.clear()
         if para is not None:
             blocks.append(para)
+        blocks.extend(pending)
+        pending.clear()
 
     def field_begin(el: etree._Element) -> None:
         if link or (el.get("Type") or "").lower() != FIELD_HYPERLINK:
@@ -391,11 +400,15 @@ def parse_paragraph(p: etree._Element, ctx: DocContext) -> list[Block]:
                 equation(child)
             elif tag in SKIPPED_ELEMENTS:
                 ctx.skips.add(SKIPPED_ELEMENTS[tag])
-            else:
+            elif tag == "PICTURE":
                 sub = object_blocks(child, ctx)
                 if sub:
                     flush()
                     blocks.extend(sub)
+            else:
+                sub = object_blocks(child, ctx)
+                if sub:
+                    pending.extend(sub)
             # 그 외(SECDEF, COLDEF, AUTONUM, BOOKMARK, ...)는 무시
     flush()
     return blocks
@@ -468,6 +481,14 @@ def parse_table(tbl: etree._Element, ctx: DocContext) -> Table | None:
     return make_table([[contents.get(key, []) for key in row] for row in grid])
 
 
+def _list_head(para: Paragraph) -> list[Inline]:
+    """칸 안 목록 단락의 머리 글자 (§4-D): 글머리표 "- ", 그 밖 "<머리> ". 목록이 아니면 []."""
+    info = para.list_info
+    if info is None:
+        return []
+    return ["- " if info.kind == "bullet" else f"{info.label} "]
+
+
 def _cell_inlines(cell: etree._Element, ctx: DocContext) -> list[Inline]:
     """칸 단락 → 인라인. 단락 경계는 "\\n".
     칸 안 표는 글자를 공백으로 잇고, 그 안 그림은 칸 끝에 붙인다."""
@@ -475,7 +496,7 @@ def _cell_inlines(cell: etree._Element, ctx: DocContext) -> list[Inline]:
     tail: list[Image] = []
     for b in _paralist_blocks(cell, ctx):
         if isinstance(b, Paragraph):
-            parts.append(list(b.inlines or (b.text,)))
+            parts.append([*_list_head(b), *(b.inlines or (b.text,))])
         elif isinstance(b, Table):
             flat = _flat_table_text(b)
             if flat:

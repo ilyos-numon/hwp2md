@@ -594,6 +594,14 @@ def _parse_ole(payload: bytes, bin_data: ImageResolver | None, ctx: ReadContext)
     return list(outcome.blocks)
 
 
+def _list_head(para: Paragraph) -> list[Inline]:
+    """칸 안 목록 단락의 머리 글자 (§4-D): 글머리표 "- ", 그 밖 "<머리> ". 목록이 아니면 []."""
+    info = para.list_info
+    if info is None:
+        return []
+    return ["- " if info.kind == "bullet" else f"{info.label} "]
+
+
 CellParas = list[list[Inline]]
 
 
@@ -610,7 +618,7 @@ def _cell_paragraphs(blocks: Sequence[Block]) -> CellParas:
 
     for b in blocks:
         if isinstance(b, Paragraph):
-            paras.append(list(b.inlines) if b.inlines else [b.text])
+            paras.append([*_list_head(b), *(b.inlines or (b.text,))])
         elif isinstance(b, Image):
             tail().append(b)
         elif isinstance(b, Table):

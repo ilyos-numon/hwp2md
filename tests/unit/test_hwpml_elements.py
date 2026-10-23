@@ -189,11 +189,11 @@ def test_container_children_in_order() -> None:
     ellipse = "<ELLIPSE><DRAWTEXT><PARALIST>" + _para("타원") + "</PARALIST></DRAWTEXT></ELLIPSE>"
     inner = f"<CONTAINER>{ellipse}</CONTAINER>"
     body = f"<P><TEXT><CHAR>앞</CHAR><CONTAINER>{rect}{inner}</CONTAINER><CHAR>뒤</CHAR></TEXT></P>"
+    # 개체 블록은 앵커 단락 글자 뒤에 둔다 (HWP 5.0·HWPX 와 같음)
     assert read_blocks(_doc(body)) == [
-        Paragraph("앞"),
+        Paragraph("앞뒤"),
         Paragraph("상자"),
         Paragraph("타원"),
-        Paragraph("뒤"),
     ]
 
 
