@@ -64,4 +64,4 @@
 
 ## 13. 마감
 
-- [ ] 13.1 리뷰(diff·스크린샷), RESULT.md, STATE.md 갱신
+- [x] 13.1 리뷰(diff·스크린샷), RESULT.md, STATE.md 갱신

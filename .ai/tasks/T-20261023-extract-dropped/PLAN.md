@@ -1,7 +1,7 @@
 # PLAN — T-20261023-extract-dropped 버려지던 HWP 요소 추출과 추출 한계 명시
 
 > 작성: planner opus · 2026-10-23 17:30 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: `main` HEAD `e18cd70` 기준 작업 트리 · 단위 `366 collected / 360 passed / 6 failed`(오늘 추가된 실제 샘플 때문, §1-D) · Python 3.12 · olefile·lxml
 > 근거 자료: `.ai/tasks/T-20261023-extract-dropped/research.md`(조사), `inventory.md`(실제 샘플 구조 개수), `inventory.py`(구조 탐색 코드). 실제 샘플 파일 이름은 이 플랜·OpenSpec·테스트 코드에 쓰지 않는다. 샘플은 inventory.md 의 행 이름(예: "§4 표 칸 안 그림 행")으로만 가리키고, 테스트는 구조 탐색으로 고른다.

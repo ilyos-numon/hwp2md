@@ -611,3 +611,29 @@
 - 커밋: 4c93cdf [T-20261023-extract-dropped][s25] E2E: 웹 화면·design/v3 건너뜀·보호 문서
 - 다음: S27 리뷰·기록
 - 메모: orchestrator: README 품질 표 테스트 수 2개 실측값으로 갱신
+
+## [2026-10-23 19:12] S27 | orchestrator | START
+- 한 일: 리뷰·결과 기록
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: cc79ba3 [T-20261023-extract-dropped][s26] E2E 전체 실행 (C1~C19 통과), README 테스트 수 갱신
+
+## [2026-10-23 19:13] S26 | hook | AUTO
+- 한 일: 도구 호출 840회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: cc79ba3 [T-20261023-extract-dropped][s26] E2E 전체 실행 (C1~C19 통과), README 테스트 수 갱신
+
+## [2026-10-23 19:20] S26 | hook | AUTO
+- 한 일: 도구 호출 855회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 73345bd [T-20261023-extract-dropped][s27] E2E: 샘플 없음 skip 을 매개변수화로, 브라우저 모드는 기존 관례대로 실패
+
+## [2026-10-23 19:20] S27 | orchestrator | DONE
+- 한 일: 태스크 완료, gate·validate 통과 (unit 813P, e2e 120P 0S, reviewer PASS)
+- 변경 파일(미커밋, .ai 제외): openspec/changes/extract-dropped/tasks.md 
+- 커밋: 73345bd [T-20261023-extract-dropped][s27] E2E: 샘플 없음 skip 을 매개변수화로, 브라우저 모드는 기존 관례대로 실패
+- 다음: 사용자 RESULT 검토 → main 병합
+
+## [2026-10-23 19:22] S26 | hook | AUTO
+- 한 일: 도구 호출 870회 경과
+- 변경 파일(미커밋, .ai 제외): openspec/changes/extract-dropped/.openspec.yaml openspec/changes/extract-dropped/design.md openspec/changes/extract-dropped/proposal.md openspec/changes/extract-dropped/specs/document-protection/spec.md openspec/changes/extract-dropped/specs/element-extraction/spec.md openspec/changes/extract-dropped/specs/hwpml-input/spec.md openspec/changes/extract-dropped/specs/image-extraction/spec.md openspec/changes/extract-dropped/specs/memory-conversion/spec.md openspec/changes/extract-dropped/specs/web-preview/spec.md openspec/changes/extract-dropped/tasks.md openspec/specs/image-extraction/spec.md openspec/specs/memory-conversion/spec.md openspec/specs/web-preview/spec.md openspec/changes/archive/2026-10-23-extract-dropped/ openspec/specs/document-protection/ openspec/specs/element-extraction/ openspec/specs/hwpml-input/ 
+- 커밋: 73345bd [T-20261023-extract-dropped][s27] E2E: 샘플 없음 skip 을 매개변수화로, 브라우저 모드는 기존 관례대로 실패
