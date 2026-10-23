@@ -17,15 +17,17 @@ from ..blocks import Block, Image
 from ..errors import Hwp2mdError
 from ..hwpx.reader import make_parser
 from ..images import ImageNamer, normalize_ext, sniff_ext
+from ..ole import OleOutcome, ole_to_outcome, unwrap_hwpx_ole
 from ..skips import SkipCounter
 from ..source import Source
-from .body import parse_body, parse_para_levels
+from .body import DocContext, HeadInfo, parse_body, parse_head
 
 HWPML_ROOT = "HWPML"
 MAX_HWPML_BYTES = 50 * 1024 * 1024  # 입력 전체 상한 (메모리 API 상한과 같다)
 MAX_BINDATA_BYTES = 50 * 1024 * 1024  # Base64 를 푼(또는 압축을 푼) BINDATA 하나의 상한
 HEAD_BYTES = 1024  # 판별에 보는 앞부분 (BOM 제외)
 UNSUPPORTED_DTD = "unsupported DTD in HWPML"
+CFB_MAGIC = bytes.fromhex("D0CF11E0A1B11AE1")
 _PREDEFINED = frozenset({"lt", "gt", "amp", "apos", "quot"})
 _BOMS: tuple[tuple[bytes, str], ...] = (
     (b"\xef\xbb\xbf", "utf-8"),
@@ -250,11 +252,14 @@ class BinDataStore:
         self._namer = ImageNamer()
         self._cache: dict[str, Image | None] = {}
 
-    def resolve(self, ref: str) -> Image | None:
+    def _item(self, ref: str) -> etree._Element | None:
         try:
-            item = self._items.get(int(ref))
+            return self._items.get(int(ref))
         except ValueError:
             return None
+
+    def resolve(self, ref: str) -> Image | None:
+        item = self._item(ref)
         if item is None:
             return None
         if (item.get("Type") or "").strip().lower() == "link":
@@ -266,7 +271,22 @@ class BinDataStore:
             self._cache[bid] = self._load(bid, item.get("Format"))
         return self._cache[bid]
 
-    def _load(self, bid: str, fmt: str | None) -> Image | None:
+    def resolve_ole(self, ref: str) -> OleOutcome:
+        """OLE@BinItem → BINDATA(CFB. 길이 접두·raw deflate 허용) → 차트·이미지·건너뜀."""
+        item = self._item(ref)
+        if item is None or (item.get("Type") or "").strip().lower() == "link":
+            return OleOutcome((), "ole")
+        bid = (item.get("BinData") or "").strip()
+        raw = self._raw(bid)
+        if raw is None:
+            return OleOutcome((), "ole")
+        return ole_to_outcome(_ole_bytes(raw, f"BINDATA {bid}"), bid, self._make_image)
+
+    def _make_image(self, key: str, data: bytes) -> Image:
+        return Image(file_name=self._namer.name_for(key, normalize_ext(None, data)), data=data)
+
+    def _raw(self, bid: str) -> bytes | None:
+        """BINDATA Base64 를 푼 바이트. 없거나 풀 수 없거나 비면 None."""
         bd = self._data.get(bid)
         if bd is None:
             return None
@@ -284,10 +304,22 @@ class BinDataStore:
             return None
         if len(raw) > MAX_BINDATA_BYTES:
             raise Hwp2mdError(f"binary item too large: {label} ({len(raw)} bytes)")
-        if not raw:
+        return raw or None
+
+    def _load(self, bid: str, fmt: str | None) -> Image | None:
+        raw = self._raw(bid)
+        if raw is None:
             return None
-        data = _inflate_if_needed(raw, label)
+        data = _inflate_if_needed(raw, f"BINDATA {bid}")
         return Image(file_name=self._namer.name_for(bid, normalize_ext(fmt, data)), data=data)
+
+
+def _ole_bytes(raw: bytes, label: str) -> bytes:
+    """CFB 그대로, 길이 접두 CFB, 또는 raw deflate 된 것 → CFB 바이트(아니면 받은 그대로)."""
+    for cand in (raw, unwrap_hwpx_ole(raw)):
+        if cand.startswith(CFB_MAGIC):
+            return cand
+    return unwrap_hwpx_ole(_inflate_if_needed(raw, label))
 
 
 def _read_source(path: Source) -> bytes:
@@ -301,9 +333,16 @@ def _read_source(path: Source) -> bytes:
 
 
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
-    """skips: 건너뛴 요소를 셀 카운터 (외부 연결 그림 → image_link)."""
+    """skips: 건너뛴 요소를 셀 카운터 (외부 연결 그림·머리말·숨은 설명·OLE 등).
+    각주·미주 Note 블록은 모든 섹션 뒤에 둔다."""
     root = parse_hwpml(_read_source(path))
     head = root.find("HEAD")
-    levels = parse_para_levels(head) if head is not None else {}
-    store = BinDataStore(root, skips)
-    return parse_body(root.iterfind("BODY/SECTION"), levels, store.resolve)
+    counter = SkipCounter() if skips is None else skips
+    store = BinDataStore(root, counter)
+    ctx = DocContext(
+        head=parse_head(head) if head is not None else HeadInfo(),
+        resolve_image=store.resolve,
+        resolve_ole=store.resolve_ole,
+        skips=counter,
+    )
+    return parse_body(root.iterfind("BODY/SECTION"), ctx)
