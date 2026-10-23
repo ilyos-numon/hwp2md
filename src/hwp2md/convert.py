@@ -9,6 +9,7 @@ from pathlib import Path
 from .blocks import Block, Paragraph, Table, iter_images
 from .detect import detect_format
 from .hwp5.reader import read_blocks as read_hwp5_blocks
+from .hwpml.reader import read_blocks as read_hwpml_blocks
 from .hwpx.reader import read_blocks as read_hwpx_blocks
 from .images import image_dir_name
 from .render import render_blocks
@@ -63,10 +64,13 @@ def _count_blocks(blocks: Sequence[Block]) -> tuple[int, int, int, int]:
 
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
     """포맷을 감지해 리더를 고른다.
-    "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks. 예외는 그대로 전파.
-    skips 는 리더에 그대로 넘긴다 (건너뛴 요소를 센다)."""
-    if detect_format(path) == "hwpx":
+    "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks, "hwpml" → read_hwpml_blocks.
+    예외는 그대로 전파. skips 는 리더에 그대로 넘긴다 (건너뛴 요소를 센다)."""
+    fmt = detect_format(path)
+    if fmt == "hwpx":
         return read_hwpx_blocks(path, skips)
+    if fmt == "hwpml":
+        return read_hwpml_blocks(path, skips)
     return read_hwp5_blocks(path, skips)
 
 

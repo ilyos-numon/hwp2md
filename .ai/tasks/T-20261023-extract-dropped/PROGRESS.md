@@ -231,3 +231,10 @@
 - 커밋: 398fb83 [T-20261023-extract-dropped][s9] HWP 5.0 단락 안 요소 (링크·각주·수식·필드, 머리말 건너뜀)
 - 다음: S11 커밋
 - 메모: 표 칸 안 각주 참조는 칸이 글자만이라 미표시 → S13 칸 인라인에서 해결
+
+## [2026-10-23 18:11] S11 | implementer(opus) | DONE
+- 한 일: hwpml 패키지(looks_like_hwpml·prepare_xml 안전 엔티티·read_blocks 본문/제목/표/그림), detect ④, convert 분기. 실제 HWPML 2개 종료 3→0. R1 통합: unit 617P, 실제 샘플 md 변화 7(머리말 제거3·링크2·각주1·수식1), reviewer PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/convert.py src/hwp2md/detect.py src/hwp2md/hwpml/__init__.py src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py tests/synth_hwpml.py tests/unit/test_hwpml.py 
+- 커밋: 50f20a9 [T-20261023-extract-dropped][s10] HWPX 단락 안 요소
+- 다음: R2 (S12~S14)
+- 메모: orchestrator: synth_hwpml 의 SubVersion 속성 1줄 삭제(sanitize IPv4 오탐, 리더 미사용). reviewer 가 git add -N 으로 .claude worktree 를 인덱스에 올린 것 git reset 으로 제거. worktree venv 가 Python 3.14 로 생성됨 → 다음 묶음은 uv sync --python 3.12
