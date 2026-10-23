@@ -545,3 +545,25 @@
 - 커밋: 1c34840 [T-20261023-extract-dropped][s22] 추출 한계 문서·기능 명세 갱신
 - 다음: S24 E2E 작성
 - 메모: README 품질 표 테스트 수는 S26 뒤 갱신 필요
+
+## [2026-10-23 18:55] S24 | orchestrator | START
+- 한 일: E2E 작성: 실제 샘플·CLI
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 514fa39 [T-20261023-extract-dropped][s23] README·결정 기록·MIT 라이선스·NOTICE
+
+## [2026-10-23 18:56] P3 | hook | AUTO
+- 한 일: 도구 호출 750회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 514fa39 [T-20261023-extract-dropped][s23] README·결정 기록·MIT 라이선스·NOTICE
+
+## [2026-10-23 18:59] P3 | hook | AUTO
+- 한 일: 도구 호출 765회 경과
+- 변경 파일(미커밋, .ai 제외): tests/samples.py 
+- 커밋: 514fa39 [T-20261023-extract-dropped][s23] README·결정 기록·MIT 라이선스·NOTICE
+
+## [2026-10-23 19:04] S24 | test-writer(sonnet) | DONE
+- 한 일: samples.probe·samples_with·probe_texts, test_extract_real 18, test_extract_cli 14, test_cli_image §1-D 2개. e2e 67P 0F 0S, unit 806P
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_image.py tests/samples.py tests/e2e/test_extract_cli.py tests/e2e/test_extract_real.py 
+- 커밋: 514fa39 [T-20261023-extract-dropped][s23] README·결정 기록·MIT 라이선스·NOTICE
+- 다음: 0바이트 이미지 결함 수정(S24 후속) → S25
+- 메모: 실제 HWP5 BMP 1개가 0바이트로 해석되는데 빈 파일로 쓰고 이미지로 셈 → image_missing 이어야 함(스펙 위반)
