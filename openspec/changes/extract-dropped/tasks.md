@@ -12,7 +12,7 @@
 
 ## 3. 보호 문서
 
-- [ ] 3.1 `DrmProtectedError`·`EncryptedDocumentError`, DRM 서명 판별, HWP 5.0 DRM 비트, HWPX 암호화 매니페스트, 오류 코드 `drm`·`encrypted` 를 구현한다
+- [x] 3.1 `DrmProtectedError`·`EncryptedDocumentError`, DRM 서명 판별, HWP 5.0 DRM 비트, HWPX 암호화 매니페스트, 오류 코드 `drm`·`encrypted` 를 구현한다
 
 ## 4. 독립 모듈
 

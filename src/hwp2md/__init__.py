@@ -6,7 +6,13 @@
 from .blocks import Block, Image, Link, ListInfo, Math, Note, NoteRef, Paragraph, Table
 from .convert import ConvertResult, convert
 from .detect import DocFormat, detect_format
-from .errors import Hwp2mdError, NotHwpFileError, UnsupportedHwpError
+from .errors import (
+    DrmProtectedError,
+    EncryptedDocumentError,
+    Hwp2mdError,
+    NotHwpFileError,
+    UnsupportedHwpError,
+)
 from .memory import MemoryResult, convert_bytes
 from .skips import SkipCounter
 
@@ -16,6 +22,8 @@ __all__ = [
     "Block",
     "ConvertResult",
     "DocFormat",
+    "DrmProtectedError",
+    "EncryptedDocumentError",
     "Hwp2mdError",
     "Image",
     "Link",

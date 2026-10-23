@@ -81,3 +81,61 @@
 - 커밋: 85410e8 [T-20261023-extract-dropped][s3] 블록 모델·렌더 계약
 - 다음: P1 (S5~S8 병렬)
 - 메모: test_memory 의 _raise_value_error 스텁이 skips 인자를 못 받아 TypeError 로 convert_failed 통과 → S5 에서 스텁 시그니처 보정
+
+## [2026-10-23 17:50] S5 | orchestrator | START
+- 한 일: P1 worktree
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:50] S6 | orchestrator | START
+- 한 일: P1 worktree
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:50] S7 | orchestrator | START
+- 한 일: P1 worktree
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:50] S8 | orchestrator | START
+- 한 일: P1 worktree
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:53] S5 | implementer(opus) | RETRY
+- 한 일: worktree 가 main(e18cd70)에서 생성되어 S3·S4 없음 + worktree 안 git 훅 차단 → 작업 0
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+- 다음: 메인 트리에서 재실행 (S7 과 동시, 쓰기 범위 비중첩)
+
+## [2026-10-23 17:53] S7 | orchestrator | RETRY
+- 한 일: worktree 기반 커밋 오류로 중단(TaskStop)
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+- 다음: 메인 트리에서 재실행
+
+## [2026-10-23 17:54] P1 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:55] P1 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/detect.py src/hwp2md/errors.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py .claude/ NOTICE src/hwp2md/equation/ tests/unit/test_equation.py 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:56] P1 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/detect.py src/hwp2md/errors.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py tests/unit/test_memory.py NOTICE src/hwp2md/equation/ src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_protection.py 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:58] P1 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE src/hwp2md/__init__.py src/hwp2md/detect.py src/hwp2md/equation/__init__.py src/hwp2md/equation/eqedit.py src/hwp2md/equation/tokens.py src/hwp2md/errors.py src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_memory.py tests/unit/test_ole_chart.py tests/unit/test_protection.py 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+
+## [2026-10-23 17:59] S5 | implementer(opus) | DONE
+- 한 일: DrmProtectedError·EncryptedDocumentError, DRM 서명 판별, HWP5 비트 1/4/10, HWPX manifest 암호화, 오류 코드 drm/encrypted 415. 실제 DRM 2개 → drm. test_protection 28
+- 변경 파일(미커밋, .ai 제외): NOTICE src/hwp2md/__init__.py src/hwp2md/detect.py src/hwp2md/equation/__init__.py src/hwp2md/equation/eqedit.py src/hwp2md/equation/tokens.py src/hwp2md/errors.py src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_memory.py tests/unit/test_ole_chart.py tests/unit/test_protection.py 
+- 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
+- 다음: S6 커밋

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from lxml import etree
 
 from ..blocks import Block
-from ..errors import Hwp2mdError, NotHwpFileError
+from ..errors import EncryptedDocumentError, Hwp2mdError, NotHwpFileError
 from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
 from .bindata import (
@@ -25,6 +25,7 @@ from .header import EMPTY_HEADER, parse_header, parse_header_xml
 HWPX_MIMETYPE = b"application/hwp+zip"
 HWPX_SECTION0 = "Contents/section0.xml"
 HWPX_HEADER = "Contents/header.xml"
+HWPX_ODF_MANIFEST = "META-INF/manifest.xml"
 NS_HP = "http://www.hancom.co.kr/hwpml/2011/paragraph"
 NS_HS = "http://www.hancom.co.kr/hwpml/2011/section"
 HS_SEC = f"{{{NS_HS}}}sec"
@@ -56,12 +57,35 @@ class HwpxPackage:
     bin_data: dict[str, bytes]  # "BinData/" 로 시작하는 파일 엔트리 전부 (키 = 엔트리 전체 이름)
 
 
+def is_encrypted_manifest(data: bytes) -> bool:
+    """META-INF/manifest.xml 안에 local-name 이 "encryption-data" 인 요소가 있으면 True.
+    파싱할 수 없는 매니페스트는 False (본문 판정에 맡긴다)."""
+    try:
+        root = etree.fromstring(data, make_parser())
+    except etree.XMLSyntaxError:
+        return False
+    return any(
+        isinstance(el.tag, str) and etree.QName(el).localname == "encryption-data"
+        for el in root.iter()
+    )
+
+
+def _check_encryption(zf: zipfile.ZipFile, label: str) -> None:
+    if HWPX_ODF_MANIFEST not in zf.namelist():
+        return
+    if zf.getinfo(HWPX_ODF_MANIFEST).file_size > MAX_SECTION_BYTES:
+        return
+    if is_encrypted_manifest(zf.read(HWPX_ODF_MANIFEST)):
+        raise EncryptedDocumentError(f"encrypted document: {label}")
+
+
 def read_hwpx_package(path: Source) -> HwpxPackage:
     try:
         zf = zipfile.ZipFile(as_binary_io(path))
     except zipfile.BadZipFile as exc:
         raise NotHwpFileError(f"not a zip archive: {source_label(path)}") from exc
     with zf:
+        _check_encryption(zf, source_label(path))
         out: list[bytes] = []
         for name in section_names(zf):
             size = zf.getinfo(name).file_size

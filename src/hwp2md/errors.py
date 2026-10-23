@@ -13,6 +13,14 @@ class UnsupportedHwpError(Hwp2mdError):
     """암호화 또는 배포용 문서 (종료 코드 3)"""
 
 
+class DrmProtectedError(UnsupportedHwpError):
+    """DRM 래핑 파일 또는 HWP 5.0 DRM 비트 (종료 코드 3)"""
+
+
+class EncryptedDocumentError(UnsupportedHwpError):
+    """비밀번호 문서 (종료 코드 3)"""
+
+
 class EmptyInputError(Hwp2mdError):
     """메모리 변환 입력이 0바이트"""
 

@@ -54,6 +54,8 @@ def test_constants() -> None:
         "too_large": 413,
         "not_hwp": 415,
         "unsupported": 415,
+        "drm": 415,
+        "encrypted": 415,
         "convert_failed": 422,
     }
 
@@ -282,8 +284,12 @@ def test_error_code(exc: BaseException, code: str) -> None:
     assert error_code(exc) == code
 
 
-def _raise_value_error(_data: bytes) -> Any:
+def _raise_value_error(_data: bytes, **_kw: Any) -> Any:
     raise ValueError("broken record")
+
+
+def _raise_unsupported(_data: bytes, **_kw: Any) -> Any:
+    raise UnsupportedHwpError("distribution document: <memory>")
 
 
 @pytest.mark.parametrize(
@@ -293,6 +299,7 @@ def _raise_value_error(_data: bytes) -> Any:
         ("too_large", 413, "too_large"),
         ("not_hwp", 415, "not_hwp"),
         ("unsupported", 415, "unsupported"),
+        ("encrypted", 415, "encrypted"),
         ("convert_failed", 422, "convert_failed"),
     ],
 )
@@ -307,6 +314,8 @@ def test_convert_to_response_errors(
     elif case == "not_hwp":
         data = b"plain text"
     elif case == "unsupported":
+        monkeypatch.setattr(memory, "read_blocks", _raise_unsupported)
+    elif case == "encrypted":
         data = _synth_bytes(tmp_path, properties=0x3)
     else:
         monkeypatch.setattr(memory, "read_blocks", _raise_value_error)
