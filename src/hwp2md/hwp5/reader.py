@@ -21,6 +21,7 @@ from ..images import ImageNamer, normalize_ext
 from ..skips import SkipCounter, SkipKind
 from ..source import Source, as_binary_io, source_label
 from .body import ReadContext, parse_blocks
+from .distdoc import decrypt_view_text
 from .docinfo import (
     BIN_DATA_EMBEDDING,
     BIN_DATA_LINK,
@@ -74,6 +75,27 @@ def _inflate(data: bytes) -> bytes:
     return d.decompress(data) + d.flush()
 
 
+def _strip_aes_padding(data: bytes) -> bytes:
+    """비압축 배포용 섹션 끝의 AES 블록 0 채움(16B 미만)을 레코드 경계에서 잘라 낸다."""
+    pos = 0
+    end = len(data)
+    while pos < end:
+        if end - pos < 16 and not any(data[pos:]):
+            return data[:pos]
+        if pos + 4 > end:
+            break
+        (header,) = struct.unpack_from("<I", data, pos)
+        pos += 4
+        size = (header >> 20) & 0xFFF
+        if size == 0xFFF:
+            if pos + 4 > end:
+                break
+            (size,) = struct.unpack_from("<I", data, pos)
+            pos += 4
+        pos += size
+    return data
+
+
 @dataclass(frozen=True)
 class Hwp5Package:
     header: FileHeader
@@ -98,17 +120,33 @@ def read_hwp5_package(path: Source) -> Hwp5Package:
             raise EncryptedDocumentError(f"encrypted document: {label}")
         if properties & (_PROP_DRM | _PROP_CERT_DRM):
             raise DrmProtectedError(f"DRM-protected document: {label}")
-        if header.distribution:
-            raise UnsupportedHwpError(f"distribution document: {label}")
+        if header.distribution and not ole.exists("ViewText/Section0"):
+            raise UnsupportedHwpError(f"distribution document: ViewText missing: {label}")
         docinfo = b""
         if ole.exists("DocInfo"):
             raw = _read_stream(ole, "DocInfo")
             docinfo = _inflate(raw) if header.compressed else raw
+        # 배포용(bit2): BodyText 대신 ViewText/Section<N> 을 복호화해 읽는다.
+        # DocInfo·BinData 는 평문
+        storage = "ViewText" if header.distribution else "BodyText"
         sections: list[bytes] = []
         n = 0
-        while ole.exists(f"BodyText/Section{n}"):
-            data = _read_stream(ole, f"BodyText/Section{n}")
-            sections.append(_inflate(data) if header.compressed else data)
+        while ole.exists(f"{storage}/Section{n}"):
+            data = _read_stream(ole, f"{storage}/Section{n}")
+            if header.distribution:
+                data = decrypt_view_text(data)
+            if header.compressed:
+                try:
+                    data = _inflate(data)
+                except zlib.error as exc:
+                    if not header.distribution:
+                        raise
+                    raise UnsupportedHwpError(
+                        f"distribution document: cannot inflate ViewText: {label}"
+                    ) from exc
+            elif header.distribution:
+                data = _strip_aes_padding(data)
+            sections.append(data)
             n += 1
         bin_data: dict[str, bytes] = {}
         for entry in ole.listdir():
