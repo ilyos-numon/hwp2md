@@ -14,15 +14,32 @@ from pathlib import Path
 
 from hwp2md.blocks import Image, Paragraph, Table
 from hwp2md.hwp5.records import (
+    CTRL_ID_ENDNOTE,
+    CTRL_ID_EQUATION,
+    CTRL_ID_FOOTER,
+    CTRL_ID_FOOTNOTE,
+    CTRL_ID_HEADER,
+    CTRL_ID_HIDDEN_COMMENT,
+    CTRL_ID_HYPERLINK,
     CTRL_ID_TABLE,
     HWPTAG_CTRL_HEADER,
     HWPTAG_DOCUMENT_PROPERTIES,
+    HWPTAG_EQEDIT,
     HWPTAG_LIST_HEADER,
     HWPTAG_PARA_CHAR_SHAPE,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_LINE_SEG,
     HWPTAG_PARA_TEXT,
     HWPTAG_TABLE,
+)
+from synth_items import (
+    SynthEquation,
+    SynthField,
+    SynthHeaderFooter,
+    SynthHidden,
+    SynthLink,
+    SynthNote,
+    SynthRich,
 )
 
 HWPTAG_PARA_SHAPE = 0x19
@@ -120,9 +137,11 @@ class SynthTable:
 
 
 Item = str | SynthTable | SynthHeading | SynthImage
+# build_section0·build_hwp5·write_hwp5 가 받는 항목: 기존 Item + 단락 안 요소 항목(synth_items)
+AnyItem = Item | SynthRich | SynthHeaderFooter | SynthHidden
 
 
-def collect_images(items: Sequence[Item]) -> list[SynthImage]:
+def collect_images(items: Sequence[AnyItem]) -> list[SynthImage]:
     """문서 순서로 처음 보는 SynthImage 만 모은다. 바이너리 항목 k = index + 1 (§4.5)."""
     found: list[SynthImage] = []
 
@@ -135,12 +154,15 @@ def collect_images(items: Sequence[Item]) -> list[SynthImage]:
             for c in item.cells:
                 for p in c.paragraphs:
                     add(p)
+        elif isinstance(item, SynthHeaderFooter):
+            if item.with_image:
+                add(HEADER_IMAGE)
         else:
             add(item)
     return found
 
 
-def has_heading(items: Sequence[Item]) -> bool:
+def has_heading(items: Sequence[AnyItem]) -> bool:
     """items 또는 표 셀 단락에 SynthHeading 이 있으면 True."""
     for item in items:
         if isinstance(item, SynthHeading):
@@ -304,7 +326,152 @@ def build_table_control(
     return out
 
 
-def build_section0(items: Sequence[Item], images: Sequence[SynthImage] | None = None) -> bytes:
+_FIELD_START = 3
+_FIELD_END = 4
+_CTRL_CHAR_HIDDEN = 15
+_CTRL_CHAR_HEADER_FOOTER = 16
+_CTRL_CHAR_NOTE = 17
+CTRL_ID_CLICK_HERE = b"%clk"[::-1]  # 누름틀 필드
+
+
+def _ctrl_chars(code: int, ctrl_id: bytes) -> bytes:
+    """확장·필드 끝 제어문자 8 WCHAR: 코드 + ctrl_id(4) + 0×8 + 코드."""
+    return struct.pack("<H", code) + ctrl_id + b"\x00" * 8 + struct.pack("<H", code)
+
+
+def _para_records(wchars: bytes, *, level: int, last: bool, ctrl_mask: int = 0) -> bytes:
+    """PARA_HEADER(level) + PARA_TEXT·CHAR_SHAPE·LINE_SEG(level+1). wchars 는 끝 13 제외."""
+    body = wchars + b"\r\x00"
+    nchars = len(body) // 2
+    if last:
+        nchars |= _LAST_PARA_BIT
+    para_header = struct.pack("<IIHBBHHHI", nchars, ctrl_mask, 0, 0, 0, 1, 0, 1, 0)
+    return (
+        build_record(HWPTAG_PARA_HEADER, level, para_header)
+        + build_record(HWPTAG_PARA_TEXT, level + 1, body)
+        + build_record(HWPTAG_PARA_CHAR_SHAPE, level + 1, struct.pack("<II", 0, 0))
+        + build_record(HWPTAG_PARA_LINE_SEG, level + 1, b"\x00" * 36)
+    )
+
+
+def escape_link_target(url: str) -> str:
+    """하이퍼링크 command 의 대상 이스케이프: `\\` `:` `?` `;` `#` `|` 앞에 `\\`."""
+    return "".join("\\" + ch if ch in "\\:?;#|" else ch for ch in url)
+
+
+def build_ctrl_header_field(ctrl_id: bytes, command: str) -> bytes:
+    """필드 CTRL_HEADER: ctrl_id + UINT32 속성 + BYTE 기타 + WORD len + WCHAR command
+    + UINT32 인스턴스 ID."""
+    cmd = command.encode("utf-16-le")
+    return ctrl_id + struct.pack("<IBH", 0, 0, len(cmd) // 2) + cmd + struct.pack("<I", 1)
+
+
+def build_list_header(n_paragraphs: int) -> bytes:
+    """문단 리스트 LIST_HEADER: UINT32 문단 수 + UINT32 속성 + 0×8."""
+    return struct.pack("<II", n_paragraphs, 0) + b"\x00" * 8
+
+
+def build_subtree_paragraphs(paragraphs: Sequence[str], *, level: int) -> bytes:
+    """LIST_HEADER(level) + 단락들(level)."""
+    out = build_record(HWPTAG_LIST_HEADER, level, build_list_header(len(paragraphs)))
+    for i, text in enumerate(paragraphs):
+        out += build_paragraph(text, last=(i == len(paragraphs) - 1), level=level)
+    return out
+
+
+def build_eqedit(script: str) -> bytes:
+    """EQEDIT payload: UINT32 속성, WORD len + WCHAR 스크립트, UINT32 글자 크기, COLORREF,
+    INT16 baseline, UINT16, WORD len + 버전 문자열, WORD len + 글꼴 이름."""
+    sc = script.encode("utf-16-le")
+    ver = "Equation Version 60".encode("utf-16-le")
+    font = "HancomEQN".encode("utf-16-le")
+    return (
+        struct.pack("<IH", 0, len(sc) // 2)
+        + sc
+        + struct.pack("<IIhH", 1000, 0, 85, 0)
+        + struct.pack("<H", len(ver) // 2)
+        + ver
+        + struct.pack("<H", len(font) // 2)
+        + font
+    )
+
+
+def build_rich_paragraph(rich: SynthRich, *, level: int, last: bool) -> bytes:
+    """링크·누름틀(필드 시작 3 … 끝 4), 각주·미주(17), 수식(11) 을 위치대로 쓴 단락.
+    확장 제어문자 순서와 같은 순서로 CTRL_HEADER(level+1) 를 단락 뒤에 둔다."""
+    wchars = b""
+    ctrls = b""
+    for run in rich.runs:
+        if isinstance(run, str):
+            wchars += run.encode("utf-16-le")
+        elif isinstance(run, SynthLink):
+            wchars += (
+                _ctrl_chars(_FIELD_START, CTRL_ID_HYPERLINK)
+                + run.text.encode("utf-16-le")
+                + _ctrl_chars(_FIELD_END, CTRL_ID_HYPERLINK)
+            )
+            command = escape_link_target(run.url) + ";1;0;0;"
+            ctrls += build_record(
+                HWPTAG_CTRL_HEADER, level + 1, build_ctrl_header_field(CTRL_ID_HYPERLINK, command)
+            )
+        elif isinstance(run, SynthField):
+            wchars += (
+                _ctrl_chars(_FIELD_START, CTRL_ID_CLICK_HERE)
+                + run.text.encode("utf-16-le")
+                + _ctrl_chars(_FIELD_END, CTRL_ID_CLICK_HERE)
+            )
+            ctrls += build_record(
+                HWPTAG_CTRL_HEADER,
+                level + 1,
+                build_ctrl_header_field(CTRL_ID_CLICK_HERE, "Clickhere:set:0:"),
+            )
+        elif isinstance(run, SynthNote):
+            ctrl_id = CTRL_ID_FOOTNOTE if run.kind == "footnote" else CTRL_ID_ENDNOTE
+            wchars += _ctrl_chars(_CTRL_CHAR_NOTE, ctrl_id)
+            ctrls += build_record(HWPTAG_CTRL_HEADER, level + 1, ctrl_id + b"\x00" * 8)
+            ctrls += build_subtree_paragraphs(run.paragraphs, level=level + 2)
+        else:
+            assert isinstance(run, SynthEquation)
+            wchars += _ctrl_chars(_CTRL_CHAR_EXTENDED, CTRL_ID_EQUATION)
+            ctrls += build_record(
+                HWPTAG_CTRL_HEADER,
+                level + 1,
+                CTRL_ID_EQUATION
+                + struct.pack("<IiiIIiHHHHII", 0, 0, 0, 2000, 1000, 0, 0, 0, 0, 0, 0, 0),
+            )
+            ctrls += build_record(HWPTAG_EQEDIT, level + 2, build_eqedit(run.script))
+    return _para_records(wchars, level=level, last=last) + ctrls
+
+
+def build_header_footer_paragraph(
+    item: SynthHeaderFooter, *, level: int, last: bool, images: Sequence[SynthImage] = ()
+) -> bytes:
+    """제어문자 16 하나뿐인 단락 + CTRL_HEADER(head|foot) + LIST_HEADER + 안쪽 단락(+그림)."""
+    ctrl_id = CTRL_ID_HEADER if item.kind == "header" else CTRL_ID_FOOTER
+    out = _para_records(_ctrl_chars(_CTRL_CHAR_HEADER_FOOTER, ctrl_id), level=level, last=last)
+    out += build_record(
+        HWPTAG_CTRL_HEADER, level + 1, ctrl_id + struct.pack("<IiiBB", 0, 42520, 4252, 0, 0)
+    )
+    n = len(item.paragraphs) + (1 if item.with_image else 0)
+    out += build_record(HWPTAG_LIST_HEADER, level + 2, build_list_header(n))
+    for i, text in enumerate(item.paragraphs):
+        out += build_paragraph(text, last=(i == n - 1), level=level + 2)
+    if item.with_image:
+        out += build_picture_control(images.index(HEADER_IMAGE) + 1, level=level + 2, last=True)
+    return out
+
+
+def build_hidden_paragraph(item: SynthHidden, *, level: int, last: bool) -> bytes:
+    """제어문자 15 하나뿐인 단락 + CTRL_HEADER(tcmt) + LIST_HEADER + 안쪽 단락."""
+    out = _para_records(
+        _ctrl_chars(_CTRL_CHAR_HIDDEN, CTRL_ID_HIDDEN_COMMENT), level=level, last=last
+    )
+    out += build_record(HWPTAG_CTRL_HEADER, level + 1, CTRL_ID_HIDDEN_COMMENT)
+    out += build_subtree_paragraphs(item.paragraphs, level=level + 2)
+    return out
+
+
+def build_section0(items: Sequence[AnyItem], images: Sequence[SynthImage] | None = None) -> bytes:
     """미압축 섹션. str → 본문 단락, SynthHeading → 개요 단락, SynthTable → 표 컨트롤.
 
     마지막 원소만 last=True.
@@ -319,6 +486,12 @@ def build_section0(items: Sequence[Item], images: Sequence[SynthImage] | None = 
             out += build_table_control(item, level=0, last=last, images=images)
         elif isinstance(item, SynthImage):
             out += build_picture_control(images.index(item) + 1, level=0, last=last)
+        elif isinstance(item, SynthRich):
+            out += build_rich_paragraph(item, level=0, last=last)
+        elif isinstance(item, SynthHeaderFooter):
+            out += build_header_footer_paragraph(item, level=0, last=last, images=images)
+        elif isinstance(item, SynthHidden):
+            out += build_hidden_paragraph(item, level=0, last=last)
         elif isinstance(item, SynthHeading):
             out += build_paragraph(
                 item.text, last=last, para_shape_id=item.level, style_id=item.level
@@ -534,7 +707,7 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
     return bytes(header) + fat_bytes + dir_bytes + minifat_bytes + ministream_padded
 
 
-def build_hwp5(paragraphs: Sequence[Item], *, properties: int = 0x1) -> bytes:
+def build_hwp5(paragraphs: Sequence[AnyItem], *, properties: int = 0x1) -> bytes:
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
     images = collect_images(paragraphs)
     docinfo = build_docinfo(outline=has_heading(paragraphs), images=images)
@@ -555,7 +728,7 @@ def build_hwp5(paragraphs: Sequence[Item], *, properties: int = 0x1) -> bytes:
     return build_cfb(streams)
 
 
-def write_hwp5(path: Path, paragraphs: Sequence[Item], *, properties: int = 0x1) -> Path:
+def write_hwp5(path: Path, paragraphs: Sequence[AnyItem], *, properties: int = 0x1) -> Path:
     """부모 디렉터리 생성 후 바이트 저장, path 반환."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(build_hwp5(paragraphs, properties=properties))
@@ -655,6 +828,7 @@ PNG_1X1: bytes = bytes.fromhex(
 )  # 69 bytes, 1×1 RGB PNG
 JPEG_STUB: bytes = b"\xff\xd8\xff\xe0" + bytes(range(16)) + b"\xff\xd9"  # 22 bytes, 유효 JPEG 아님
 FIXTURE_IMAGE_PNG = SynthImage(PNG_1X1, "png")
+HEADER_IMAGE = SynthImage(PNG_1X1, "png")  # SynthHeaderFooter(with_image=True) 안의 그림
 FIXTURE_IMAGE_JPG = SynthImage(JPEG_STUB, "jpg")
 
 # 모든 EXPECTED_MARKDOWN_IMAGE* 는 입력 파일 stem 이 "doc" 일 때(doc.hwp / doc.hwpx → doc_images/)

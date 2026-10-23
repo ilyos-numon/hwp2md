@@ -1,26 +1,54 @@
-"""BodyText record sequence -> blocks (paragraphs and tables)."""
+"""BodyText record sequence -> blocks (paragraphs, tables, inline elements)."""
 
 from __future__ import annotations
 
+import re
 import struct
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Protocol
 
-from ..blocks import Block, Image, Paragraph, Table
+from ..blocks import (
+    Block,
+    Image,
+    Inline,
+    Link,
+    Math,
+    Note,
+    NoteKind,
+    NoteRef,
+    Paragraph,
+    Table,
+    make_paragraph,
+    make_table,
+)
+from ..equation import to_latex
 from ..errors import Hwp2mdError
+from ..skips import SkipCounter
 from .docinfo import EMPTY_DOCINFO, DocInfo
 from .records import (
+    CTRL_ID_ENDNOTE,
+    CTRL_ID_EQUATION,
+    CTRL_ID_FOOTER,
+    CTRL_ID_FOOTNOTE,
     CTRL_ID_GSO,
+    CTRL_ID_HEADER,
+    CTRL_ID_HIDDEN_COMMENT,
+    CTRL_ID_HYPERLINK,
     CTRL_ID_TABLE,
+    FIELD_END,
+    FIELD_START,
     HWPTAG_CTRL_HEADER,
+    HWPTAG_EQEDIT,
     HWPTAG_LIST_HEADER,
+    HWPTAG_MEMO_LIST,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_TEXT,
     HWPTAG_SHAPE_COMPONENT_PICTURE,
     HWPTAG_TABLE,
+    CtrlMark,
     Record,
-    decode_para_text,
+    decode_para_runs,
 )
 
 
@@ -66,24 +94,92 @@ def parse_picture_bindata_id(payload: bytes) -> int:
     return int(bindata_id)
 
 
+_LINK_TAIL = re.compile(r";(\d+);\d+;\d+;?$")
+_LINK_ESCAPE = re.compile(r"\\(.)", re.DOTALL)
+
+
+def parse_field_command(payload: bytes) -> str:
+    """필드 CTRL_HEADER: ctrl_id(4) UINT32 속성 BYTE 기타 WORD len WCHAR[len] command.
+    잘렸으면 있는 만큼만 읽는다."""
+    if len(payload) < 11:
+        return ""
+    (n,) = struct.unpack_from("<H", payload, 9)
+    raw = payload[11 : 11 + 2 * n]
+    return raw[: len(raw) // 2 * 2].decode("utf-16-le", errors="replace")
+
+
+def hyperlink_url(command: str) -> str | None:
+    """꼬리 `;\\d+;\\d+;\\d+;?$` 제거 → `|` 앞부분 → `\\(.)` 언이스케이프.
+    종류(꼬리 첫 수)가 0(문서 안 이동)이거나 결과가 비거나 `?` 로 시작하면 None."""
+    target = command
+    m = _LINK_TAIL.search(command)
+    if m is not None:
+        if int(m.group(1)) == 0:
+            return None
+        target = command[: m.start()]
+    target = target.split("|", 1)[0]
+    url = _LINK_ESCAPE.sub(lambda x: x.group(1), target)
+    if not url or url.startswith("?"):
+        return None
+    return url
+
+
+def parse_eqedit_script(payload: bytes) -> str:
+    """EQEDIT: UINT32 속성, WORD len, WCHAR[len] 스크립트. 잘렸으면 있는 만큼만 읽는다."""
+    if len(payload) < 6:
+        return ""
+    (n,) = struct.unpack_from("<H", payload, 4)
+    raw = payload[6 : 6 + 2 * n]
+    return raw[: len(raw) // 2 * 2].decode("utf-16-le", errors="replace")
+
+
+class ReadContext:
+    """문서 하나를 읽는 동안 섹션을 넘어 유지하는 상태(각주·미주 번호와 내용, 건너뜀)."""
+
+    def __init__(self, skips: SkipCounter | None = None) -> None:
+        self.skips = skips if skips is not None else SkipCounter()
+        self.notes: dict[NoteKind, list[Note]] = {"footnote": [], "endnote": []}
+        self._numbers: dict[NoteKind, int] = {"footnote": 0, "endnote": 0}
+        self.in_note = False
+
+    def next_note_number(self, kind: NoteKind) -> int:
+        self._numbers[kind] += 1
+        return self._numbers[kind]
+
+    def note_blocks(self) -> list[Block]:
+        """각주 번호순, 이어서 미주 번호순."""
+        return [*self.notes["footnote"], *self.notes["endnote"]]  # 번호를 매긴 순서로 쌓인다
+
+
 def parse_blocks(
     records: Iterable[Record],
     docinfo: DocInfo = EMPTY_DOCINFO,
     bin_data: ImageResolver | None = None,
+    ctx: ReadContext | None = None,
 ) -> list[Block]:
-    """§4.3 알고리즘. 섹션 하나의 레코드 시퀀스 → 블록 목록."""
+    """§4.3 알고리즘. 섹션 하나의 레코드 시퀀스 → 블록 목록.
+    ctx 가 없으면 이 섹션만의 컨텍스트를 만들고 Note 블록을 끝에 붙인다.
+    ctx 가 있으면 Note 블록은 호출자가 ctx.note_blocks() 로 문서 끝에 붙인다."""
+    own = ctx is None
+    if ctx is None:
+        ctx = ReadContext()
     recs = list(records)
     blocks: list[Block] = []
     i = 0
     while i < len(recs):
         r = recs[i]
         if r.tag_id == HWPTAG_PARA_HEADER and r.level == 0:
-            text, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo, bin_data)
-            if text:
-                blocks.append(Paragraph(text, heading))
+            inlines, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo, bin_data, ctx)
+            para = make_paragraph(inlines, heading)
+            if para is not None:
+                blocks.append(para)
             blocks.extend(trailing)
         else:
+            if r.tag_id == HWPTAG_MEMO_LIST:
+                ctx.skips.add("memo")
             i += 1
+    if own:
+        blocks.extend(ctx.note_blocks())
     return blocks
 
 
@@ -95,50 +191,244 @@ def _heading_level(para_header_payload: bytes, docinfo: DocInfo) -> int:
     return docinfo.heading_level(para_shape_id)
 
 
+def _subtree_end(recs: Sequence[Record], i: int) -> int:
+    """recs[i] 의 하위 레코드(level 이 더 큰 연속 레코드) 바로 다음 인덱스."""
+    ctrl_level = recs[i].level
+    j = i + 1
+    while j < len(recs) and recs[j].level > ctrl_level:
+        j += 1
+    return j
+
+
+class _InlineBuilder:
+    """단락 인라인을 위치대로 모은다. 하이퍼링크 필드 안 글자는 Link 로 묶는다."""
+
+    def __init__(self) -> None:
+        self.items: list[Inline] = []
+        self._depth = 0  # 열린 필드 수
+        self._link_depth = 0  # 열린 링크 필드의 깊이 (0 = 없음)
+        self._link_url: str | None = None
+        self._link_text: list[str] = []
+
+    def text(self, s: str) -> None:
+        if self._link_depth:
+            self._link_text.append(s)
+        else:
+            self.items.append(s)
+
+    def inline(self, item: Inline) -> None:
+        if self._link_depth:
+            self._flush_link()
+        self.items.append(item)
+
+    def field_start(self, url: str | None, *, link: bool) -> None:
+        self._depth += 1
+        if link and not self._link_depth:
+            self._link_depth = self._depth
+            self._link_url = url
+            self._link_text = []
+
+    def field_end(self) -> None:
+        if not self._depth:
+            return
+        if self._link_depth == self._depth:
+            self._flush_link()
+            self._link_depth = 0
+            self._link_url = None
+        self._depth -= 1
+
+    def _flush_link(self) -> None:
+        text = "".join(self._link_text)
+        self._link_text = []
+        if not text:
+            return
+        if self._link_url is None:
+            self.items.append(text)
+        else:
+            self.items.append(Link(text, self._link_url))
+
+    def finish(self) -> list[Inline]:
+        if self._link_depth:
+            self._flush_link()
+            self._link_depth = 0
+        return self.items
+
+
 def _parse_paragraph(
     recs: Sequence[Record],
     i: int,
     level: int,
     docinfo: DocInfo,
-    bin_data: ImageResolver | None = None,
-) -> tuple[str, int, list[Block], int]:
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> tuple[list[Inline], int, list[Block], int]:
+    """(인라인, 제목 수준, 단락 뒤에 둘 블록, 다음 인덱스).
+    확장 제어문자와 같은 단락의 CTRL_HEADER 를 등장 순서로 1:1 대응한다. 개수가 다르면
+    대응을 포기하고 글자 뒤에 컨트롤 결과를 차례로 둔다."""
     heading = _heading_level(recs[i].payload, docinfo)
     i += 1
-    text = ""
-    trailing: list[Block] = []
+    payload: bytes | None = None
+    ctrls: list[tuple[int, int]] = []  # level+1 CTRL_HEADER 하위 트리 [start, stop)
     while i < len(recs) and recs[i].level > level:
         r = recs[i]
         if r.tag_id == HWPTAG_PARA_TEXT and r.level == level + 1:
-            text = decode_para_text(r.payload)
+            payload = r.payload
             i += 1
-        elif (
-            r.tag_id == HWPTAG_CTRL_HEADER
-            and r.level == level + 1
-            and r.payload[:4] == CTRL_ID_TABLE
-        ):
-            table, i = _parse_table(recs, i, level + 1, docinfo)
-            if table is not None:
-                trailing.append(table)
-        elif (
-            r.tag_id == HWPTAG_CTRL_HEADER and r.level == level + 1 and r.payload[:4] == CTRL_ID_GSO
-        ):
-            images, i = _parse_gso(recs, i, r.level, bin_data)
-            trailing.extend(images)
         elif r.tag_id == HWPTAG_CTRL_HEADER and r.level == level + 1:
-            # 표가 아닌 컨트롤: 안쪽 단락을 그대로 흘려보낸다
-            ctrl_level = r.level
-            i += 1
-            while i < len(recs) and recs[i].level > ctrl_level:
-                if recs[i].tag_id == HWPTAG_PARA_HEADER and recs[i].level == ctrl_level + 1:
-                    t2, h2, tr2, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, bin_data)
-                    if t2:
-                        trailing.append(Paragraph(t2, h2))
-                    trailing.extend(tr2)
-                else:
-                    i += 1
+            stop = _subtree_end(recs, i)
+            ctrls.append((i, stop))
+            i = stop
         else:
             i += 1
-    return text, heading, trailing, i
+    end = i
+    runs = decode_para_runs(payload) if payload is not None else []
+    marks = sum(1 for x in runs if isinstance(x, CtrlMark) and x.code != FIELD_END)
+    mapped = marks == len(ctrls)
+    seq: list[str | CtrlMark] = runs
+    if not mapped:
+        seq = [x for x in runs if isinstance(x, str)] + [CtrlMark(0)] * len(ctrls)
+    builder = _InlineBuilder()
+    trailing: list[Block] = []
+    k = 0
+    for item in seq:
+        if isinstance(item, str):
+            builder.text(item)
+        elif item.code == FIELD_END:
+            builder.field_end()
+        else:
+            start, stop = ctrls[k]
+            k += 1
+            _handle_control(
+                recs,
+                start,
+                stop,
+                item.code if mapped else 0,
+                docinfo,
+                bin_data,
+                ctx,
+                builder,
+                trailing,
+            )
+    return builder.finish(), heading, trailing, end
+
+
+def _handle_control(
+    recs: Sequence[Record],
+    start: int,
+    stop: int,
+    code: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+    builder: _InlineBuilder,
+    trailing: list[Block],
+) -> None:
+    """code: 대응한 확장 제어문자 코드(대응 포기면 0)."""
+    r = recs[start]
+    ctrl_id = r.payload[:4]
+    if ctrl_id == CTRL_ID_TABLE:
+        table, _ = _parse_table(recs, start, r.level, docinfo, ctx)
+        if table is not None:
+            trailing.append(table)
+    elif ctrl_id == CTRL_ID_GSO:
+        images, _ = _parse_gso(recs, start, r.level, bin_data)
+        trailing.extend(images)
+    elif code == FIELD_START:
+        if ctrl_id == CTRL_ID_HYPERLINK:
+            builder.field_start(hyperlink_url(parse_field_command(r.payload)), link=True)
+        else:
+            builder.field_start(None, link=False)  # 누름틀 등: 글자는 그대로 둔다
+    elif ctrl_id in (CTRL_ID_FOOTNOTE, CTRL_ID_ENDNOTE):
+        kind: NoteKind = "footnote" if ctrl_id == CTRL_ID_FOOTNOTE else "endnote"
+        ref = _parse_note(recs, start, stop, kind, docinfo, bin_data, ctx)
+        if ref is not None:
+            builder.inline(ref)
+    elif ctrl_id == CTRL_ID_EQUATION:
+        math = _parse_equation(recs, start, stop)
+        if math is not None:
+            builder.inline(math)
+    elif ctrl_id in (CTRL_ID_HEADER, CTRL_ID_FOOTER):
+        ctx.skips.add("header_footer")  # 하위 트리 통째로 건너뜀
+    elif ctrl_id == CTRL_ID_HIDDEN_COMMENT:
+        ctx.skips.add("hidden_comment")
+    else:
+        # 그 밖의 컨트롤: 안쪽 단락을 그대로 흘려보낸다
+        trailing.extend(_subtree_blocks(recs, start, stop, docinfo, bin_data, ctx))
+
+
+def _subtree_blocks(
+    recs: Sequence[Record],
+    start: int,
+    stop: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> list[Block]:
+    """컨트롤 하위 트리 안 단락(level = 컨트롤+1)을 블록으로."""
+    ctrl_level = recs[start].level
+    out: list[Block] = []
+    j = start + 1
+    while j < stop:
+        if recs[j].tag_id == HWPTAG_PARA_HEADER and recs[j].level == ctrl_level + 1:
+            inlines, heading, trailing, j = _parse_paragraph(
+                recs, j, ctrl_level + 1, docinfo, bin_data, ctx
+            )
+            para = make_paragraph(inlines, heading)
+            if para is not None:
+                out.append(para)
+            out.extend(trailing)
+        else:
+            j += 1
+    return out
+
+
+def _parse_note(
+    recs: Sequence[Record],
+    start: int,
+    stop: int,
+    kind: NoteKind,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> NoteRef | None:
+    """각주 안 각주는 만들지 않는다(건너뛰고 보고하지 않는다)."""
+    if ctx.in_note:
+        return None
+    number = ctx.next_note_number(kind)
+    ctx.in_note = True
+    try:
+        blocks = _subtree_blocks(recs, start, stop, docinfo, bin_data, ctx)
+    finally:
+        ctx.in_note = False
+    paragraphs: list[Paragraph] = []
+    for b in blocks:
+        para: Paragraph | None
+        if isinstance(b, Paragraph):
+            para = replace(b, level=0)
+        elif isinstance(b, Table):
+            para = make_paragraph([_flatten_table(b)])
+        elif isinstance(b, Image):
+            para = make_paragraph([b])
+        else:
+            para = None
+        if para is not None:
+            paragraphs.append(para)
+    ctx.notes[kind].append(Note(kind, number, tuple(paragraphs)))
+    return NoteRef(kind, number)
+
+
+def _parse_equation(recs: Sequence[Record], start: int, stop: int) -> Math | None:
+    for j in range(start + 1, stop):
+        if recs[j].tag_id == HWPTAG_EQEDIT:
+            script = parse_eqedit_script(recs[j].payload).strip()
+            if not script:
+                return None
+            return Math(script, to_latex(script))
+    return None
+
+
+def _flatten_table(table: Table) -> str:
+    return " ".join(c for row in table.rows for c in row if c)
 
 
 def _parse_gso(
@@ -159,13 +449,16 @@ def _parse_gso(
     return images, i
 
 
+CellParas = list[list[Inline]]
+
+
 def _parse_table(
-    recs: Sequence[Record], i: int, ctrl_level: int, docinfo: DocInfo
+    recs: Sequence[Record], i: int, ctrl_level: int, docinfo: DocInfo, ctx: ReadContext
 ) -> tuple[Table | None, int]:
     i += 1
     header: TableHeader | None = None
-    cells: list[tuple[CellHeader, list[str]]] = []
-    current: tuple[CellHeader, list[str]] | None = None
+    cells: list[tuple[CellHeader, CellParas]] = []
+    current: tuple[CellHeader, CellParas] | None = None
     while i < len(recs) and recs[i].level > ctrl_level:
         r = recs[i]
         if r.tag_id == HWPTAG_TABLE and r.level == ctrl_level + 1:
@@ -176,32 +469,37 @@ def _parse_table(
             cells.append(current)
             i += 1
         elif r.tag_id == HWPTAG_PARA_HEADER and r.level == ctrl_level + 1 and current is not None:
-            # 셀 단락은 텍스트만 쓴다 (수준은 버린다)
-            text, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, None)
-            if text:
-                current[1].append(text)
+            # 셀 단락은 인라인만 쓴다 (수준은 버린다)
+            inlines, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, None, ctx)
+            para = make_paragraph(inlines)
+            if para is not None:
+                current[1].append(list(para.inlines) if para.inlines else [para.text])
             for b in trailing:
-                # 셀 안의 중첩 표·컨트롤 단락 → 부모 셀 텍스트로 평탄화
+                # 셀 안의 중첩 표·컨트롤 단락 → 부모 셀 인라인으로 평탄화
                 if isinstance(b, Paragraph):
-                    current[1].append(b.text)
+                    current[1].append(list(b.inlines) if b.inlines else [b.text])
                 elif isinstance(b, Table):
-                    flat = " ".join(c for row in b.rows for c in row if c)
+                    flat = _flatten_table(b)
                     if flat:
-                        current[1].append(flat)
+                        current[1].append([flat])
         else:
             i += 1
     if header is None or header.row_count == 0 or header.col_count == 0:
         return None, i
-    return Table(rows=_place_cells(header, cells)), i
+    return make_table(_place_cells(header, cells)), i
 
 
 def _place_cells(
-    header: TableHeader, cells: Sequence[tuple[CellHeader, list[str]]]
-) -> list[list[str]]:
+    header: TableHeader, cells: Sequence[tuple[CellHeader, CellParas]]
+) -> list[list[list[Inline]]]:
     rows, cols = header.row_count, header.col_count
-    grid: list[list[str | None]] = [[None] * cols for _ in range(rows)]
+    grid: list[list[list[Inline] | None]] = [[None] * cols for _ in range(rows)]
     for cell, paras in cells:
-        text = "\n".join(paras)
+        text: list[Inline] = []
+        for n, para in enumerate(paras):
+            if n:
+                text.append("\n")
+            text.extend(para)
         r, c = cell.row, cell.col
         if not (0 <= r < len(grid) and 0 <= c < cols) or grid[r][c] is not None:
             # 좌표가 범위 밖이거나 이미 찬 자리 → 읽기 순서로 첫 빈 칸
@@ -217,5 +515,5 @@ def _place_cells(
         for rr in range(r, min(r + max(cell.row_span, 1), len(grid))):
             for cc in range(c, min(c + max(cell.col_span, 1), cols)):
                 if (rr, cc) != (r, c) and grid[rr][cc] is None:
-                    grid[rr][cc] = ""  # 병합으로 덮인 칸
-    return [[x if x is not None else "" for x in row] for row in grid]
+                    grid[rr][cc] = []  # 병합으로 덮인 칸
+    return [[x if x is not None else [] for x in row] for row in grid]

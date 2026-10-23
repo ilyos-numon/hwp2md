@@ -20,7 +20,7 @@ from ..errors import (
 from ..images import ImageNamer, normalize_ext
 from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
-from .body import parse_blocks
+from .body import ReadContext, parse_blocks
 from .docinfo import BIN_DATA_EMBEDDING, DocInfo, parse_docinfo
 from .records import iter_records
 
@@ -169,14 +169,17 @@ def read_sections(path: Source) -> list[bytes]:
 
 
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
-    """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다.
-    skips: 건너뛴 요소를 셀 카운터 (아직 세지 않는다)."""
+    """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙이고,
+    문서 끝에 각주(번호순)·미주(번호순) Note 블록을 둔다.
+    skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모)를 셀 카운터."""
     pkg = read_hwp5_package(path)
     docinfo = parse_docinfo(pkg.docinfo)
     store = BinDataStore(docinfo, pkg.bin_data, compressed=pkg.header.compressed)
+    ctx = ReadContext(skips)  # 각주 번호·건너뜀을 섹션을 넘어 유지
     blocks: list[Block] = []
     for section in pkg.sections:
-        blocks.extend(parse_blocks(iter_records(section), docinfo, store))
+        blocks.extend(parse_blocks(iter_records(section), docinfo, store, ctx))
+    blocks.extend(ctx.note_blocks())
     return blocks
 
 
