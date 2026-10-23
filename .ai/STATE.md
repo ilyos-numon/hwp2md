@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261023-extract-dropped
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
-- 현재 단계: S3 / 27 — 블록 모델·렌더 계약
+- 현재 단계: S4 / 27 — 결과·페이로드 건너뜀 연결
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-extract-dropped`
-- 마지막 체크포인트: 2026-10-23 17:38 (S2 DONE)
+- 마지막 체크포인트: 2026-10-23 17:47 (S3 DONE)
 - 마지막 커밋: ae6ed95 [s0] V3 시안·기능 명세 선행 커밋
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S3(implementer opus): PLAN §4-A~D·M 을 blocks/skips/numbering/render/synth_items 로 고정 (PLAN §5 Stage 3)
+1. S4(implementer opus): convert/memory/__init__/리더 read_blocks 에 skipped 연결 (PLAN §5 Stage 4, §4-E)
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (Q1~Q10 승인 완료)

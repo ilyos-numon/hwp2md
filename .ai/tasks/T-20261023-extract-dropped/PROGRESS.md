@@ -37,3 +37,25 @@
 - 커밋: 7a6518d [T-20261023-extract-dropped][s1] 기준선 기록
 - 다음: S3 블록 모델·렌더 계약
 - 메모: S1 브라우저 모드 실패 2건도 샘플 집합 원인이었음. test_cli_convert.py:16 *.hwp glob 잔존(현재 통과, 범위 밖)
+
+## [2026-10-23 17:38] S3 | orchestrator | START
+- 한 일: 블록 모델·렌더 계약
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: bced79e [T-20261023-extract-dropped][s2] 실제 샘플 선정 규칙 고정 (tests/samples.py)
+
+## [2026-10-23 17:39] S3 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: bced79e [T-20261023-extract-dropped][s2] 실제 샘플 선정 규칙 고정 (tests/samples.py)
+
+## [2026-10-23 17:45] S3 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/blocks.py src/hwp2md/render.py src/hwp2md/numbering.py src/hwp2md/skips.py tests/synth_items.py tests/unit/test_render_extract.py 
+- 커밋: bced79e [T-20261023-extract-dropped][s2] 실제 샘플 선정 규칙 고정 (tests/samples.py)
+
+## [2026-10-23 17:47] S3 | implementer(opus)+reviewer(sonnet) | DONE
+- 한 일: blocks(Link/NoteRef/Math/ListInfo/Note/make_*/iter_images)·skips·numbering·render(safe_link_url·인라인·목록·Note)·synth_items(EXT_FIXTURES 16). unit 408P, 기준선 md 61개 동일, reviewer PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/blocks.py src/hwp2md/numbering.py src/hwp2md/render.py src/hwp2md/skips.py tests/synth_items.py tests/unit/test_render_extract.py 
+- 커밋: bced79e [T-20261023-extract-dropped][s2] 실제 샘플 선정 규칙 고정 (tests/samples.py)
+- 다음: S4 결과·페이로드 건너뜀
+- 메모: 수식 기대값은 to_latex('a over b')=='\frac{a}{b}' 가정(S6/S9 확인). _count_blocks 는 S4 에서 iter_images·Note 반영

@@ -7,7 +7,7 @@
 
 ## 2. 공통 계약
 
-- [ ] 2.1 `blocks.py`(Link·NoteRef·Math·ListInfo·Note, Paragraph·Table 필드 추가, make_paragraph·make_table·plain_text·iter_images)와 `skips.py`(SkipKind·SKIP_LABELS·SkipCounter)를 추가하고 `render.py` 를 계약대로 확장한다
+- [x] 2.1 `blocks.py`(Link·NoteRef·Math·ListInfo·Note, Paragraph·Table 필드 추가, make_paragraph·make_table·plain_text·iter_images)와 `skips.py`(SkipKind·SKIP_LABELS·SkipCounter)를 추가하고 `render.py` 를 계약대로 확장한다
 - [ ] 2.2 `convert.py`·`memory.py` 가 `skips` 를 받아 `ConvertResult.skipped`·`MemoryResult.skipped`·페이로드 `skipped` 를 채우게 하고, `__init__.py` docstring 에 한컴 공개 문서 문구와 새 export 를 넣는다
 
 ## 3. 보호 문서
