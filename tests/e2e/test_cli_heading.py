@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from samples import LEGACY_HWP5, LEGACY_HWPX
 from synth_hwp5 import (
     EXPECTED_MARKDOWN,
     EXPECTED_MARKDOWN_HEADING_EDGE,
@@ -32,8 +33,8 @@ from synth_hwpx import write_hwpx
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
 FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures"
-REAL_HWP5 = sorted(FIXTURES_DIR.glob("*.hwp"))
-REAL_HWPX = sorted(FIXTURES_DIR.joinpath("hwpx").glob("*.hwpx"))
+REAL_HWP5 = LEGACY_HWP5
+REAL_HWPX = LEGACY_HWPX
 REAL_EXPECTED: dict[str, tuple[int, int, int]] = {  # (단락, 표, 제목) §4.11
     "form200005063113.hwp": (118, 8, 0),
     "form210001070268.hwp": (47, 0, 0),

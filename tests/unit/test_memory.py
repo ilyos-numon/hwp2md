@@ -30,10 +30,11 @@ from hwp2md.memory import (
     safe_stem,
     to_payload,
 )
+from samples import LEGACY_SAMPLES
 from synth_hwp5 import FIXTURE_PARAGRAPHS, write_hwp5
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
-SAMPLES = sorted(FIXTURES.glob("*.hwp")) + sorted((FIXTURES / "hwpx").glob("*.hwpx"))
+SAMPLES = LEGACY_SAMPLES
 SAMPLE_IDS = [p.name for p in SAMPLES]
 BROTHER = next(p for p in SAMPLES if p.name.startswith("브라더"))
 

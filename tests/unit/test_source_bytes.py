@@ -9,12 +9,13 @@ from hwp2md import NotHwpFileError, detect_format
 from hwp2md.hwp5 import reader as hwp5_reader
 from hwp2md.hwpx import reader as hwpx_reader
 from hwp2md.source import MEMORY_LABEL, as_binary_io, source_label
+from samples import LEGACY_HWP5, LEGACY_HWPX
 from synth_hwp5 import FIXTURE_PARAGRAPHS, write_hwp5
 from synth_hwpx import write_hwpx
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
-HWP5_SAMPLES = sorted(FIXTURES.glob("*.hwp"))
-HWPX_SAMPLES = sorted((FIXTURES / "hwpx").glob("*.hwpx"))
+HWP5_SAMPLES = LEGACY_HWP5
+HWPX_SAMPLES = LEGACY_HWPX
 SAMPLES = [(p, "hwp5") for p in HWP5_SAMPLES] + [(p, "hwpx") for p in HWPX_SAMPLES]
 SAMPLE_IDS = [p.name for p, _ in SAMPLES]
 

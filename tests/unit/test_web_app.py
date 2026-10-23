@@ -16,10 +16,11 @@ from hwp2md import convert_bytes, memory
 from hwp2md.web import app as web_app
 from hwp2md.web import server
 from hwp2md.web.app import STATIC_DIR, build_runtime_zip, create_app
+from samples import LEGACY_HWPX
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 HWP5 = FIXTURES / "form200005063113.hwp"
-BROTHER = next((FIXTURES / "hwpx").glob("브라더*.hwpx"))
+BROTHER = next(p for p in LEGACY_HWPX if p.name.startswith("브라더"))
 OCTET = {"Content-Type": "application/octet-stream"}
 
 

@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from samples import LEGACY_HWP5, LEGACY_HWPX
 from synth_hwp5 import (
     EXPECTED_MARKDOWN_IMAGE_IN_CELL,
     EXPECTED_MARKDOWN_IMAGE_MISSING,
@@ -37,8 +38,8 @@ from synth_hwpx import write_hwpx
 
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
-REAL_HWP5 = sorted(Path(__file__).resolve().parents[1].joinpath("fixtures").glob("*.hwp"))
-REAL_HWPX = sorted(Path(__file__).resolve().parents[1].joinpath("fixtures", "hwpx").glob("*.hwpx"))
+REAL_HWP5 = LEGACY_HWP5
+REAL_HWPX = LEGACY_HWPX
 REAL_IMAGE_EXPECTED: dict[str, tuple[int, int, dict[str, str]]] = {  # §4.10
     "form200005063113.hwp": (0, 0, {}),
     "form210001070268.hwp": (0, 0, {}),

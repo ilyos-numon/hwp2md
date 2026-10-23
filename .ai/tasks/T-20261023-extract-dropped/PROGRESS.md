@@ -20,3 +20,20 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 0d1546a [T-20261023-extract-dropped][record] PROGRESS 위치 정정 (STATE 태스크 줄 형식)
 - 다음: S2 샘플 선정 규칙
+
+## [2026-10-23 17:35] S2 | orchestrator | START
+- 한 일: 실제 샘플 선정 규칙 고정
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 7a6518d [T-20261023-extract-dropped][s1] 기준선 기록
+
+## [2026-10-23 17:36] S2 | hook | AUTO
+- 한 일: 도구 호출 15회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 7a6518d [T-20261023-extract-dropped][s1] 기준선 기록
+
+## [2026-10-23 17:38] S2 | test-writer(sonnet) | DONE
+- 한 일: tests/samples.py(LEGACY 5개·classify·all_samples) + 기존 테스트 7개 샘플 정의만 교체. 1회 수정(HWPML DOCTYPE 분류). unit 338P, e2e cli/api 51P, web_ui 8P(브라우저 모드 포함)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py tests/fixtures/README.md tests/unit/test_memory.py tests/unit/test_source_bytes.py tests/unit/test_web_app.py tests/samples.py 
+- 커밋: 7a6518d [T-20261023-extract-dropped][s1] 기준선 기록
+- 다음: S3 블록 모델·렌더 계약
+- 메모: S1 브라우저 모드 실패 2건도 샘플 집합 원인이었음. test_cli_convert.py:16 *.hwp glob 잔존(현재 통과, 범위 밖)
