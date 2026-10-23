@@ -9,11 +9,12 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 from typing import Any, Literal
 
-from .blocks import Image
+from .blocks import iter_images
 from .convert import _count_blocks, read_blocks
 from .errors import EmptyInputError, InputTooLargeError, NotHwpFileError, UnsupportedHwpError
 from .images import image_dir_name
 from .render import render_blocks
+from .skips import SKIP_LABELS, SkipCounter, SkipKind
 
 MAX_INPUT_BYTES = 50 * 1024 * 1024  # 52428800
 ErrorCode = Literal["empty", "too_large", "not_hwp", "unsupported", "convert_failed"]
@@ -57,6 +58,7 @@ class MemoryResult:
     table_count: int
     heading_count: int
     image_count: int  # Image 블록 수(재참조 포함)
+    skipped: tuple[tuple[SkipKind, int], ...] = ()  # SkipCounter.items() — count > 0, 보고 순서
 
 
 def safe_stem(filename: str) -> str:
@@ -77,15 +79,16 @@ def convert_bytes(data: bytes, filename: str = "document.hwp") -> MemoryResult:
         raise InputTooLargeError(
             f"파일이 너무 큽니다: {len(data)} bytes (최대 {MAX_INPUT_BYTES} bytes)"
         )
-    blocks = read_blocks(data)
+    counter = SkipCounter()
+    blocks = read_blocks(data, skips=counter)
     stem = safe_stem(filename)
     image_dir = image_dir_name(stem)
     markdown = render_blocks(blocks, image_dir=image_dir)
     paragraph_count, table_count, heading_count, image_count = _count_blocks(blocks)
     unique: dict[str, MemoryImage] = {}
-    for block in blocks:
-        if isinstance(block, Image) and block.file_name not in unique:
-            unique[block.file_name] = MemoryImage(file_name=block.file_name, data=block.data)
+    for img in iter_images(blocks):
+        if img.file_name not in unique:
+            unique[img.file_name] = MemoryImage(file_name=img.file_name, data=img.data)
     return MemoryResult(
         stem=stem,
         markdown=markdown,
@@ -95,6 +98,7 @@ def convert_bytes(data: bytes, filename: str = "document.hwp") -> MemoryResult:
         table_count=table_count,
         heading_count=heading_count,
         image_count=image_count,
+        skipped=counter.items(),
     )
 
 
@@ -137,6 +141,10 @@ def to_payload(result: MemoryResult) -> dict[str, Any]:
             "headings": result.heading_count,
             "images": result.image_count,
         },
+        "skipped": [
+            {"kind": kind, "label": SKIP_LABELS[kind], "count": count}
+            for kind, count in result.skipped
+        ],
     }
 
 
