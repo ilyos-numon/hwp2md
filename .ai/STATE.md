@@ -10,7 +10,7 @@
 - 현재 단계: S1 — 데모 화면 + 문서 작성
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-docs-finalize`
-- 마지막 체크포인트: 2026-10-23 11:07 (S1 START)
+- 마지막 체크포인트: 2026-10-23 11:16 (S3 DONE)
 - 마지막 커밋: 2cc095c [T-20261023-web-preview][s10] e2e: web ui both modes, no-upload, parity, screenshots
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
