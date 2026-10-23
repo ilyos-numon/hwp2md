@@ -145,3 +145,9 @@
 - 변경 파일(미커밋, .ai 제외): NOTICE src/hwp2md/equation/__init__.py src/hwp2md/equation/eqedit.py src/hwp2md/equation/tokens.py src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_ole_chart.py 
 - 커밋: 85e5abd [T-20261023-extract-dropped][s5] 보호 문서 판별 (DRM·비밀번호 전용 예외·오류 코드)
 - 다음: S7 커밋
+
+## [2026-10-23 17:59] S7 | implementer(opus) | DONE
+- 한 일: ole.py(unwrap_hwpx_ole·chart_xml_to_blocks·ole_to_outcome), synth_ole(직접 CFB 구성: build_cfb 가 HWP 스트림만 받아 이탈, reviewer 수용), test_ole_chart 21
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_ole_chart.py 
+- 커밋: e48c5c2 [T-20261023-extract-dropped][s6] 수식 변환기 벤더링 (python-hwpx, Apache-2.0)
+- 다음: S8 커밋
