@@ -588,3 +588,9 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/bindata.py src/hwp2md/ole.py tests/e2e/test_extract_real.py tests/samples.py tests/e2e/test_design_v3.py tests/e2e/test_web_extract.py tests/unit/test_zero_byte_images.py 
 - 커밋: 8c84270 [T-20261023-extract-dropped][s24] E2E: 실제 샘플 요소별·세 포맷 CLI
 - 다음: S25 대기
+
+## [2026-10-23 19:09] S25 | test-writer(sonnet) | DONE
+- 한 일: test_web_extract(서버6·브라우저3·API5) + test_design_v3(4): 18P 0F 0S, 스크린샷 4개
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_design_v3.py tests/e2e/test_web_extract.py 
+- 커밋: ca3fd9e [T-20261023-extract-dropped][s24] 0바이트 그림을 본체 없는 그림으로 보고 (실제 샘플 E2E 에서 발견)
+- 다음: S26 E2E 실행

@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261023-extract-dropped
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
-- 현재 단계: P3 (S20~S23 메인 트리 동시, 쓰기 범위 비중첩) — 웹 UI, design/v3, 한계 문서·명세, README·라이선스
+- 현재 단계: S26 / 27 — E2E 실행·성공 기준 C1~C19
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-extract-dropped`
-- 마지막 체크포인트: 2026-10-23 19:08 (S24 DONE)
+- 마지막 체크포인트: 2026-10-23 19:09 (S25 DONE)
 - 마지막 커밋: 81169a0 [s14] HWPML 요소
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. P3 4개 보고 받으면 통합 검증 → 단계별 커밋(경로 지정) → S24 E2E 작성
+1. S26 runner → S27 reviewer(스크린샷 직접) + scribe RESULT → gate.sh → openspec validate·archive → done 커밋
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (Q1~Q10 승인 완료)
