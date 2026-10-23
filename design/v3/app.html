@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>hwp2md 변환 도구</title>
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var t = localStorage.getItem("hwp2md-theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="page-app" data-state="idle">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html" aria-label="hwp2md 서비스 소개로 이동">
+        <svg class="brand__mark"><use href="#i-logo"/></svg>
+        <span>hwp2md</span>
+        <span class="brand__ver">v3.0</span>
+      </a>
+      <nav class="site-nav" aria-label="사이트">
+        <a href="index.html">서비스 소개</a>
+      </nav>
+      <div class="header-actions">
+        <div class="mode">
+          <label class="switch" for="mode-toggle">
+            <input type="checkbox" id="mode-toggle" role="switch">
+            <span class="switch__track" aria-hidden="true"></span>
+            <span class="switch__label">브라우저 안에서만 처리</span>
+          </label>
+          <span id="mode-status" data-state="server" aria-live="polite">서버 모드</span>
+        </div>
+        <button type="button" class="icon-btn theme-toggle" aria-label="다크 모드로 전환">
+          <svg class="i-moon"><use href="#i-moon"/></svg>
+          <svg class="i-sun"><use href="#i-sun"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app" id="main">
+    <div class="app-head">
+      <h1>한글 문서를 Markdown으로</h1>
+      <p>HWP·HWPX 파일을 선택하고 변환 결과를 확인하세요.</p>
+    </div>
+
+    <div class="error-wrap">
+      <div id="error" role="alert" hidden>
+        <svg class="error__icon"><use href="#i-alert"/></svg>
+        <span id="error-text"></span>
+        <button type="button" class="error__close" id="error-close" aria-label="오류 닫기"><svg><use href="#i-x"/></svg></button>
+      </div>
+    </div>
+
+    <section id="drop-zone" tabindex="0" role="button" aria-label="HWP 또는 HWPX 파일 선택" aria-describedby="drop-hint">
+      <svg class="drop-zone__frame" aria-hidden="true" preserveAspectRatio="none"><rect x="1" y="1" rx="13" ry="13"/></svg>
+      <input type="file" id="file-input" accept=".hwp,.hwpx" hidden>
+      <span class="drop-zone__icon" aria-hidden="true"><svg><use href="#i-upload"/></svg></span>
+      <p class="drop-zone__title"><span class="t-idle">파일을 놓거나 선택하세요</span><span class="t-drag">여기에 놓으면 바로 변환합니다</span></p>
+      <p class="drop-zone__hint" id="drop-hint">HWP · HWPX · 최대 50MB</p>
+      <button type="button" class="drop-zone__sample" id="demo-sample">예시 문서로 해 보기</button>
+    </section>
+
+    <section class="status-bar" aria-label="변환 상태">
+      <div class="file-chip" id="file-chip" hidden>
+        <svg class="file-chip__icon"><use href="#i-logo"/></svg>
+        <span id="file-name">선택한 파일 없음</span>
+        <span class="badge" id="file-badge"></span>
+        <span class="file-chip__size" id="file-size"></span>
+      </div>
+      <span class="status-text" id="status-text">변환 대기 중</span>
+      <span id="result-meta" aria-live="polite"></span>
+      <span class="busy" aria-hidden="true">변환 중…</span>
+      <button type="button" class="btn btn--primary btn--sm" id="download" disabled>
+        <svg><use href="#i-download"/></svg>ZIP 다운로드
+      </button>
+      <span class="progress" aria-hidden="true"><span class="progress__bar"></span></span>
+    </section>
+
+    <div class="pane-tabs" role="tablist" aria-label="결과 보기">
+      <button type="button" role="tab" id="tab-preview" aria-controls="pane-preview" aria-selected="true">미리보기</button>
+      <button type="button" role="tab" id="tab-raw" aria-controls="pane-raw" aria-selected="false" tabindex="-1">Markdown</button>
+    </div>
+
+    <section class="panes">
+      <article class="pane" id="pane-preview" role="tabpanel" aria-labelledby="tab-preview">
+        <header class="pane__head">
+          <span class="pane__title"><svg><use href="#i-eye"/></svg>미리보기</span>
+        </header>
+        <div class="pane__body">
+          <div id="preview" class="markdown-body">
+            <div class="empty">
+              <svg><use href="#i-eye"/></svg>
+              <p>변환된 문서의 미리보기가 여기에 표시됩니다</p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="pane pane--raw" id="pane-raw" role="tabpanel" aria-labelledby="tab-raw">
+        <header class="pane__head">
+          <span class="pane__title"><svg><use href="#i-code"/></svg>Markdown</span>
+          <span class="pane__meta" id="raw-meta"></span>
+          <button type="button" class="btn btn--ghost btn--sm" id="copy" disabled>
+            <svg class="i-copy"><use href="#i-copy"/></svg><svg class="i-done"><use href="#i-check"/></svg><span>복사</span>
+          </button>
+        </header>
+        <div class="pane__body">
+          <div class="empty empty--raw">
+            <svg><use href="#i-code"/></svg>
+            <p>변환된 Markdown 원문이 여기에 표시됩니다</p>
+          </div>
+          <pre id="raw"></pre>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <details class="demo-dock">
+    <summary><svg><use href="#i-flask"/></svg>데모</summary>
+    <div class="demo-dock__body">
+      <span class="demo-dock__note">백엔드 연결 전: 어떤 파일이든 예시 결과를 보여 줍니다</span>
+      <button type="button" data-demo="sample">예시 변환</button>
+      <button type="button" data-demo="error">오류 보기</button>
+      <button type="button" data-demo="reset">처음으로</button>
+    </div>
+  </details>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="js/demo-payload.js"></script>
+  <script src="js/demo-engine.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

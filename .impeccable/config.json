@@ -11,6 +11,42 @@
         ],
         "createdAt": "2026-10-23T01:28:27.666Z",
         "reason": "orchestrator: L337 is .markdown-body blockquote neutral border (standard Markdown quote rendering), not an accent card"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "design/v3/index.html"
+        ],
+        "createdAt": "2026-10-23T06:18:22.094Z",
+        "reason": "Claude visual check 2026-10-23: desktop/mobile screenshots show 48-152px section padding and padded grid items; detector misreads pinned/section wrappers"
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "design/v3/index.html"
+        ],
+        "createdAt": "2026-10-23T06:18:22.126Z",
+        "reason": "Claude: intentional illustration (mock document sheet inside window frame, flow diagram nodes inside diagram stage), not UI card nesting"
+      },
+      {
+        "rule": "marquee",
+        "value": "*",
+        "files": [
+          "design/v3/app.html"
+        ],
+        "createdAt": "2026-10-23T06:18:22.154Z",
+        "reason": "Claude: 2px indeterminate progress bar shown only while converting, specified by Precision Slate design system; reduced-motion shows static bar"
+      },
+      {
+        "rule": "em-dash-overuse",
+        "value": "*",
+        "files": [
+          "design/v3/index.html"
+        ],
+        "createdAt": "2026-10-23T07:20:35.643Z",
+        "reason": "Claude: remaining matches are box-drawing characters in real 'tree out' CLI output inside the terminal demo, not prose em-dashes"
       }
     ]
   }
