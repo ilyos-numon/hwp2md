@@ -2,7 +2,7 @@
 
 ## 1. 의존성
 
-- [ ] 1.1 `pyproject.toml` 에 `[project.optional-dependencies] web = ["starlette>=0.37", "uvicorn>=0.30"]` 과 dev 그룹 `starlette`·`uvicorn`·`httpx>=0.27`·`playwright>=1.45` 를 추가하고 `uv sync` + `uv run playwright install chromium` 후 네 모듈 import 와 wheel METADATA 의 `Provides-Extra: web` 을 확인한다
+- [x] 1.1 `pyproject.toml` 에 `[project.optional-dependencies] web = ["starlette>=0.37", "uvicorn>=0.30"]` 과 dev 그룹 `starlette`·`uvicorn`·`httpx>=0.27`·`playwright>=1.45` 를 추가하고 `uv sync` + `uv run playwright install chromium` 후 네 모듈 import 와 wheel METADATA 의 `Provides-Extra: web` 을 확인한다
 
 ## 2. Pyodide 스파이크
 

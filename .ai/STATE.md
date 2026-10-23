@@ -7,10 +7,10 @@
 - 현재 태스크: T-20261023-web-preview
 - 마지막 완료: T-20261022-image-extract (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-web-preview/PLAN.md` (상태: APPROVED)
-- 현재 단계: S0 — 플랜 작성 완료
+- 현재 단계: S2 — Pyodide 스파이크
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-web-preview`
-- 마지막 체크포인트: 2026-10-23 10:02 (S0 DONE)
+- 마지막 체크포인트: 2026-10-23 10:07 (S1 DONE)
 - 마지막 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)

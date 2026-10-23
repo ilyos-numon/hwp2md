@@ -20,7 +20,7 @@ MVP 착수 전. README.md의 MVP 범위만 구현한다.
 
 ## 명령 (에이전트가 그대로 실행한다 — 스택 확정 후 채운다. (none)은 그 검증 생략)
 ```
-INSTALL_CMD: uv sync
+INSTALL_CMD: uv sync && uv run playwright install chromium
 DEV_CMD: (none)
 DEV_URL: (none)
 DEV_READY: (none)
