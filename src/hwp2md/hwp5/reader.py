@@ -6,7 +6,6 @@ import struct
 import zlib
 from collections.abc import Mapping
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 import olefile
@@ -14,6 +13,7 @@ import olefile
 from ..blocks import Block, Image, Paragraph
 from ..errors import NotHwpFileError, UnsupportedHwpError
 from ..images import ImageNamer, normalize_ext
+from ..source import Source, as_binary_io, source_label
 from .body import parse_blocks
 from .docinfo import BIN_DATA_EMBEDDING, DocInfo, parse_docinfo
 from .records import iter_records
@@ -67,19 +67,20 @@ class Hwp5Package:
     bin_data: dict[str, bytes]  # "BinData/<NAME>" 스트림 원본 바이트(해제 안 함). 키 = <NAME>
 
 
-def read_hwp5_package(path: Path) -> Hwp5Package:
+def read_hwp5_package(path: Source) -> Hwp5Package:
     """FileHeader·DocInfo·BodyText 섹션·BinData 스트림을 읽는다."""
-    if not olefile.isOleFile(str(path)):
-        raise NotHwpFileError(f"not an OLE compound file: {path}")
-    ole = olefile.OleFileIO(str(path))
+    label = source_label(path)
+    if not olefile.isOleFile(as_binary_io(path)):
+        raise NotHwpFileError(f"not an OLE compound file: {label}")
+    ole = olefile.OleFileIO(as_binary_io(path))
     try:
         if not ole.exists("FileHeader"):
-            raise NotHwpFileError(f"FileHeader stream missing: {path}")
+            raise NotHwpFileError(f"FileHeader stream missing: {label}")
         header = parse_file_header(_read_stream(ole, "FileHeader"))
         if header.encrypted:
-            raise UnsupportedHwpError(f"encrypted document: {path}")
+            raise UnsupportedHwpError(f"encrypted document: {label}")
         if header.distribution:
-            raise UnsupportedHwpError(f"distribution document: {path}")
+            raise UnsupportedHwpError(f"distribution document: {label}")
         docinfo = b""
         if ole.exists("DocInfo"):
             raw = _read_stream(ole, "DocInfo")
@@ -97,11 +98,11 @@ def read_hwp5_package(path: Path) -> Hwp5Package:
     finally:
         ole.close()
     if not sections:
-        raise NotHwpFileError(f"BodyText/Section0 stream missing: {path}")
+        raise NotHwpFileError(f"BodyText/Section0 stream missing: {label}")
     return Hwp5Package(header=header, docinfo=docinfo, sections=sections, bin_data=bin_data)
 
 
-def read_streams(path: Path) -> tuple[bytes, list[bytes]]:
+def read_streams(path: Source) -> tuple[bytes, list[bytes]]:
     """호환 래퍼: (DocInfo 바이트, BodyText/Section<N> 목록)."""
     pkg = read_hwp5_package(path)
     return pkg.docinfo, pkg.sections
@@ -150,12 +151,12 @@ class BinDataStore:
         return Image(file_name=self._namer.name_for(str(bindata_id), ext), data=data)
 
 
-def read_sections(path: Path) -> list[bytes]:
+def read_sections(path: Source) -> list[bytes]:
     """호환 래퍼: BodyText/Section<N> 스트림을 N 오름차순으로 (압축이면 해제해서) 반환."""
     return read_streams(path)[1]
 
 
-def read_blocks(path: Path) -> list[Block]:
+def read_blocks(path: Source) -> list[Block]:
     """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다."""
     pkg = read_hwp5_package(path)
     docinfo = parse_docinfo(pkg.docinfo)
@@ -166,6 +167,6 @@ def read_blocks(path: Path) -> list[Block]:
     return blocks
 
 
-def read_paragraphs(path: Path) -> list[str]:
+def read_paragraphs(path: Source) -> list[str]:
     """호환 래퍼: 본문 Paragraph 블록의 비어 있지 않은 텍스트만 (표 셀 텍스트 제외)."""
     return [b.text for b in read_blocks(path) if isinstance(b, Paragraph) and b.text]
