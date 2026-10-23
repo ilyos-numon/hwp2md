@@ -5,12 +5,12 @@
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
 - 현재 태스크: 없음
-- 마지막 완료: T-20261023-extract-dropped (병합 전, 사용자 RESULT 검토 대기)
+- 마지막 완료: T-20261023-extract-dropped (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: DONE)
 - 결과: `.ai/tasks/T-20261023-extract-dropped/RESULT.md`
 - 현재 단계: 없음
 - 상태: IDLE
-- 브랜치: `ai/T-20261023-extract-dropped` (main 병합 전)
+- 브랜치: `main` (ai/T-20261023-extract-dropped 병합·푸시 완료 2026-10-23)
 - 마지막 체크포인트: 2026-10-23 S27 DONE
 - 마지막 커밋: 73345bd [T-20261023-extract-dropped][s27] (PROGRESS 기준, git 재확인 필요)
 
