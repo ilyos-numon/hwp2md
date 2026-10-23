@@ -6,7 +6,7 @@
 
 ## 2. Pyodide 스파이크
 
-- [ ] 2.1 headless chromium 에서 CDN Pyodide + lxml 로 `src/hwp2md` + olefile 소스를 import 해 실제 샘플 5개를 변환하고, Markdown 이 네이티브 `convert()` 와 5/5 같음을 `logs/s2-spike.log` 의 `SPIKE OK 5/5` 로 확인한다
+- [x] 2.1 headless chromium 에서 CDN Pyodide + lxml 로 `src/hwp2md` + olefile 소스를 import 해 실제 샘플 5개를 변환하고, Markdown 이 네이티브 `convert()` 와 5/5 같음을 `logs/s2-spike.log` 의 `SPIKE OK 5/5` 로 확인한다
 
 ## 3. 바이트 입력 리더
 
