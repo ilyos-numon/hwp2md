@@ -29,6 +29,7 @@ from synth_items import (
     SynthHeaderFooter,
     SynthHidden,
     SynthLink,
+    SynthListPara,
     SynthNote,
     SynthRich,
     SynthTextBox,
@@ -440,6 +441,8 @@ def ext_item_xml(
         return captioned_table_xml(item, para_id=para_id, first=first)
     if isinstance(item, SynthChart):
         return chart_paragraph_xml(item, para_id=para_id, first=first, charts=charts)
+    if isinstance(item, SynthListPara):
+        return list_paragraph_xml(item, para_id=para_id, first=first)
     return None
 
 
@@ -471,6 +474,117 @@ def section_xml(
     ).encode("utf-8")
 
 
+LIST_PARA_PR_BASE = 8  # 목록 paraPr id 시작 (0 = 본문, 1~7 = 개요)
+LIST_NUMBERING_ID = 1  # 번호 목록이 쓰는 hh:numbering id
+LIST_BULLET_ID = 1  # 글머리표가 쓰는 hh:bullet id
+BULLET_CHAR = "•"
+
+
+def list_para_pr_id(kind: str, depth: int) -> int:
+    """(종류, 수준) → paraPr id. 글머리표 BASE+depth, 번호 BASE+7+depth (depth 0~6)."""
+    return LIST_PARA_PR_BASE + (0 if kind == "bullet" else 7) + depth
+
+
+def list_paragraph_xml(item: SynthListPara, *, para_id: int, first: bool = False) -> str:
+    return paragraph_xml(
+        item.text, para_id=para_id, first=first, para_pr_id=list_para_pr_id(item.kind, item.depth)
+    )
+
+
+def has_list(items: Sequence[object]) -> bool:
+    return any(isinstance(x, SynthListPara) for x in items)
+
+
+def list_para_pr_xml(kind: str, depth: int, *, in_switch: bool = False) -> str:
+    """목록 paraPr. in_switch 면 heading 을 hp:switch/hp:case 안에 두고 hp:default 는 NONE."""
+    heading = (
+        f'<hh:heading type="{"BULLET" if kind == "bullet" else "NUMBER"}" '
+        f'idRef="{LIST_BULLET_ID if kind == "bullet" else LIST_NUMBERING_ID}" level="{depth}"/>'
+    )
+    if in_switch:
+        heading = (
+            '<hp:switch><hp:case hp:required-namespace="http://www.hancom.co.kr/hwpml/2016/HwpUnitChar">'
+            + heading
+            + '</hp:case><hp:default><hh:heading type="NONE" idRef="0" level="0"/>'
+            + "</hp:default></hp:switch>"
+        )
+    return (
+        f'<hh:paraPr id="{list_para_pr_id(kind, depth)}" tabPrIDRef="0" condense="0" '
+        'fontLineHeight="0" snapToGrid="1" suppressLineNumbers="0" checked="0">'
+        '<hh:align horizontal="JUSTIFY" vertical="BASELINE"/>' + heading + "</hh:paraPr>"
+    )
+
+
+def para_head_templates(items: Sequence[object]) -> dict[int, str]:
+    """번호 정의 하나의 수준(1~7) → 형식. 그 수준 첫 번호 항목의 template, 없으면 "^L."."""
+    out = {level: f"^{level}." for level in range(1, 8)}
+    seen: set[int] = set()
+    for item in items:
+        if isinstance(item, SynthListPara) and item.kind == "number":
+            level = item.depth + 1
+            if level in out and level not in seen:
+                out[level] = item.template
+                seen.add(level)
+    return out
+
+
+def para_head_xml(level: int, text: str, *, num_format: str = "DIGIT", start: int = 1) -> str:
+    return (
+        f'<hh:paraHead start="{start}" level="{level}" align="LEFT" useInstWidth="1" '
+        f'autoIndent="1" widthAdjust="0" textOffsetType="PERCENT" textOffset="50" '
+        f'numFormat="{num_format}" charPrIDRef="4294967295" checkable="0">{escape(text)}'
+        "</hh:paraHead>"
+    )
+
+
+def numbering_xml(
+    templates: Mapping[int, str],
+    *,
+    numbering_id: int = LIST_NUMBERING_ID,
+    formats: Mapping[int, str] | None = None,
+    starts: Mapping[int, int] | None = None,
+    start: int = 0,
+) -> str:
+    """hh:numbering 하나. formats·starts 는 수준 → numFormat·시작 번호 (없으면 DIGIT·1)."""
+    fmts = formats or {}
+    sts = starts or {}
+    return (
+        f'<hh:numbering id="{numbering_id}" start="{start}">'
+        + "".join(
+            para_head_xml(lv, t, num_format=fmts.get(lv, "DIGIT"), start=sts.get(lv, 1))
+            for lv, t in templates.items()
+        )
+        + "</hh:numbering>"
+    )
+
+
+def lists_ref_xml(items: Sequence[object]) -> str:
+    """refList 안 목록 정의: hh:numberings(번호가 있을 때 id 1 하나)
+    + hh:bullets(글머리표가 있을 때 id 1 하나)."""
+    out = ""
+    if any(isinstance(x, SynthListPara) and x.kind == "number" for x in items):
+        out += (
+            '<hh:numberings itemCnt="1">'
+            + numbering_xml(para_head_templates(items))
+            + "</hh:numberings>"
+        )
+    if any(isinstance(x, SynthListPara) and x.kind == "bullet" for x in items):
+        out += (
+            f'<hh:bullets itemCnt="1"><hh:bullet id="{LIST_BULLET_ID}" char="{BULLET_CHAR}" '
+            'useImage="0">' + para_head_xml(0, "") + "</hh:bullet></hh:bullets>"
+        )
+    return out
+
+
+def list_para_props_xml(*, in_switch: bool = False) -> str:
+    """목록 paraPr 14개 (종류 2 × 수준 0~6)."""
+    return "".join(
+        list_para_pr_xml(kind, depth, in_switch=in_switch)
+        for kind in ("bullet", "number")
+        for depth in range(7)
+    )
+
+
 def para_pr_xml(i: int) -> str:
     return (
         f'<hh:paraPr id="{i}" tabPrIDRef="0" condense="0" fontLineHeight="0" snapToGrid="1" '
@@ -489,9 +603,37 @@ def style_xml(i: int) -> str:
     )
 
 
-def header_xml(section_count: int, *, outline: bool) -> bytes:
+def header_xml(
+    section_count: int,
+    *,
+    outline: bool,
+    list_items: Sequence[object] = (),
+    list_in_switch: bool = False,
+) -> bytes:
+    """list_items 에 SynthListPara 가 있으면 목록 정의와 목록 paraPr 를 더한다 (없으면 기존과 같은
+    바이트)."""
     n = section_count
     begin = '<hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/>'
+    if has_list(list_items):
+        outline_props = "".join(para_pr_xml(i) for i in range(8)) if outline else ""
+        styles = (
+            '<hh:styles itemCnt="8">' + "".join(style_xml(i) for i in range(8)) + "</hh:styles>"
+            if outline
+            else ""
+        )
+        return (
+            XML_DECL
+            + f'<hh:head xmlns:hh="{NS_HH}" xmlns:hp="{NS_HP}" version="1.5" secCnt="{n}">'
+            + begin
+            + "<hh:refList>"
+            + lists_ref_xml(list_items)
+            + "<hh:paraProperties>"
+            + outline_props
+            + list_para_props_xml(in_switch=list_in_switch)
+            + "</hh:paraProperties>"
+            + styles
+            + "</hh:refList></hh:head>"
+        ).encode("utf-8")
     if not outline:
         return (
             XML_DECL
@@ -531,7 +673,10 @@ def ole_manifest_items(charts: Sequence[SynthChart]) -> str:
 
 
 def hwpx_entries(
-    items: Sequence[Item | ExtItem], *, more_sections: Sequence[Sequence[Item | ExtItem]] = ()
+    items: Sequence[Item | ExtItem],
+    *,
+    more_sections: Sequence[Sequence[Item | ExtItem]] = (),
+    list_in_switch: bool = False,
 ) -> dict[str, bytes]:
     """삽입 순서: mimetype, version.xml, META-INF/container.xml, Contents/content.hpf,
     Contents/header.xml, BinData/image{k}.{ext} (missing 제외),
@@ -574,7 +719,12 @@ def hwpx_entries(
         + "".join(f'<opf:itemref idref="section{i}" linear="yes"/>' for i in range(n))
         + "</opf:spine></opf:package>"
     )
-    header = header_xml(n, outline=any(has_heading(s) for s in sections))  # type: ignore[arg-type]
+    header = header_xml(
+        n,
+        outline=any(has_heading(s) for s in sections),  # type: ignore[arg-type]
+        list_items=[x for sec in sections for x in sec],
+        list_in_switch=list_in_switch,
+    )
     entries: dict[str, bytes] = {
         "mimetype": HWPX_MIMETYPE,
         "version.xml": version.encode("utf-8"),
