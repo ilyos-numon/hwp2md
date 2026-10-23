@@ -82,6 +82,8 @@ class BinItemStore:
         if name is None:
             return None
         data = self._entries[name]
+        if not data:  # 0바이트 본체 → 본체 없는 그림 (호출 쪽이 image_missing 으로 센다)
+            return None
         base = name.rsplit("/", 1)[-1]
         ext = base.rsplit(".", 1)[1] if "." in base else None
         return Image(file_name=self._namer.name_for(item_id, normalize_ext(ext, data)), data=data)
