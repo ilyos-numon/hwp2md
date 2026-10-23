@@ -33,6 +33,8 @@ from hwp2md.hwp5.records import (
     HWPTAG_TABLE,
 )
 from synth_items import (
+    SynthCaptionedTable,
+    SynthChart,
     SynthEquation,
     SynthField,
     SynthHeaderFooter,
@@ -40,6 +42,7 @@ from synth_items import (
     SynthLink,
     SynthNote,
     SynthRich,
+    SynthTextBox,
 )
 
 HWPTAG_PARA_SHAPE = 0x19
@@ -138,7 +141,15 @@ class SynthTable:
 
 Item = str | SynthTable | SynthHeading | SynthImage
 # build_section0·build_hwp5·write_hwp5 가 받는 항목: 기존 Item + 단락 안 요소 항목(synth_items)
-AnyItem = Item | SynthRich | SynthHeaderFooter | SynthHidden
+AnyItem = (
+    Item
+    | SynthRich
+    | SynthHeaderFooter
+    | SynthHidden
+    | SynthTextBox
+    | SynthCaptionedTable
+    | SynthChart
+)
 
 
 def collect_images(items: Sequence[AnyItem]) -> list[SynthImage]:
@@ -157,6 +168,9 @@ def collect_images(items: Sequence[AnyItem]) -> list[SynthImage]:
         elif isinstance(item, SynthHeaderFooter):
             if item.with_image:
                 add(HEADER_IMAGE)
+        elif isinstance(item, SynthTextBox):
+            if item.with_image:
+                add(TEXTBOX_IMAGE)
         else:
             add(item)
     return found
@@ -471,6 +485,109 @@ def build_hidden_paragraph(item: SynthHidden, *, level: int, last: bool) -> byte
     return out
 
 
+# 개체(S12): 글상자 · 캡션 있는 표 · 차트(OLE)
+CHID_RECT = b"$rec"[::-1]
+CHID_OLE = b"$ole"[::-1]
+HWPTAG_SHAPE_COMPONENT_RECTANGLE = 0x4F
+HWPTAG_SHAPE_COMPONENT_OLE = 0x54
+_BIN_DATA_STORAGE_ATTR = 0x0002
+
+
+def collect_charts(items: Sequence[AnyItem]) -> list[SynthChart]:
+    """문서 순서의 SynthChart. BinData ID = len(collect_images(items)) + index + 1."""
+    return [x for x in items if isinstance(x, SynthChart)]
+
+
+def build_bin_data_storage(storage_id: int) -> bytes:
+    """OLE 개체용 BIN_DATA: STORAGE, 압축 비트 0(문서 기본). 스트림 BIN<id>.ole."""
+    return struct.pack("<HH", _BIN_DATA_STORAGE_ATTR, storage_id)
+
+
+def build_chart_ole(chart: SynthChart) -> bytes:
+    """OLE BinData 스트림 본문(압축 전) = [UINT32 LE len(cfb)][cfb] (실제 샘플과 같은 모양).
+    legacy → 구형 차트 `Contents` 스트림만, 아니면 `OOXMLChartContents`."""
+    from synth_ole import build_ole_cfb, chart_xml  # synth_ole 이 synth_hwp5 를 import 한다
+
+    if chart.legacy:
+        cfb = build_ole_cfb({"Contents": b"\x00" * 64})
+    else:
+        cfb = build_ole_cfb(
+            {"OOXMLChartContents": chart_xml(chart.title, chart.categories, chart.series)}
+        )
+    return struct.pack("<I", len(cfb)) + cfb
+
+
+def _gso_anchor(text: str, *, level: int, last: bool) -> bytes:
+    """글자 + 확장 제어문자 11(gso) 단락."""
+    return _para_records(
+        text.encode("utf-16-le") + _ctrl_chars(_CTRL_CHAR_EXTENDED, CTRL_ID_GSO),
+        level=level,
+        last=last,
+        ctrl_mask=_TABLE_PLACEHOLDER_MASK,
+    )
+
+
+def build_textbox_list_header(n_paragraphs: int) -> bytes:
+    """글상자 LIST_HEADER: UINT32 문단 수 + UINT32 속성 + 여백 4×INT16 + 최대 폭 UINT32."""
+    return struct.pack("<II4hI", n_paragraphs, 0x20, 283, 283, 283, 283, 8000) + b"\x00" * 13
+
+
+def build_textbox_paragraph(
+    item: SynthTextBox, *, level: int, last: bool, images: Sequence[SynthImage] = ()
+) -> bytes:
+    """앵커 단락(글자 + gso) + CTRL_HEADER(gso) + SHAPE_COMPONENT($rec) + 글상자 LIST_HEADER
+    + 단락들(+그림 단락) + SHAPE_COMPONENT_RECTANGLE. 실제 샘플과 같은 수준 관계."""
+    out = _gso_anchor(item.anchor_text, level=level, last=last)
+    out += build_record(HWPTAG_CTRL_HEADER, level + 1, build_ctrl_header_gso())
+    out += build_record(HWPTAG_SHAPE_COMPONENT, level + 2, CHID_RECT + CHID_RECT + b"\x00" * 244)
+    n = len(item.paragraphs) + (1 if item.with_image else 0)
+    out += build_record(HWPTAG_LIST_HEADER, level + 3, build_textbox_list_header(n))
+    for i, text in enumerate(item.paragraphs):
+        out += build_paragraph(text, last=(i == n - 1), level=level + 3)
+    if item.with_image:
+        out += build_picture_control(images.index(TEXTBOX_IMAGE) + 1, level=level + 3, last=True)
+    out += build_record(HWPTAG_SHAPE_COMPONENT_RECTANGLE, level + 3, b"\x00" * 33)
+    return out
+
+
+def build_caption_list_header(n_paragraphs: int) -> bytes:
+    """캡션 LIST_HEADER 30 bytes: UINT32 문단 수 + UINT32 속성 + 캡션 속성(방향 아래=3)
+    + 폭 + 간격 + 텍스트 최대 길이. 오프셋 8 이 칸 열 번호로 읽히면 3 이 된다."""
+    return struct.pack("<IIIIhI", n_paragraphs, 0, 3, 8504, 850, 42520) + b"\x00" * 4
+
+
+def build_captioned_table_paragraph(item: SynthCaptionedTable, *, level: int, last: bool) -> bytes:
+    """자리표시자 단락 + CTRL_HEADER(tbl) + 캡션 LIST_HEADER + 캡션 단락 + TABLE + 칸들.
+    캡션은 TABLE 레코드보다 앞에 온다(실제 샘플과 같은 순서)."""
+    rows = len(item.cells)
+    cols = max((len(r) for r in item.cells), default=0)
+    table = SynthTable(
+        rows=rows,
+        cols=cols,
+        cells=tuple(
+            SynthCell((text,), col=c, row=r)
+            for r, row in enumerate(item.cells)
+            for c, text in enumerate(row)
+        ),
+    )
+    plain = build_table_control(table, level=level, last=last)
+    split = plain.index(build_record(HWPTAG_TABLE, level + 2, build_table_record(table)))
+    caption = build_record(HWPTAG_LIST_HEADER, level + 2, build_caption_list_header(1))
+    caption += build_paragraph(item.caption, last=True, level=level + 2)
+    return plain[:split] + caption + plain[split:]
+
+
+def build_chart_paragraph(bindata_id: int, *, level: int, last: bool) -> bytes:
+    """gso 하나뿐인 단락 + CTRL_HEADER(gso) + SHAPE_COMPONENT($ole) + SHAPE_COMPONENT_OLE.
+    OLE 레코드: UINT32 속성, INT32 extent x·y, UINT16 BinData ID(오프셋 12), 테두리."""
+    out = _gso_anchor("", level=level, last=last)
+    out += build_record(HWPTAG_CTRL_HEADER, level + 1, build_ctrl_header_gso())
+    out += build_record(HWPTAG_SHAPE_COMPONENT, level + 2, CHID_OLE + CHID_OLE + b"\x00" * 188)
+    ole = struct.pack("<IiiHIiI", 0x00010001, 7926, 3728, bindata_id, 0, 0, 0)
+    out += build_record(HWPTAG_SHAPE_COMPONENT_OLE, level + 3, ole)
+    return out
+
+
 def build_section0(items: Sequence[AnyItem], images: Sequence[SynthImage] | None = None) -> bytes:
     """미압축 섹션. str → 본문 단락, SynthHeading → 개요 단락, SynthTable → 표 컨트롤.
 
@@ -492,6 +609,13 @@ def build_section0(items: Sequence[AnyItem], images: Sequence[SynthImage] | None
             out += build_header_footer_paragraph(item, level=0, last=last, images=images)
         elif isinstance(item, SynthHidden):
             out += build_hidden_paragraph(item, level=0, last=last)
+        elif isinstance(item, SynthTextBox):
+            out += build_textbox_paragraph(item, level=0, last=last, images=images)
+        elif isinstance(item, SynthCaptionedTable):
+            out += build_captioned_table_paragraph(item, level=0, last=last)
+        elif isinstance(item, SynthChart):
+            bindata_id = len(images) + collect_charts(items).index(item) + 1
+            out += build_chart_paragraph(bindata_id, level=0, last=last)
         elif isinstance(item, SynthHeading):
             out += build_paragraph(
                 item.text, last=last, para_shape_id=item.level, style_id=item.level
@@ -530,15 +654,20 @@ def build_style(index: int) -> bytes:
     )
 
 
-def build_docinfo(*, outline: bool = False, images: Sequence[SynthImage] = ()) -> bytes:
+def build_docinfo(
+    *, outline: bool = False, images: Sequence[SynthImage] = (), ole_count: int = 0
+) -> bytes:
     """미압축 DocInfo, §4.4-F·§4.5.
 
-    images 마다 BIN_DATA(level 1), outline=True 면 PARA_SHAPE·STYLE 각 8개.
+    images 마다 BIN_DATA(level 1), 이어서 OLE 개체 ole_count 개의 STORAGE BIN_DATA,
+    outline=True 면 PARA_SHAPE·STYLE 각 8개.
     """
     payload = struct.pack("<7HIII", 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
     out = build_record(HWPTAG_DOCUMENT_PROPERTIES, 0, payload)
     for k, img in enumerate(images, start=1):
         out += build_record(HWPTAG_BIN_DATA, 1, build_bin_data(k, img.ext))
+    for k in range(len(images) + 1, len(images) + ole_count + 1):
+        out += build_record(HWPTAG_BIN_DATA, 1, build_bin_data_storage(k))
     if outline:
         for i in range(8):
             out += build_record(HWPTAG_PARA_SHAPE, 1, build_para_shape(outline_level=i))
@@ -710,7 +839,8 @@ def build_cfb(streams: Mapping[str, bytes]) -> bytes:
 def build_hwp5(paragraphs: Sequence[AnyItem], *, properties: int = 0x1) -> bytes:
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
     images = collect_images(paragraphs)
-    docinfo = build_docinfo(outline=has_heading(paragraphs), images=images)
+    charts = collect_charts(paragraphs)
+    docinfo = build_docinfo(outline=has_heading(paragraphs), images=images, ole_count=len(charts))
     section0 = build_section0(paragraphs, images)
     if properties & 0x1:
         docinfo = compress_raw(docinfo)
@@ -725,6 +855,11 @@ def build_hwp5(paragraphs: Sequence[AnyItem], *, properties: int = 0x1) -> bytes
             continue
         data = compress_raw(img.data) if properties & 0x1 else img.data
         streams[f"{_BINDATA_PREFIX}BIN{k:04X}.{img.ext}"] = data
+    for k, chart in enumerate(charts, start=len(images) + 1):
+        data = build_chart_ole(chart)
+        streams[f"{_BINDATA_PREFIX}BIN{k:04X}.ole"] = (
+            compress_raw(data) if properties & 0x1 else data
+        )
     return build_cfb(streams)
 
 
@@ -829,6 +964,7 @@ PNG_1X1: bytes = bytes.fromhex(
 JPEG_STUB: bytes = b"\xff\xd8\xff\xe0" + bytes(range(16)) + b"\xff\xd9"  # 22 bytes, 유효 JPEG 아님
 FIXTURE_IMAGE_PNG = SynthImage(PNG_1X1, "png")
 HEADER_IMAGE = SynthImage(PNG_1X1, "png")  # SynthHeaderFooter(with_image=True) 안의 그림
+TEXTBOX_IMAGE = SynthImage(PNG_1X1, "png")  # SynthTextBox(with_image=True) 안의 그림
 FIXTURE_IMAGE_JPG = SynthImage(JPEG_STUB, "jpg")
 
 # 모든 EXPECTED_MARKDOWN_IMAGE* 는 입력 파일 stem 이 "doc" 일 때(doc.hwp / doc.hwpx → doc_images/)
