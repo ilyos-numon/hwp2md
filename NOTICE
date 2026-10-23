@@ -1,6 +1,14 @@
 hwp2md
 Third-party notices
 
+hwp2md is licensed under the MIT License (see LICENSE). The vendored files
+listed below remain under their original license (Apache License 2.0).
+
+------------------------------------------------------------------------
+HWP document format public specification
+
+본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
+
 ------------------------------------------------------------------------
 python-hwpx — equation converter (vendored)
 

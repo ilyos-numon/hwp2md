@@ -1,6 +1,8 @@
 # hwp2md
 
-한컴오피스 없이 HWP·HWPX 문서를 제목 구조·표·이미지가 살아 있는 Markdown 으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.
+한컴오피스 없이 HWP·HWPX·HWPML 문서를 제목 구조·표·이미지·각주·수식이 살아 있는 Markdown 으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.
+
+본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
 
 ![hwp2md 웹 미리보기 — 왼쪽은 렌더링된 미리보기, 오른쪽은 Markdown 원문](docs/images/web-server-mode.png)
 
@@ -99,9 +101,10 @@ out/
 ```
 
 - `-o` 를 생략하면 현재 폴더에 쓴다. 출력 폴더가 없으면 만든다.
-- HWP 5.0 과 HWPX 는 같은 명령이다. 포맷은 확장자가 아니라 파일 내용으로 판별한다.
+- HWP 5.0·HWPX·HWPML 은 같은 명령이다. 포맷은 확장자가 아니라 파일 내용으로 판별한다.
 - 이미지가 없는 문서는 `_images` 폴더를 만들지 않고, 요약 줄에서 0개인 제목·이미지 항목을 생략한다.
-- 종료 코드: 0 성공 · 1 변환 오류 · 2 파일 없음 · 3 HWP 가 아니거나 지원하지 않는 문서(암호화·배포용).
+- 종료 코드: 0 성공 · 1 변환 오류 · 2 파일 없음 · 3 HWP 가 아니거나 지원하지 않는 문서(DRM·비밀번호 문서 등). 오류 줄은 `unsupported HWP file (DRM protected): …`, `unsupported HWP file (password protected): …` 처럼 거부 이유를 구분한다.
+- 변환하지 못한 요소가 있으면 마지막에 `  건너뜀: 머리말·꼬리말 2개 · 메모 1개` 같은 줄이 붙는다(아래 "건너뜀 보고").
 - 변환할 파일 이름이 `serve` 이면 `hwp2md ./serve` 처럼 경로로 적는다.
 
 ### ② 웹 미리보기
@@ -157,26 +160,52 @@ for img in result.images:                  # 추출된 이미지 (고유 파일�
 ```
 
 - 시그니처: `convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult`, `convert_bytes(data: bytes, filename: str = "document.hwp") -> MemoryResult`.
-- 예외: `NotHwpFileError`(HWP 아님), `UnsupportedHwpError`(암호화·배포용), 모두 `Hwp2mdError` 하위. `convert` 는 파일이 없으면 `FileNotFoundError`, `convert_bytes` 는 빈 입력·50MB 초과도 `Hwp2mdError` 하위 예외로 거부한다.
+- 예외: `NotHwpFileError`(HWP 아님), `UnsupportedHwpError`(지원하지 않는 문서)와 그 하위 `DrmProtectedError`(DRM 적용 문서)·`EncryptedDocumentError`(비밀번호 문서), 모두 `Hwp2mdError` 하위.
+- 건너뛴 요소: `result.skipped` 는 `(("header_footer", 2), …)` 처럼 종류와 개수의 튜플이다(0개는 빠진다). `convert`·`convert_bytes` 결과 모두에 있다. `convert` 는 파일이 없으면 `FileNotFoundError`, `convert_bytes` 는 빈 입력·50MB 초과도 `Hwp2mdError` 하위 예외로 거부한다.
 
 ## 지원 범위
 
 | 구분 | 항목 | 설명 |
 |---|---|---|
-| 지원 | 포맷 | HWP 5.0 바이너리(OLE), HWPX(zip/XML). 확장자가 아니라 내용으로 판별 |
+| 지원 | 포맷 | HWP 5.0 바이너리(OLE), HWPX(zip/XML), HWPML 2.x(단일 XML). 확장자가 아니라 내용으로 판별 |
 | 지원 | 본문 단락 | 탭은 공백, 줄바꿈 유지 |
 | 지원 | 제목 계층 | 문단 모양의 개요 1~6수준 → `#`~`######`, 7수준은 `######` |
 | 지원 | 표 | GFM 표 (첫 행이 헤더), 셀 안 여러 단락은 `<br>`, `\|` 이스케이프, 중첩 표는 셀 텍스트로 평탄화 |
 | 지원 | 이미지 | 본문 그림을 `<이름>_images/img_001.png` … 로 추출(원본 바이트 그대로)하고 제자리에 `![그림 N](…)` 링크. 같은 그림을 다시 참조하면 파일 1개 |
+| 지원 | 표 칸 안 그림 | 칸 안에 `![그림 N](…)` 링크. 문서 순서대로 그림 번호를 쓴다 |
+| 지원 | 캡션 | 표·그림 캡션을 개체 뒤 단락으로 출력 |
+| 지원 | 글상자·도형·묶음 | 안쪽 글과 그림을 개체 자리에 출력 |
+| 지원 | 하이퍼링크 | `[글자](주소)`. http·https·mailto 만 링크로 쓰고 그 밖의 주소는 글자만 남긴다 |
+| 지원 | 각주·미주 | 본문에 `[^1]`·`[^e1]` 참조, 문서 끝에 정의 |
+| 지원 | 수식 | 한글 수식 스크립트 → LaTeX `$…$` (단락에 수식만 있으면 `$$…$$`). 변환에 실패하면 원문 스크립트를 코드 스팬으로 |
+| 지원 | 번호·글머리표 목록 | 글머리표는 `-`, `1.`·`1)` 꼴 번호는 Markdown 목록 문법, 그 밖의 번호(`가.`·`①` 등)는 단락 앞 글자로. 번호는 문단 번호 정의로 근사 계산 |
+| 지원 | OOXML 차트 | 차트에 저장된 값으로 `차트: 제목` 단락 + 표 |
+| 지원 | 배포용 문서 | 공개된 절차로 복호화해 변환 (아래 "배포용 문서 고지") |
+| 부분 | OLE 개체 | 원본이 그림(PNG·JPEG·GIF·BMP)이면 그림으로 추출, 그 밖은 건너뜀 보고 |
 | 제한 | 병합 셀 | 원 셀에 텍스트, 덮인 칸은 빈 칸 (GFM 이 병합을 표현하지 못함) |
-| 제한 | 표 셀·머리말·꼬리말·글상자 안 그림 | 추출하지 않음 |
-| 제한 | 머리말·꼬리말·쪽번호 (HWPX) | 본문 흐름에 넣지 않음 (청킹 잡음 방지) |
-| 제한 | 머리말·꼬리말·각주 (HWP 5.0) | 안쪽 텍스트가 본문 단락으로 섞일 수 있음 (HWPX 와의 알려진 차이) |
+| 제외 | 머리말·꼬리말 | 본문 흐름에 넣지 않고(청킹 잡음 방지) 건너뜀으로 보고. 세 포맷 동일 |
+| 제외 | 메모·숨은 설명 | 작성자 정보가 있을 수 있어 내용은 출력하지 않고 개수만 보고 |
 | 제한 | 서식 | 글꼴·색상·정렬은 버린다 ("하지 않는 것" 참조) |
-| 거부 | 암호화 문서·배포용 문서 | `UnsupportedHwpError`, CLI 종료 코드 3 |
+| 거부 | DRM 적용 문서 | `DrmProtectedError`, CLI 종료 코드 3, API 오류 코드 `drm` |
+| 거부 | 비밀번호 문서 | `EncryptedDocumentError`, CLI 종료 코드 3, API 오류 코드 `encrypted`. 비밀번호 입력 기능은 없다 |
 | 미지원 | HWP 3.0 이하 | HWP 파일이 아닌 것으로 판정 (종료 코드 3) |
-| 미구현 | 각주·미주 | Markdown 각주(`[^1]`) 변환은 미구현. HWPX 는 출력에서 빠지고, HWP 5.0 은 본문 단락으로 섞인다. 로드맵 참조 |
-| 미구현 | 목록(번호·글머리표) | 본문 단락으로 출력 |
+
+요소별 상태(추출·부분·불가·제외)와 이유, 대안은 [docs/extraction-limits.md](docs/extraction-limits.md) 에 있다.
+
+### 건너뜀 보고
+
+변환하지 못한 요소는 조용히 버리지 않고 종류별 개수를 알려 준다. 종류는 머리말·꼬리말, 메모, 숨은 설명, 데이터를 꺼낼 수 없는 차트, OLE 개체, 글맵시, 양식 개체, 외부 연결 그림, 본체 없는 그림 아홉 가지다.
+
+| 어디서 | 모양 |
+|---|---|
+| CLI | 요약 끝 줄 `  건너뜀: 머리말·꼬리말 2개 · OLE 개체 1개` |
+| 라이브러리 | `ConvertResult.skipped`·`MemoryResult.skipped` (종류, 개수) 튜플 |
+| 웹 API | 응답 JSON 의 `skipped`: `[{"kind": "header_footer", "label": "머리말·꼬리말", "count": 2}]` (항상 있음, 없으면 빈 배열) |
+| 웹 화면 | 미리보기 위 "변환하지 못한 요소: …" 경고 |
+
+### 배포용 문서 고지
+
+배포용 문서(편집·복사·인쇄를 제한해 배포한 HWP 5.0 문서)는 기본으로 변환한다. 편집·복사 제한 문서를 텍스트로 꺼내므로 작성자의 의도와 사용 권한을 확인하세요. hwp2md 는 공개된 복호화 절차만 쓰며, DRM 적용 문서와 비밀번호 문서는 풀지 않고 거부한다.
 
 ## 구조
 
@@ -188,20 +217,22 @@ flowchart LR
     WEB["웹 서버<br>hwp2md serve"]
     PYO["브라우저 Pyodide<br>같은 소스를 브라우저에서 실행"]
   end
-  IN[".hwp / .hwpx<br>경로 또는 bytes"] --> DET["detect<br>내용으로 포맷 판별"]
+  IN[".hwp / .hwpx / .hml<br>경로 또는 bytes"] --> DET["detect<br>내용으로 포맷 판별"]
   CLI --> IN
   LIB --> IN
   WEB --> IN
   PYO --> IN
   DET -->|"OLE"| H5["hwp5 리더<br>레코드 파싱"]
   DET -->|"zip + mimetype"| HX["hwpx 리더<br>XML 파싱"]
-  H5 --> BL["Block 리스트<br>Paragraph / Table / Image"]
+  DET -->|"루트 HWPML"| HM["hwpml 리더<br>XML 파싱"]
+  H5 --> BL["Block 리스트<br>Paragraph / Table / Image / Note"]
   HX --> BL
+  HM --> BL
   BL --> RD["render<br>Markdown"]
   RD --> OUT["문서.md + 문서_images/<br>(CLI) 또는 메모리 결과(웹·API)"]
 ```
 
-두 포맷의 리더는 같은 블록 모델을 돌려주고, 렌더러는 포맷을 모른다. 그래서 CLI·웹 서버·브라우저 모드가 같은 Markdown 을 낸다. 모듈별 역할, 웹 엔드포인트, 브라우저 모드 시퀀스, 확장 방법은 [docs/system-overview.md](docs/system-overview.md) 에 있다.
+세 포맷의 리더는 같은 블록 모델을 돌려주고, 렌더러는 포맷을 모른다. 그래서 CLI·웹 서버·브라우저 모드가 같은 Markdown 을 낸다. 모듈별 역할, 웹 엔드포인트, 브라우저 모드 시퀀스, 확장 방법은 [docs/system-overview.md](docs/system-overview.md) 에 있다.
 
 ## 개인정보·보안 설계
 
@@ -244,15 +275,18 @@ uv run mypy src                                 # strict
 - PyPI 에 배포하지 않았다. CI(GitHub Actions)도 아직 없다.
 - 기본 포트 8765 가 다른 프로그램과 겹치면 `--port` 로 바꾼다 (자동으로 다음 포트를 찾지 않는다).
 - 이미지가 있는 실제 HWP 5.0 샘플이 없어, HWP 5.0 이미지 경로는 합성 문서와 공개 스펙 교차 확인으로만 검증했다.
-- 머리말·꼬리말·각주 처리가 포맷마다 다르다. HWPX 는 출력에서 빼지만, HWP 5.0 은 그 안쪽 텍스트를 본문 단락으로 흘려보내 본문에 섞일 수 있다.
 - 이미지 포맷은 변환하지 않는다. WMF/EMF 같은 원본은 그대로 저장되어 브라우저에서 안 보일 수 있다.
+- 구형 차트(차트 값이 OOXML 로 저장되지 않은 것)는 데이터를 꺼내지 못하고 건너뜀으로 보고한다.
+- 쪽 번호·날짜 같은 필드 값은 다시 계산하지 않는다. 목록 번호는 근사값이다.
+- 단락 중간에 놓인 그림의 위치가 HWP 5.0 과 HWPX 에서 다를 수 있다.
+- 요소별 전체 목록과 대안은 [docs/extraction-limits.md](docs/extraction-limits.md) 에 있다.
 
 ## 로드맵
 
-- [ ] 각주·미주 → Markdown 하단 참조(`[^1]`)
+- [x] 각주·미주 → Markdown 하단 참조(`[^1]`)
 - [ ] RAG 옵션: `--split section` (제목 단위 분할), `--meta` (목차·표 수·이미지 경로·원본 해시 JSON)
 - [ ] 폴더 일괄 변환
-- [ ] 배포용 문서 지원
+- [x] 배포용 문서 지원
 - [ ] 병합 셀 개선 (`--table html` 로 rowspan/colspan 보존)
 - [ ] 공공기관 샘플 20개 품질 비교표
 - [ ] PyPI 배포 + GitHub Actions CI
@@ -262,8 +296,15 @@ uv run mypy src                                 # strict
 - [docs/vision.md](docs/vision.md) — 완성된 모습 (사용자 시나리오)
 - [docs/system-overview.md](docs/system-overview.md) — 내부 구조 (모듈·데이터 흐름·웹·보안·테스트·확장)
 - [docs/decisions.md](docs/decisions.md) — 결정 기록 (날짜와 이유)
+- [docs/extraction-limits.md](docs/extraction-limits.md) — 추출 한계 (요소별 상태·이유·대안)
 
 ## 하지 않는 것
 
 - 역변환 (md → hwp)
 - 서식 완벽 재현 (글꼴·색상)
+
+## 라이선스
+
+- hwp2md 는 [MIT 라이선스](LICENSE)로 배포한다.
+- `src/hwp2md/equation/eqedit.py`·`tokens.py` 는 python-hwpx 에서 가져온 코드로 Apache License 2.0 을 따른다. 출처·커밋·변경 사실은 [NOTICE](NOTICE) 에 있다.
+- 본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
