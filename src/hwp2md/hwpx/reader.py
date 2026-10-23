@@ -4,16 +4,18 @@ from __future__ import annotations
 
 import re
 import zipfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from lxml import etree
 
 from ..blocks import Block
 from ..errors import EncryptedDocumentError, Hwp2mdError, NotHwpFileError
+from ..ole import MAX_OLE_BYTES
 from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
 from .bindata import (
     BIN_DATA_PREFIX,
+    CHART_PREFIX,
     HWPX_CONTENT_HPF,
     MAX_IMAGE_BYTES,
     BinItemStore,
@@ -55,6 +57,8 @@ class HwpxPackage:
     sections: list[bytes]
     manifest: bytes | None  # Contents/content.hpf
     bin_data: dict[str, bytes]  # "BinData/" 로 시작하는 파일 엔트리 전부 (키 = 엔트리 전체 이름)
+    # "Chart/" 로 시작하는 파일 엔트리 (MAX_OLE_BYTES 초과는 빼서 해석 불가 차트로 남긴다)
+    charts: dict[str, bytes] = field(default_factory=dict)
 
 
 def is_encrypted_manifest(data: bytes) -> bool:
@@ -113,7 +117,15 @@ def read_hwpx_package(path: Source) -> HwpxPackage:
             if size > MAX_IMAGE_BYTES:
                 raise Hwp2mdError(f"binary item too large: {name} ({size} bytes)")
             bin_data[name] = zf.read(name)
-        return HwpxPackage(header=header, sections=out, manifest=manifest, bin_data=bin_data)
+        charts: dict[str, bytes] = {}
+        for name in names:
+            if not name.startswith(CHART_PREFIX) or name.endswith("/"):
+                continue
+            if zf.getinfo(name).file_size <= MAX_OLE_BYTES:
+                charts[name] = zf.read(name)
+        return HwpxPackage(
+            header=header, sections=out, manifest=manifest, bin_data=bin_data, charts=charts
+        )
 
 
 def read_package(path: Source) -> tuple[bytes | None, list[bytes]]:
@@ -137,12 +149,12 @@ def parse_section_xml(data: bytes) -> etree._Element:
 
 
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
-    """skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모)를 셀 카운터.
+    """skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모·차트·OLE·글맵시·양식 개체·그림)를 셀 카운터.
     각주·미주 Note 블록은 모든 섹션 뒤에 둔다."""
     pkg = read_hwpx_package(path)
     info = EMPTY_HEADER if pkg.header is None else parse_header(parse_header_xml(pkg.header))
     manifest = parse_manifest(pkg.manifest) if pkg.manifest is not None else {}
-    store = BinItemStore(manifest, pkg.bin_data)
+    store = BinItemStore(manifest, pkg.bin_data, pkg.charts)
     ctx = DocContext(skips=SkipCounter() if skips is None else skips)
     blocks: list[Block] = []
     for data in pkg.sections:

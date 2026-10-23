@@ -13,6 +13,7 @@ HWPX_CONTENT_HPF = "Contents/content.hpf"
 NS_OPF = "http://www.idpf.org/2007/opf/"
 OPF_ITEM = f"{{{NS_OPF}}}item"
 BIN_DATA_PREFIX = "BinData/"
+CHART_PREFIX = "Chart/"
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 
 
@@ -34,11 +35,18 @@ def parse_manifest(data: bytes) -> dict[str, str]:
 
 
 class BinItemStore:
-    """문서 하나당 인스턴스 하나. item_id → Image (같은 id 는 같은 file_name)."""
+    """문서 하나당 인스턴스 하나. item_id → Image (같은 id 는 같은 file_name).
+    charts: 차트 XML zip 엔트리 (키 = 엔트리 전체 이름, hp:chart/@chartIDRef 로 찾는다)."""
 
-    def __init__(self, manifest: Mapping[str, str], entries: Mapping[str, bytes]) -> None:
+    def __init__(
+        self,
+        manifest: Mapping[str, str],
+        entries: Mapping[str, bytes],
+        charts: Mapping[str, bytes] | None = None,
+    ) -> None:
         self._manifest = manifest
         self._entries = entries
+        self._charts: Mapping[str, bytes] = {} if charts is None else charts
         self._namer = ImageNamer()
         self._cache: dict[str, Image | None] = {}
 
@@ -49,14 +57,28 @@ class BinItemStore:
         self._cache[item_id] = image
         return image
 
-    def _resolve(self, item_id: str) -> Image | None:
+    def raw(self, item_id: str) -> bytes | None:
+        """바이너리 항목 원본 바이트 (OLE 등). 없으면 None."""
+        name = self._entry_name(item_id)
+        return None if name is None else self._entries[name]
+
+    def chart(self, ref: str) -> bytes | None:
+        """chartIDRef(zip 엔트리 경로) → 차트 XML 바이트. 없으면 None."""
+        return self._charts.get(ref.lstrip("/"))
+
+    def make_image(self, key: str, data: bytes) -> Image:
+        """ole.ImageFactory: 그림 번호를 문서의 다른 그림과 같은 순서로 이어 붙인다."""
+        return Image(file_name=self._namer.name_for(key, normalize_ext(None, data)), data=data)
+
+    def _entry_name(self, item_id: str) -> str | None:
         href = self._manifest.get(item_id)
-        name: str | None = None
         if href is not None and href in self._entries:
-            name = href
-        else:
-            prefix = f"{BIN_DATA_PREFIX}{item_id}."
-            name = next((n for n in sorted(self._entries) if n.startswith(prefix)), None)
+            return href
+        prefix = f"{BIN_DATA_PREFIX}{item_id}."
+        return next((n for n in sorted(self._entries) if n.startswith(prefix)), None)
+
+    def _resolve(self, item_id: str) -> Image | None:
+        name = self._entry_name(item_id)
         if name is None:
             return None
         data = self._entries[name]

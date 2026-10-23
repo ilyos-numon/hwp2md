@@ -23,13 +23,17 @@ from synth_hwp5 import (  # 재정의 금지
 from synth_items import (
     ExtItem,
     Run,
+    SynthCaptionedTable,
+    SynthChart,
     SynthField,
     SynthHeaderFooter,
     SynthHidden,
     SynthLink,
     SynthNote,
     SynthRich,
+    SynthTextBox,
 )
+from synth_ole import build_ole_cfb, chart_xml, hwpx_ole_entry
 
 NS_HC = "http://www.hancom.co.kr/hwpml/2011/core"
 NS_HH = "http://www.hancom.co.kr/hwpml/2011/head"
@@ -157,12 +161,28 @@ def table_xml(
 HEADER_IMAGE = SynthImage(PNG_1X1, "png")  # SynthHeaderFooter(with_image=True) 의 그림
 
 
+TEXTBOX_IMAGE = SynthImage(PNG_1X1, "png")  # SynthTextBox(with_image=True) 의 그림
+
+
 def all_images(items: Sequence[Item | ExtItem]) -> list[SynthImage]:
-    """collect_images + 머리말·꼬리말 안 그림 (문서 순서, 중복 제외)."""
+    """collect_images + 머리말·꼬리말 안 그림 + 글상자 안 그림 (중복 제외)."""
     found = collect_images([x for x in items if not isinstance(x, SynthHeaderFooter)])  # type: ignore[arg-type]
     for item in items:
         if isinstance(item, SynthHeaderFooter) and item.with_image and HEADER_IMAGE not in found:
             found.append(HEADER_IMAGE)
+    for item in items:
+        if isinstance(item, SynthTextBox) and item.with_image and TEXTBOX_IMAGE not in found:
+            found.append(TEXTBOX_IMAGE)
+    return found
+
+
+def all_charts(sections: Sequence[Sequence[Item | ExtItem]]) -> list[SynthChart]:
+    """문서 순서로 처음 보는 SynthChart. 차트 k = index + 1 (Chart/chart{k}.xml 또는 ole{k})."""
+    found: list[SynthChart] = []
+    for sec in sections:
+        for item in sec:
+            if isinstance(item, SynthChart) and item not in found:
+                found.append(item)
     return found
 
 
@@ -278,26 +298,162 @@ def hidden_paragraph_xml(item: SynthHidden, *, para_id: int, first: bool = False
     )
 
 
+SHAPE_COMMON_XML = (
+    '<hp:sz width="10000" widthRelTo="ABSOLUTE" height="5000" heightRelTo="ABSOLUTE" '
+    'protect="0"/>'
+    '<hp:pos treatAsChar="0" affectLSpacing="0" flowWithText="1" allowOverlap="1" '
+    'holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="PARA" vertAlign="TOP" horzAlign="LEFT" '
+    'vertOffset="0" horzOffset="0"/>'
+    '<hp:outMargin left="0" right="0" top="0" bottom="0"/>'
+)
+
+
+def textbox_paragraph_xml(
+    item: SynthTextBox, *, para_id: int, first: bool = False, images: Sequence[SynthImage] = ()
+) -> str:
+    """사각형(hp:rect) 글상자가 앵커 글자보다 앞 run 에 오는 단락 (한글이 저장하는 순서)."""
+    pic = (
+        f'<hp:p id="0" {P_ATTRS}><hp:run charPrIDRef="0">'
+        + pic_xml(images.index(TEXTBOX_IMAGE) + 1, pic_id=5000 + para_id)
+        + "</hp:run></hp:p>"
+        if item.with_image
+        else ""
+    )
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0"><hp:rect id="{6000 + para_id}" zOrder="1" '
+        'numberingType="NONE" textWrap="IN_FRONT_OF_TEXT" textFlow="BOTH_SIDES" lock="0" '
+        f'dropcapstyle="None" href="" groupLevel="0" instid="{7000 + para_id}" ratio="0">'
+        '<hp:offset x="0" y="0"/><hp:orgSz width="10000" height="5000"/>'
+        '<hp:curSz width="0" height="0"/><hp:flip horizontal="0" vertical="0"/>'
+        '<hp:rotationInfo angle="0" centerX="5000" centerY="2500" rotateimage="1"/>'
+        "<hp:renderingInfo/>"
+        f'<hp:drawText lastWidth="10000" name="" editable="0"><hp:subList {SUBLIST_ATTRS}>'
+        + _sub_paragraphs_xml(item.paragraphs)
+        + pic
+        + "</hp:subList>"
+        '<hp:textMargin left="283" right="283" top="283" bottom="283"/></hp:drawText>'
+        '<hc:pt0 x="0" y="0"/><hc:pt1 x="10000" y="0"/><hc:pt2 x="10000" y="5000"/>'
+        '<hc:pt3 x="0" y="5000"/>'
+        + SHAPE_COMMON_XML
+        + "<hp:shapeComment/></hp:rect><hp:t/></hp:run>"
+        + _t_run(item.anchor_text)
+        + "</hp:p>"
+    )
+
+
+def captioned_table_xml(item: SynthCaptionedTable, *, para_id: int, first: bool = False) -> str:
+    """hp:tbl 안 hp:caption(아래쪽) — 실제 파일처럼 hp:tr 보다 앞에 둔다."""
+    rows = len(item.cells)
+    cols = max((len(r) for r in item.cells), default=0)
+    caption = (
+        '<hp:caption side="BOTTOM" fullSz="0" width="8504" gap="850" lastWidth="10000">'
+        f"<hp:subList {SUBLIST_ATTRS}>"
+        + _sub_paragraphs_xml((item.caption,))
+        + "</hp:subList></hp:caption>"
+    )
+    trs = "".join(
+        "<hp:tr>"
+        + "".join(cell_xml(SynthCell((text,), col=c, row=r)) for c, text in enumerate(row))
+        + "</hp:tr>"
+        for r, row in enumerate(item.cells)
+    )
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0"><hp:tbl id="{1000 + para_id}" rowCnt="{rows}" '
+        + f'colCnt="{cols}" {TBL_ATTRS}>'
+        + SHAPE_COMMON_XML
+        + caption
+        + '<hp:inMargin left="141" right="141" top="141" bottom="141"/>'
+        + trs
+        + "</hp:tbl><hp:t/></hp:run></hp:p>"
+    )
+
+
+def chart_paragraph_xml(
+    item: SynthChart, *, para_id: int, first: bool = False, charts: Sequence[SynthChart] = ()
+) -> str:
+    """legacy=False: hp:chart/@chartIDRef → Chart/chart{k}.xml.
+    legacy=True: hp:ole/@binaryItemIDRef → ole{k} (CFB 에 Contents 스트림만)."""
+    k = charts.index(item) + 1
+    common = (
+        f'id="{8000 + para_id}" zOrder="0" numberingType="PICTURE" textWrap="TOP_AND_BOTTOM" '
+        'textFlow="BOTH_SIDES" lock="0" dropcapstyle="None"'
+    )
+    if item.legacy:
+        obj = (
+            f'<hp:ole {common} href="" groupLevel="0" instid="{9000 + para_id}" '
+            f'objectType="EMBEDDED" binaryItemIDRef="ole{k}" hasMoniker="0" drawAspect="CONTENT" '
+            'eqBaseLine="0"><hp:offset x="0" y="0"/><hp:orgSz width="10000" height="5000"/>'
+            '<hp:curSz width="0" height="0"/><hp:flip horizontal="0" vertical="0"/>'
+            '<hp:rotationInfo angle="0" centerX="5000" centerY="2500" rotateimage="1"/>'
+            '<hp:renderingInfo/><hp:extent x="10000" y="5000"/>' + SHAPE_COMMON_XML + "</hp:ole>"
+        )
+    else:
+        obj = f'<hp:chart {common} chartIDRef="{chart_entry_name(k)}">{SHAPE_COMMON_XML}</hp:chart>'
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0">{obj}<hp:t/></hp:run></hp:p>'
+    )
+
+
+def chart_entry_name(k: int) -> str:
+    return f"Chart/chart{k}.xml"
+
+
+LEGACY_CHART_CONTENTS = b"\x00" * 32  # 구형 차트 Contents 스트림 자리 (내용은 읽지 않는다)
+
+
+def chart_entries(charts: Sequence[SynthChart]) -> dict[str, bytes]:
+    """차트 k 의 zip 엔트리: 새 차트는 Chart/chart{k}.xml, 구형은 BinData/ole{k}.ole."""
+    out: dict[str, bytes] = {}
+    for k, chart in enumerate(charts, 1):
+        if chart.legacy:
+            cfb = build_ole_cfb({"Contents": LEGACY_CHART_CONTENTS})
+            out[f"BinData/ole{k}.ole"] = hwpx_ole_entry(cfb)
+        else:
+            out[chart_entry_name(k)] = chart_xml(chart.title, chart.categories, chart.series)
+    return out
+
+
 def ext_item_xml(
-    item: object, *, para_id: int, first: bool, images: Sequence[SynthImage]
+    item: object,
+    *,
+    para_id: int,
+    first: bool,
+    images: Sequence[SynthImage],
+    charts: Sequence[SynthChart] = (),
 ) -> str | None:
-    """단락 안 요소 항목(SynthRich·SynthHeaderFooter·SynthHidden) → 단락 XML. 그 밖 None."""
+    """단락 안 요소·개체 항목 → 단락 XML. 그 밖 None."""
     if isinstance(item, SynthRich):
         return rich_paragraph_xml(item, para_id=para_id, first=first)
     if isinstance(item, SynthHeaderFooter):
         return header_footer_paragraph_xml(item, para_id=para_id, first=first, images=images)
     if isinstance(item, SynthHidden):
         return hidden_paragraph_xml(item, para_id=para_id, first=first)
+    if isinstance(item, SynthTextBox):
+        return textbox_paragraph_xml(item, para_id=para_id, first=first, images=images)
+    if isinstance(item, SynthCaptionedTable):
+        return captioned_table_xml(item, para_id=para_id, first=first)
+    if isinstance(item, SynthChart):
+        return chart_paragraph_xml(item, para_id=para_id, first=first, charts=charts)
     return None
 
 
 def section_xml(
-    items: Sequence[Item | ExtItem], images: Sequence[SynthImage] | None = None
+    items: Sequence[Item | ExtItem],
+    images: Sequence[SynthImage] | None = None,
+    charts: Sequence[SynthChart] | None = None,
 ) -> bytes:
     imgs = all_images(items) if images is None else images
+    chs = all_charts([items]) if charts is None else charts
     body = "".join(
         ext
-        if (ext := ext_item_xml(item, para_id=i, first=(i == 0), images=imgs)) is not None
+        if (ext := ext_item_xml(item, para_id=i, first=(i == 0), images=imgs, charts=chs))
+        is not None
         else paragraph_xml(item, para_id=i, first=(i == 0))
         if isinstance(item, str)
         else paragraph_xml(item.text, para_id=i, first=(i == 0), para_pr_id=item.level)
@@ -364,11 +520,22 @@ def manifest_items(images: Sequence[SynthImage]) -> str:
     )
 
 
+def ole_manifest_items(charts: Sequence[SynthChart]) -> str:
+    """구형 차트 k 의 OLE 항목 (id ole{k})."""
+    return "".join(
+        f'<opf:item id="ole{k}" href="BinData/ole{k}.ole" media-type="application/ole" '
+        'isEmbeded="1"/>'
+        for k, chart in enumerate(charts, 1)
+        if chart.legacy
+    )
+
+
 def hwpx_entries(
     items: Sequence[Item | ExtItem], *, more_sections: Sequence[Sequence[Item | ExtItem]] = ()
 ) -> dict[str, bytes]:
     """삽입 순서: mimetype, version.xml, META-INF/container.xml, Contents/content.hpf,
     Contents/header.xml, BinData/image{k}.{ext} (missing 제외),
+    (차트 k: Chart/chart{k}.xml 또는 BinData/ole{k}.ole),
     Contents/section0.xml, (Contents/section1.xml, …)."""
     sections: list[Sequence[Item | ExtItem]] = [items, *more_sections]
     n = len(sections)
@@ -377,6 +544,7 @@ def hwpx_entries(
         for img in all_images(sec):
             if img not in images:
                 images.append(img)
+    charts = all_charts(sections)
     version = (
         XML_DECL
         + f'<hv:HCFVersion xmlns:hv="{NS_HV}" tagetApplication="WORDPROCESSOR" major="5" '
@@ -396,6 +564,7 @@ def hwpx_entries(
         + "<opf:metadata><opf:title/><opf:language/></opf:metadata><opf:manifest>"
         + '<opf:item id="header" href="Contents/header.xml" media-type="application/xml"/>'
         + manifest_items(images)
+        + ole_manifest_items(charts)
         + "".join(
             f'<opf:item id="section{i}" href="Contents/section{i}.xml" '
             'media-type="application/xml"/>'
@@ -416,8 +585,9 @@ def hwpx_entries(
     for k, img in enumerate(images, 1):
         if not img.missing:
             entries[f"BinData/image{k}.{img.ext}"] = img.data
+    entries.update(chart_entries(charts))
     for i, sec_items in enumerate(sections):
-        entries[f"Contents/section{i}.xml"] = section_xml(sec_items, images)
+        entries[f"Contents/section{i}.xml"] = section_xml(sec_items, images, charts)
     return entries
 
 

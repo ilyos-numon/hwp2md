@@ -30,7 +30,7 @@
 ## 6. HWPX 리더
 
 - [x] 6.1 필드 하이퍼링크·각주/미주·수식·머리말/꼬리말·숨은 설명·메모 처리를 구현한다
-- [ ] 6.2 칸 그림·캡션·도형 글상자(`hp:drawText`)·묶음 재귀·`hp:chart`·`hp:ole`·글맵시·양식 개체 처리를 구현한다
+- [x] 6.2 칸 그림·캡션·도형 글상자(`hp:drawText`)·묶음 재귀·`hp:chart`·`hp:ole`·글맵시·양식 개체 처리를 구현한다
 - [ ] 6.3 `header.xml` 의 `hh:numbering`·`hh:bullet` 과 `hh:heading` 으로 목록 정보를 붙인다
 
 ## 7. HWPML 리더

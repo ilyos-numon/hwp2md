@@ -312,3 +312,10 @@
 - 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
 - 다음: S14 대기 후 R2 합침
 - 메모: 실제 OOXML 차트 샘플 없음 → 차트 추출은 합성으로만 검증 (S22 한계 문서에 기록). collect_images 가 TEXTBOX_IMAGE 도 수집(합침 후 S13·S14 테스트 재확인)
+
+## [2026-10-23 18:23] S14 | implementer(opus) | DONE
+- 한 일: HWPML 링크·각주·수식·머리말 건너뜀·숨은 설명·캡션·글상자·묶음·OLE·칸 그림·목록, test_hwpml_elements 33(EXT_FIXTURES 16). 실제 HWPML 2개 rc 0, header_footer 2씩. R2 통합: unit 707P(+4 옛 칸 그림 단언 → S18), 실제 샘플 오류 0·md 변화 15, reviewer PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/bindata.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/synth_hwpml.py tests/synth_hwpx.py .claude/ tests/unit/test_hwpml_elements.py tests/unit/test_hwpx_objects.py 
+- 커밋: 663b98f [T-20261023-extract-dropped][s12] HWP 5.0 개체 (칸 그림·캡션·글상자·묶음·OLE)
+- 다음: R3 (S15~S17)
+- 메모: S18: 글자-개체-글자 혼합 단락 교차 fixture 추가해 HWPX(개체 뒤)·HWPML(분할) 배치 차이 확인. S14 CAPTION·DRAWTEXT·OLE 위치는 샘플 없이 추정
