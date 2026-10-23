@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/hwp2md/web/static/style.css"
+        ],
+        "createdAt": "2026-10-23T01:28:27.666Z",
+        "reason": "orchestrator: L337 is .markdown-body blockquote neutral border (standard Markdown quote rendering), not an accent card"
+      }
+    ]
+  }
+}
