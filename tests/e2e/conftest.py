@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from samples import LEGACY_SAMPLES
 from synth_hwp5 import FIXTURE_PARAGRAPHS, write_hwp5
 
 
@@ -45,9 +46,7 @@ def run_cli(hwp2md_bin: str) -> Callable[[list[str]], subprocess.CompletedProces
 
 
 _FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures"
-REAL_SAMPLES: list[Path] = sorted(_FIXTURES_DIR.glob("*.hwp")) + sorted(
-    _FIXTURES_DIR.joinpath("hwpx").glob("*.hwpx")
-)
+REAL_SAMPLES: list[Path] = LEGACY_SAMPLES
 
 
 @dataclass(frozen=True)

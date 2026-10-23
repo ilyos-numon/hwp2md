@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from samples import LEGACY_HWPX
 from synth_hwp5 import (
     EXPECTED_MARKDOWN,
     EXPECTED_MARKDOWN_MERGED,
@@ -23,7 +24,7 @@ from synth_hwpx import build_zip, hwpx_entries, write_hwpx
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
 REAL_HWPX_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "hwpx"
-REAL_HWPX_FIXTURES = sorted(REAL_HWPX_DIR.glob("*.hwpx"))
+REAL_HWPX_FIXTURES = LEGACY_HWPX
 REAL_HWPX_EXPECTED: dict[str, tuple[int, int]] = {
     "(서식1) 비영리법인 현황 제출 양식.hwpx": (1, 1),
     "(서식2) 사업실적 및 사업계획 제출 양식.hwpx": (80, 31),
