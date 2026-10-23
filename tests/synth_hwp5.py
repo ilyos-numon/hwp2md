@@ -40,6 +40,7 @@ from synth_items import (
     SynthHeaderFooter,
     SynthHidden,
     SynthLink,
+    SynthListPara,
     SynthNote,
     SynthRich,
     SynthTextBox,
@@ -149,6 +150,7 @@ AnyItem = (
     | SynthTextBox
     | SynthCaptionedTable
     | SynthChart
+    | SynthListPara
 )
 
 
@@ -620,6 +622,9 @@ def build_section0(items: Sequence[AnyItem], images: Sequence[SynthImage] | None
             out += build_paragraph(
                 item.text, last=last, para_shape_id=item.level, style_id=item.level
             )
+        elif isinstance(item, SynthListPara):
+            shape_id = LIST_PARA_SHAPE_BASE + list_shape_keys(items).index((item.kind, item.depth))
+            out += build_paragraph(item.text, last=last, para_shape_id=shape_id)
         else:
             out += build_paragraph(item, last=last)
     return out
@@ -635,6 +640,79 @@ def build_para_shape(*, outline_level: int) -> bytes:
         + struct.pack("<4h", 0, 0, 0, 0)
         + struct.pack("<III", 0, 0, 0)
     )
+
+
+HWPTAG_NUMBERING = 0x17
+HWPTAG_BULLET = 0x18
+LIST_PARA_SHAPE_BASE = 8  # 목록 문단 모양 ID 는 본문·개요 8개 다음부터
+BULLET_CHAR = "\u25cf"
+NUM_FORMAT_DIGIT, NUM_FORMAT_CIRCLED_DIGIT, NUM_FORMAT_HANGUL = 0, 1, 8  # 번호 모양 코드
+
+
+def list_shape_keys(items: Sequence[object]) -> list[tuple[str, int]]:
+    """SynthListPara 의 (kind, depth) 를 처음 나온 순서로. 문단 모양 ID = BASE + index."""
+    keys: list[tuple[str, int]] = []
+    for item in items:
+        if isinstance(item, SynthListPara) and (item.kind, item.depth) not in keys:
+            keys.append((item.kind, item.depth))
+    return keys
+
+
+def build_list_para_shape(kind: str, depth: int, head_id: int = 1) -> bytes:
+    """번호(2)·글머리표(3) 문단 모양. 속성1 비트 23~24 머리 종류, 25~27 수준, @30 ID."""
+    head_type = 2 if kind == "number" else 3
+    attr1 = (head_type << 23) | (depth << 25)
+    return (
+        struct.pack("<I", attr1)
+        + struct.pack("<6i", 0, 0, 0, 0, 0, 0)
+        + struct.pack("<3H", 0, head_id, 0)
+        + struct.pack("<4h", 0, 0, 0, 0)
+        + struct.pack("<III", 0, 0, 0)
+    )
+
+
+def build_para_head_info(num_format: int = NUM_FORMAT_DIGIT) -> bytes:
+    """문단 머리 정보 12B: UINT32 속성(비트 5~9 번호 모양), HWPUNIT16 ×2, UINT32 글자 모양."""
+    return struct.pack("<IHHI", num_format << 5, 0, 0, 0)
+
+
+def build_numbering(
+    templates: Sequence[str],
+    *,
+    formats: Sequence[int] = (),
+    start: int = 1,
+    level_starts: Sequence[int] | None = (1, 1, 1, 1, 1, 1, 1),
+) -> bytes:
+    """NUMBERING payload. 수준 1~7 [머리 정보 + WORD len + WCHAR 형식], UINT16 시작 번호,
+    level_starts 가 있으면 UINT32 ×7. 빠진 수준 형식은 "^k.", 빠진 모양은 숫자."""
+    out = b""
+    for k in range(7):
+        template = templates[k] if k < len(templates) else f"^{k + 1}."
+        fmt = formats[k] if k < len(formats) else NUM_FORMAT_DIGIT
+        raw = template.encode("utf-16-le")
+        out += build_para_head_info(fmt) + struct.pack("<H", len(raw) // 2) + raw
+    out += struct.pack("<H", start)
+    if level_starts is not None:
+        out += struct.pack("<7I", *level_starts)
+    return out
+
+
+def build_bullet(char: str = BULLET_CHAR) -> bytes:
+    """BULLET payload: 머리 정보 + WCHAR 글머리표 문자 + INT32 이미지 여부 + 그림 정보 4B
+    + WCHAR 체크 글머리표 문자."""
+    return build_para_head_info() + char.encode("utf-16-le") + struct.pack("<iI", 0, 0) + b"\0\0"
+
+
+def list_templates(items: Sequence[object]) -> list[str]:
+    """수준별 형식 문자열: 그 수준 SynthListPara 의 첫 template, 없으면 "^k."."""
+    out = [f"^{k + 1}." for k in range(7)]
+    seen: set[int] = set()
+    for item in items:
+        if isinstance(item, SynthListPara) and item.kind == "number" and item.depth not in seen:
+            seen.add(item.depth)
+            if 0 <= item.depth < 7:
+                out[item.depth] = item.template
+    return out
 
 
 def build_style(index: int) -> bytes:
@@ -655,12 +733,19 @@ def build_style(index: int) -> bytes:
 
 
 def build_docinfo(
-    *, outline: bool = False, images: Sequence[SynthImage] = (), ole_count: int = 0
+    *,
+    outline: bool = False,
+    images: Sequence[SynthImage] = (),
+    ole_count: int = 0,
+    lists: Sequence[SynthListPara] = (),
+    list_formats: Sequence[int] = (),
 ) -> bytes:
     """미압축 DocInfo, §4.4-F·§4.5.
 
     images 마다 BIN_DATA(level 1), 이어서 OLE 개체 ole_count 개의 STORAGE BIN_DATA,
     outline=True 면 PARA_SHAPE·STYLE 각 8개.
+    lists 가 있으면 NUMBERING 1개(ID 1, 번호 모양 list_formats)·BULLET 1개(ID 1),
+    PARA_SHAPE·STYLE 각 8개, 이어서 list_shape_keys 순서의 목록 PARA_SHAPE.
     """
     payload = struct.pack("<7HIII", 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
     out = build_record(HWPTAG_DOCUMENT_PROPERTIES, 0, payload)
@@ -668,9 +753,16 @@ def build_docinfo(
         out += build_record(HWPTAG_BIN_DATA, 1, build_bin_data(k, img.ext))
     for k in range(len(images) + 1, len(images) + ole_count + 1):
         out += build_record(HWPTAG_BIN_DATA, 1, build_bin_data_storage(k))
-    if outline:
+    if lists:
+        out += build_record(
+            HWPTAG_NUMBERING, 1, build_numbering(list_templates(lists), formats=list_formats)
+        )
+        out += build_record(HWPTAG_BULLET, 1, build_bullet())
+    if outline or lists:
         for i in range(8):
             out += build_record(HWPTAG_PARA_SHAPE, 1, build_para_shape(outline_level=i))
+        for kind, depth in list_shape_keys(lists):
+            out += build_record(HWPTAG_PARA_SHAPE, 1, build_list_para_shape(kind, depth))
         for i in range(8):
             out += build_record(HWPTAG_STYLE, 1, build_style(i))
     return out
@@ -840,7 +932,10 @@ def build_hwp5(paragraphs: Sequence[AnyItem], *, properties: int = 0x1) -> bytes
     """bit0 set → DocInfo/Section0 압축. 다른 비트는 FileHeader 에만 반영."""
     images = collect_images(paragraphs)
     charts = collect_charts(paragraphs)
-    docinfo = build_docinfo(outline=has_heading(paragraphs), images=images, ole_count=len(charts))
+    lists = [p for p in paragraphs if isinstance(p, SynthListPara)]
+    docinfo = build_docinfo(
+        outline=has_heading(paragraphs), images=images, ole_count=len(charts), lists=lists
+    )
     section0 = build_section0(paragraphs, images)
     if properties & 0x1:
         docinfo = compress_raw(docinfo)

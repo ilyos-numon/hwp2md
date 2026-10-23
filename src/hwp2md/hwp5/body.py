@@ -13,6 +13,7 @@ from ..blocks import (
     Image,
     Inline,
     Link,
+    ListInfo,
     Math,
     Note,
     NoteKind,
@@ -25,9 +26,10 @@ from ..blocks import (
 )
 from ..equation import to_latex
 from ..errors import Hwp2mdError
+from ..numbering import NumberingCounter, apply_template
 from ..ole import ole_to_outcome, unwrap_hwpx_ole
 from ..skips import SkipCounter
-from .docinfo import EMPTY_DOCINFO, DocInfo
+from .docinfo import EMPTY_DOCINFO, HEADING_BULLET, HEADING_NUMBER, DocInfo
 from .records import (
     CTRL_ID_ENDNOTE,
     CTRL_ID_EQUATION,
@@ -161,13 +163,15 @@ def parse_eqedit_script(payload: bytes) -> str:
 
 
 class ReadContext:
-    """문서 하나를 읽는 동안 섹션을 넘어 유지하는 상태(각주·미주 번호와 내용, 건너뜀)."""
+    """문서 하나를 읽는 동안 섹션을 넘어 유지하는 상태(각주·미주 번호와 내용, 건너뜀,
+    목록 번호)."""
 
     def __init__(self, skips: SkipCounter | None = None) -> None:
         self.skips = skips if skips is not None else SkipCounter()
         self.notes: dict[NoteKind, list[Note]] = {"footnote": [], "endnote": []}
         self._numbers: dict[NoteKind, int] = {"footnote": 0, "endnote": 0}
         self.in_note = False
+        self.numbers = NumberingCounter()
 
     def next_note_number(self, kind: NoteKind) -> int:
         self._numbers[kind] += 1
@@ -196,8 +200,10 @@ def parse_blocks(
     while i < len(recs):
         r = recs[i]
         if r.tag_id == HWPTAG_PARA_HEADER and r.level == 0:
-            inlines, heading, trailing, i = _parse_paragraph(recs, i, 0, docinfo, bin_data, ctx)
-            para = make_paragraph(inlines, heading)
+            inlines, heading, list_info, trailing, i = _parse_paragraph(
+                recs, i, 0, docinfo, bin_data, ctx
+            )
+            para = make_paragraph(inlines, heading, list_info)
             if para is not None:
                 blocks.append(para)
             blocks.extend(trailing)
@@ -216,6 +222,31 @@ def _heading_level(para_header_payload: bytes, docinfo: DocInfo) -> int:
         return 0
     (para_shape_id,) = struct.unpack_from("<H", para_header_payload, 8)
     return docinfo.heading_level(para_shape_id)
+
+
+MAX_LIST_DEPTH = 6
+
+
+def _list_info(para_header_payload: bytes, docinfo: DocInfo, ctx: ReadContext) -> ListInfo | None:
+    """번호·글머리표 문단 모양이면 ListInfo. 번호는 문서 단위 카운터를 1 올린다.
+    번호 정의가 없으면 형식 "^n." 숫자로 근사한다."""
+    if len(para_header_payload) < 10:
+        return None
+    (para_shape_id,) = struct.unpack_from("<H", para_header_payload, 8)
+    shape = docinfo.para_shape(para_shape_id)
+    if shape is None or shape.heading_type not in (HEADING_NUMBER, HEADING_BULLET):
+        return None
+    depth = min(shape.heading_level, MAX_LIST_DEPTH)
+    if shape.heading_type == HEADING_BULLET:
+        return ListInfo("bullet", depth, "")
+    numbering = docinfo.numbering(shape.head_id)
+    if numbering is None:
+        numbers = ctx.numbers.next(shape.head_id, depth)
+        return ListInfo("number", depth, apply_template("^n.", numbers, ["DIGIT"] * len(numbers)))
+    numbers = ctx.numbers.next(shape.head_id, depth, numbering.level_start(depth))
+    template = numbering.levels[depth].template if depth < len(numbering.levels) else "^n."
+    formats = [lv.num_format for lv in numbering.levels]
+    return ListInfo("number", depth, apply_template(template, numbers, formats))
 
 
 def _subtree_end(recs: Sequence[Record], i: int) -> int:
@@ -288,11 +319,12 @@ def _parse_paragraph(
     docinfo: DocInfo,
     bin_data: ImageResolver | None,
     ctx: ReadContext,
-) -> tuple[list[Inline], int, list[Block], int]:
-    """(인라인, 제목 수준, 단락 뒤에 둘 블록, 다음 인덱스).
+) -> tuple[list[Inline], int, ListInfo | None, list[Block], int]:
+    """(인라인, 제목 수준, 목록 정보, 단락 뒤에 둘 블록, 다음 인덱스).
     확장 제어문자와 같은 단락의 CTRL_HEADER 를 등장 순서로 1:1 대응한다. 개수가 다르면
     대응을 포기하고 글자 뒤에 컨트롤 결과를 차례로 둔다."""
     heading = _heading_level(recs[i].payload, docinfo)
+    list_info = _list_info(recs[i].payload, docinfo, ctx)
     i += 1
     payload: bytes | None = None
     ctrls: list[tuple[int, int]] = []  # level+1 CTRL_HEADER 하위 트리 [start, stop)
@@ -336,7 +368,7 @@ def _parse_paragraph(
                 builder,
                 trailing,
             )
-    return builder.finish(), heading, trailing, end
+    return builder.finish(), heading, list_info, trailing, end
 
 
 def _handle_control(
@@ -397,10 +429,10 @@ def _subtree_blocks(
     j = start + 1
     while j < stop:
         if recs[j].tag_id == HWPTAG_PARA_HEADER and recs[j].level == ctrl_level + 1:
-            inlines, heading, trailing, j = _parse_paragraph(
+            inlines, heading, list_info, trailing, j = _parse_paragraph(
                 recs, j, ctrl_level + 1, docinfo, bin_data, ctx
             )
-            para = make_paragraph(inlines, heading)
+            para = make_paragraph(inlines, heading, list_info)
             if para is not None:
                 out.append(para)
             out.extend(trailing)
@@ -466,8 +498,10 @@ def _paragraph_blocks(
     ctx: ReadContext,
 ) -> tuple[list[Block], int]:
     """recs[j] (PARA_HEADER) 단락 하나 → [단락, 뒤 블록...] 과 다음 인덱스."""
-    inlines, heading, trailing, j = _parse_paragraph(recs, j, recs[j].level, docinfo, bin_data, ctx)
-    para = make_paragraph(inlines, heading)
+    inlines, heading, list_info, trailing, j = _parse_paragraph(
+        recs, j, recs[j].level, docinfo, bin_data, ctx
+    )
+    para = make_paragraph(inlines, heading, list_info)
     out: list[Block] = [para] if para is not None else []
     out.extend(trailing)
     return out, j
