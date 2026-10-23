@@ -1,7 +1,7 @@
 # PLAN — T-20261023-web-preview hwp2md 웹 미리보기 (메모리 변환 API + `hwp2md serve` + 브라우저 전용 Pyodide 모드)
 
 > 작성: planner opus · 2026-10-23 10:00 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: DRAFT)
+> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > BASE: 프로젝트 저장소 브랜치 `ai/T-20261023-web-preview` HEAD `5979e12` · 단위 240 passed · E2E 46 passed · Python 3.12.13 · olefile 0.47
 
@@ -449,13 +449,14 @@ S1(orch) ─> S2 spike ─> S3 ─> S4 ─> S5 ─> S6(cli.py) ─> S7 ─> S8 �
 - 그 외 전부 순차: S3→S8 은 같은 파일(`convert.py`, `app.js`, `index.html`)을 잇달아 만지거나 앞 단계 API 를 import 한다.
 
 ## 7. 사용자에게 확인받을 것 (플랜 승인 시 한 번에)
-- [ ] Q1. 웹 프레임워크 — 기본값: **Starlette + uvicorn** (extra `hwp2md[web]`). 근거: 순수 파이썬 소형 의존성, 정적 파일·TestClient 내장, pydantic 불필요. 대안: 표준 라이브러리 `http.server`(의존성 0, 대신 extra 가 비고 라우팅·테스트를 직접 작성), FastAPI(pydantic 추가).
-- [ ] Q2. Pyodide 로딩 방식 — 기본값: **jsDelivr CDN, 버전 고정**(S2 가 0.27.7 부터 시도해 확정). 대안: wheel 에 동봉(오프라인 동작, 패키지 수십 MB 증가).
-- [ ] Q3. hwp2md 소스를 브라우저에 싣는 방식 — 기본값: **서버가 실행 중인 `hwp2md`(web 제외)+`olefile` 소스를 `GET /pkg/hwp2md.zip` 으로 즉석 제공**. 대안: 빌드된 wheel 정적 제공 + micropip(빌드 단계 필요, olefile 은 PyPI 접근 필요).
-- [ ] Q4. 미리보기 Markdown 렌더러 — 기본값: **marked 12.0.2 를 `static/vendor/` 에 동봉**, `<br>` 외 원시 HTML 이스케이프. 대안: hwp2md 출력(제목·단락·표·이미지)만 다루는 자체 JS 렌더러 ~100줄.
-- [ ] Q5. 기본 포트·바인드 — 기본값: **localhost:8765**, 외부 바인드는 `--host` 로만. 인증 없음.
-- [ ] Q6. E2E 가 인터넷(jsDelivr) 접근을 필요로 하는 것 — 기본값: **허용**(브라우저 모드 테스트 3~4개가 CDN 필요, 오프라인이면 실패로 보고·skip 안 함). 대안: 브라우저 모드 테스트를 별도 마커로 분리해 기본 E2E_CMD 에서 제외(이 경우 C11·C12 는 별도 명령으로 검증).
-- [ ] Q7. Playwright chromium 다운로드(~150MB, `~/Library/Caches/ms-playwright`) — 기본값: **S1 에서 설치**.
+> 2026-10-23 사용자 답: "기본값" — Q1~Q7 모두 기본값 채택.
+- [x] Q1. 웹 프레임워크 — 기본값: **Starlette + uvicorn** (extra `hwp2md[web]`). 근거: 순수 파이썬 소형 의존성, 정적 파일·TestClient 내장, pydantic 불필요. 대안: 표준 라이브러리 `http.server`(의존성 0, 대신 extra 가 비고 라우팅·테스트를 직접 작성), FastAPI(pydantic 추가).
+- [x] Q2. Pyodide 로딩 방식 — 기본값: **jsDelivr CDN, 버전 고정**(S2 가 0.27.7 부터 시도해 확정). 대안: wheel 에 동봉(오프라인 동작, 패키지 수십 MB 증가).
+- [x] Q3. hwp2md 소스를 브라우저에 싣는 방식 — 기본값: **서버가 실행 중인 `hwp2md`(web 제외)+`olefile` 소스를 `GET /pkg/hwp2md.zip` 으로 즉석 제공**. 대안: 빌드된 wheel 정적 제공 + micropip(빌드 단계 필요, olefile 은 PyPI 접근 필요).
+- [x] Q4. 미리보기 Markdown 렌더러 — 기본값: **marked 12.0.2 를 `static/vendor/` 에 동봉**, `<br>` 외 원시 HTML 이스케이프. 대안: hwp2md 출력(제목·단락·표·이미지)만 다루는 자체 JS 렌더러 ~100줄.
+- [x] Q5. 기본 포트·바인드 — 기본값: **localhost:8765**, 외부 바인드는 `--host` 로만. 인증 없음.
+- [x] Q6. E2E 가 인터넷(jsDelivr) 접근을 필요로 하는 것 — 기본값: **허용**(브라우저 모드 테스트 3~4개가 CDN 필요, 오프라인이면 실패로 보고·skip 안 함). 대안: 브라우저 모드 테스트를 별도 마커로 분리해 기본 E2E_CMD 에서 제외(이 경우 C11·C12 는 별도 명령으로 검증).
+- [x] Q7. Playwright chromium 다운로드(~150MB, `~/Library/Caches/ms-playwright`) — 기본값: **S1 에서 설치**.
 
 ## 8. 리스크
 | 리스크 | 가능성 | 대응 |
