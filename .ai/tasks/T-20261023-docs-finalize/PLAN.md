@@ -1,7 +1,7 @@
 # PLAN — T-20261023-docs-finalize 개발 마무리 문서화
 
 > 작성: orchestrator(opus) · 2026-10-23 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 승인: 사용자 지시 "추가 개발하지 말고 개발 마무리. e2e 안 돌려도 됨. 문서화를 잘하고 마무리" (2026-10-23)
 
 ## 0. 한 줄 목표
