@@ -55,3 +55,19 @@
 ## 2026-10-22 HWP 5.0 BinData 해석: BIN_DATA(0x12) 1-based ID → BinData/BIN%04X.<ext>, 그림 레코드(0x55) offset 71, 압축은 레코드 비트 → 헤더 비트 → zlib 실패 시 raw
 - 결정: DocInfo BIN_DATA(0x12) 레코드를 등장 순 1-based ID 로 세어 EMBEDDING 항목만 `BinData/BIN%04X.<ext>` 스트림에 대응시킨다. 본문 gso 컨트롤 아래 그림 레코드(0x55)의 offset 71 에서 BinData ID(UINT16)를 읽는다. 압축 여부는 레코드 속성 비트가 지정하면 그것을, 기본값이면 FileHeader 압축 비트를 따르고, zlib(raw deflate) 해제에 실패하면 원본 바이트를 그대로 쓴다.
 - 이유: 레이아웃은 공개 스펙과 pyhwp 소스로 교차 확인했다. 저장소의 실제 HWP 5.0 샘플 2개에는 그림이 없어(BinData 스토리지·BIN_DATA 레코드 0) 실제 바이트 검증은 불가했고, 양성 샘플이 추가되면 E2E 가 자동으로 검증한다. 해제 실패 시 raw 로 두어 변환 전체가 실패하지 않게 한다.
+
+## 2026-10-23 웹 프레임워크: Starlette+uvicorn (extra web)
+- 결정: `hwp2md serve` 는 Starlette 앱을 uvicorn 으로 띄운다. 두 의존성은 optional extra `hwp2md[web]` 에만 두고, 기본 설치(CLI·라이브러리)는 그대로 olefile·lxml 만 쓴다. 기본 바인드는 localhost:8765, 외부 바인드는 `--host` 로만 하고 인증은 없다.
+- 이유: 순수 파이썬 소형 의존성이고 정적 파일 제공과 TestClient 가 내장돼 테스트가 쉽다. FastAPI 는 pydantic 이 추가로 들어오고, 표준 라이브러리 `http.server` 는 라우팅·멀티파트·테스트를 직접 짜야 한다.
+
+## 2026-10-23 메모리 변환: Source = Path | bytes, olefile 에는 BytesIO
+- 결정: 리더 입력 타입을 `Path | bytes` 로 넓히고, bytes 일 때 HWP 5.0 은 `olefile.OleFileIO(io.BytesIO(data))`, HWPX 는 `zipfile.ZipFile(io.BytesIO(data))` 로 연다. 공개 API `convert_bytes(data, filename)` 는 디스크에 쓰지 않고 `MemoryResult`(markdown·images·개수)를 돌려주며, markdown 은 `convert()` 가 쓰는 `.md` 와 바이트 동일하다. 입력은 50MB 상한.
+- 이유: 웹 업로드를 임시 파일 없이 처리해야 "업로드는 저장하지 않음" 을 지킬 수 있고, 브라우저(Pyodide) 안에서도 같은 함수를 그대로 부를 수 있다. 같은 렌더 경로를 쓰므로 CLI 와 웹 결과가 갈라지지 않는다.
+
+## 2026-10-23 브라우저 모드: Pyodide 0.27.7 CDN + 서버가 소스 zip 제공
+- 결정: "브라우저 안에서만 처리" 모드는 jsDelivr 에서 버전 고정한 Pyodide 0.27.7 을 불러오고, hwp2md(web 제외)와 olefile 의 순수 파이썬 소스는 서버가 `GET /pkg/hwp2md.zip` 으로 즉석에서 묶어 준다. lxml 은 Pyodide 가 제공하는 패키지를 쓴다. 변환할 파일 바이트는 서버로 보내지 않는다.
+- 이유: wheel 에 Pyodide 를 동봉하면 패키지가 수십 MB 커지고, wheel 빌드 + micropip 방식은 빌드 단계와 PyPI 접근이 필요하다. 실행 중인 소스를 그대로 실으면 서버 모드와 같은 코드가 돈다. 대가로 첫 사용 시 인터넷이 필요하고 콜드 로드가 약 1분(측정 약 65초) 걸린다.
+
+## 2026-10-23 미리보기 렌더러: 동봉 marked 12.0.2, <br> 외 HTML 이스케이프
+- 결정: 미리보기는 `static/vendor/` 에 동봉한 marked 12.0.2 로 렌더하고, 원시 HTML 은 표 셀 줄바꿈용 `<br>` 만 살리고 나머지는 이스케이프한다. 링크·이미지 주소는 허용목록만 통과시킨다: 링크는 http/https/mailto 와 상대 경로, 이미지는 상대 경로와 `data:image/*;base64`.
+- 이유: 문서 내용은 외부에서 온 입력이라 미리보기가 XSS 통로가 되면 안 된다. hwp2md 출력이 실제로 쓰는 HTML 은 `<br>` 뿐이고, 렌더러를 동봉하면 서버 모드는 CDN 없이 동작한다. 자체 렌더러보다 GFM 표 처리가 검증돼 있다.
