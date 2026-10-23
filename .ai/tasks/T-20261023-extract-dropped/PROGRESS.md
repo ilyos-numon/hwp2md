@@ -151,3 +151,10 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_ole_chart.py 
 - 커밋: e48c5c2 [T-20261023-extract-dropped][s6] 수식 변환기 벤더링 (python-hwpx, Apache-2.0)
 - 다음: S8 커밋
+
+## [2026-10-23 17:59] S8 | implementer(opus) | DONE
+- 한 일: 순수 파이썬 AES-128 ECB 복호 + distdoc(키 유도·decrypt_view_text), synth_distdoc, test_distdoc 28(FIPS-197). 실제 배포용 2개 복호 0.004s/0.013s, 레코드 819/5006 정상. P1 통합: unit 510P, 기준선 61 동일, reviewer PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py tests/synth_distdoc.py tests/unit/test_distdoc.py 
+- 커밋: c5b1bc5 [T-20261023-extract-dropped][s7] OLE·OOXML 차트 모듈
+- 다음: R1 (S9~S11)
+- 메모: P1 worktree 가 main 에서 생성돼 S5·S7 은 메인 트리 재실행, S6·S8 은 새 파일만이라 복사로 합침. 메모리 기록 갱신
