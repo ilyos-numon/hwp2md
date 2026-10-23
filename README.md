@@ -246,8 +246,8 @@ flowchart LR
 
 | 종류 | 위치 | 수 | 무엇을 보나 |
 |---|---|---|---|
-| 단위 | `tests/unit` | 338 passed (`uv run pytest tests/unit -q`, 2026-10-23 직접 실행) | 레코드·XML 파서, 제목 판정, 표 조립, 이미지 추출, 렌더러, 포맷 판별, 메모리 API, 웹 앱(TestClient) |
-| E2E | `tests/e2e` | 70 passed (웹 미리보기 태스크 완료 기록 인용, 이번 문서 작업에서는 다시 실행하지 않음) | 실제 콘솔 스크립트 실행, 실제 서버 + Playwright(Chromium) 화면 |
+| 단위 | `tests/unit` | 813 passed (`uv run pytest tests/unit -q`, 2026-10-23 직접 실행) | 레코드·XML 파서, 제목 판정, 표 조립, 이미지 추출, 렌더러, 포맷 판별, 메모리 API, 웹 앱(TestClient) |
+| E2E | `tests/e2e` | 120 passed (`uv run pytest tests/e2e -q`, 2026-10-23 직접 실행, 실제 샘플 요소별 18개 포함) | 실제 콘솔 스크립트 실행, 실제 서버 + Playwright(Chromium) 화면 |
 
 E2E 가 검증하는 핵심:
 - 서버 모드 · 브라우저 모드 · CLI 의 Markdown 이 같다 (`test_modes_produce_identical_markdown`, `test_convert_matches_cli`).
