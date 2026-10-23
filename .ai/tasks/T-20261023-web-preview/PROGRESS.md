@@ -79,3 +79,31 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/detect.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/source.py tests/unit/test_source_bytes.py 
 - 커밋: 2d3fe1f [T-20261023-web-preview][s2] spike: pyodide 0.27.7 + lxml converts 5/5 samples
 - 다음: S4 — 메모리 변환 API 시작
+
+## [2026-10-23 10:16] S4 | orchestrator | START
+- 한 일: 메모리 변환 API
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
+
+## [2026-10-23 10:16] S4 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
+
+## [2026-10-23 10:19] S4 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/errors.py src/hwp2md/memory.py tests/unit/test_memory.py 
+- 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
+
+## [2026-10-23 10:19] S4 | subagent | DONE
+- 한 일: 메모리 변환 API
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/errors.py src/hwp2md/memory.py tests/unit/test_memory.py 
+- 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
+- 다음: review PASS
+- 메모: implementer(opus) DONE 55 tests, 360 passed; reviewer(sonnet) PASS
+
+## [2026-10-23 10:19] S4 | orchestrator | DONE
+- 한 일: 메모리 변환 API 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/errors.py src/hwp2md/memory.py tests/unit/test_memory.py 
+- 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
+- 다음: S5 — 웹 서버 앱 시작

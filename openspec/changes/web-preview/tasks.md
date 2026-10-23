@@ -15,9 +15,9 @@
 
 ## 4. 메모리 변환 API
 
-- [ ] 4.1 `src/hwp2md/memory.py`(`MemoryImage`, `MemoryResult`, `safe_stem`, `convert_bytes`, `markdown_with_data_uris`, `build_zip`, `to_payload`, `error_code`, `convert_to_response`)와 `errors.py` 의 `EmptyInputError`·`InputTooLargeError` 를 추가한다
-- [ ] 4.2 `convert()` 가 `memory` 와 같은 블록→결과 계산을 공유하도록 바꾸되 출력 바이트·`ConvertResult` 필드를 유지하고 `__init__.py` 에 `convert_bytes`·`MemoryResult` export 를 더한다
-- [ ] 4.3 `tests/unit/test_memory.py` 로 샘플 5개 경로 변환 동일성, 쓰기 차단 가드 하 변환·zip, zip 엔트리·날짜, data URI, 오류 코드 5종, 웹 모듈 차단 subprocess 를 확인한다
+- [x] 4.1 `src/hwp2md/memory.py`(`MemoryImage`, `MemoryResult`, `safe_stem`, `convert_bytes`, `markdown_with_data_uris`, `build_zip`, `to_payload`, `error_code`, `convert_to_response`)와 `errors.py` 의 `EmptyInputError`·`InputTooLargeError` 를 추가한다
+- [x] 4.2 `convert()` 가 `memory` 와 같은 블록→결과 계산을 공유하도록 바꾸되 출력 바이트·`ConvertResult` 필드를 유지하고 `__init__.py` 에 `convert_bytes`·`MemoryResult` export 를 더한다
+- [x] 4.3 `tests/unit/test_memory.py` 로 샘플 5개 경로 변환 동일성, 쓰기 차단 가드 하 변환·zip, zip 엔트리·날짜, data URI, 오류 코드 5종, 웹 모듈 차단 subprocess 를 확인한다
 
 ## 5. 웹 서버 앱
 

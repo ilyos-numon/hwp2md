@@ -12,6 +12,7 @@ from .hwp5.reader import read_blocks as read_hwp5_blocks
 from .hwpx.reader import read_blocks as read_hwpx_blocks
 from .images import image_dir_name
 from .render import render_blocks
+from .source import Source
 
 
 @dataclass(frozen=True)
@@ -46,7 +47,18 @@ def _write_images(blocks: Sequence[Block], target: Path) -> tuple[Path, ...]:
     return tuple(written.values())
 
 
-def read_blocks(path: Path) -> list[Block]:
+def _count_blocks(blocks: Sequence[Block]) -> tuple[int, int, int, int]:
+    """(paragraph_count, table_count, heading_count, image_count). convert 와 memory 가 공유."""
+    paragraph_count = sum(
+        isinstance(b, Paragraph) and bool(b.text) and b.level == 0 for b in blocks
+    )
+    heading_count = sum(isinstance(b, Paragraph) and bool(b.text) and b.level >= 1 for b in blocks)
+    table_count = sum(isinstance(b, Table) for b in blocks)
+    image_count = sum(isinstance(b, Image) for b in blocks)
+    return paragraph_count, table_count, heading_count, image_count
+
+
+def read_blocks(path: Source) -> list[Block]:
     """포맷을 감지해 리더를 고른다.
     "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks. 예외는 그대로 전파."""
     if detect_format(path) == "hwpx":
@@ -62,18 +74,13 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
     blocks = read_blocks(source)
     image_dir_rel = image_dir_name(source.stem)
     markdown = render_blocks(blocks, image_dir=image_dir_rel)
-    paragraph_count = sum(
-        isinstance(b, Paragraph) and bool(b.text) and b.level == 0 for b in blocks
-    )
-    heading_count = sum(isinstance(b, Paragraph) and bool(b.text) and b.level >= 1 for b in blocks)
-    table_count = sum(isinstance(b, Table) for b in blocks)
+    paragraph_count, table_count, heading_count, image_count = _count_blocks(blocks)
     target_dir = Path(out_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
     output = target_dir / f"{source.stem}.md"
     with output.open("w", encoding="utf-8", newline="\n") as f:
         f.write(markdown)
     files = _write_images(blocks, target_dir / image_dir_rel)
-    image_count = sum(isinstance(b, Image) for b in blocks)
     return ConvertResult(
         source=source,
         output=output,
