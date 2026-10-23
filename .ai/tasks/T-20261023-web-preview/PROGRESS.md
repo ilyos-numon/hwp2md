@@ -282,3 +282,26 @@
 - 한 일: E2E 화면 두 모드·무전송·출력 동일·스크린샷
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: d6f3d8c [T-20261023-web-preview][s11] docs: web preview usage and decisions
+
+## [2026-10-23 10:42] S10 | hook | AUTO
+- 한 일: 도구 호출 240회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 21e533f [T-20261023-web-preview][record] S10 start
+
+## [2026-10-23 10:49] S10 | hook | AUTO
+- 한 일: 도구 호출 255회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_ui.py 
+- 커밋: 21e533f [T-20261023-web-preview][record] S10 start
+
+## [2026-10-23 10:51] S10 | subagent | DONE
+- 한 일: E2E 화면 두 모드
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_ui.py 
+- 커밋: 21e533f [T-20261023-web-preview][record] S10 start
+- 다음: review PASS
+- 메모: test-writer(sonnet) DONE 8 tests; 재실행 70 passed 72s; reviewer PASS; 편차: post_data_buffer None → Content-Length==파일크기로 대조
+
+## [2026-10-23 10:51] S10 | orchestrator | DONE
+- 한 일: E2E 화면 두 모드 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_ui.py 
+- 커밋: 21e533f [T-20261023-web-preview][record] S10 start
+- 다음: S12 — 리뷰·결과 기록 시작

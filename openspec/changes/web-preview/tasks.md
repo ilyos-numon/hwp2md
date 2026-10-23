@@ -37,7 +37,7 @@
 ## 8. E2E
 
 - [x] 8.1 `tests/e2e/test_web_api.py`(+ `conftest.py` 서버 픽스처)로 실제 `hwp2md serve` 프로세스의 health·convert·zip·오류·저장 흔적 없음·포트 사용 중·extra 미설치를 검증한다
-- [ ] 8.2 `tests/e2e/test_web_ui.py` 로 서버·브라우저 모드 화면, 무전송 요청 기록, 5개 샘플 두 모드·CLI 출력 동일, zip 다운로드, 오류 표시, 스크린샷을 검증하고 E2E 전체 통과를 확인한다
+- [x] 8.2 `tests/e2e/test_web_ui.py` 로 서버·브라우저 모드 화면, 무전송 요청 기록, 5개 샘플 두 모드·CLI 출력 동일, zip 다운로드, 오류 표시, 스크린샷을 검증하고 E2E 전체 통과를 확인한다
 
 ## 9. 문서
 
