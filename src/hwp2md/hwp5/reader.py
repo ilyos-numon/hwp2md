@@ -233,7 +233,7 @@ class BinDataStore:
         if entry is None or entry.storage_type != BIN_DATA_EMBEDDING:
             return None, "image_missing"
         data = self._stream_data(entry)
-        if data is None:
+        if not data:  # 스트림 없음, 또는 (압축 해제 결과) 0바이트
             return None, "image_missing"
         ext = normalize_ext(entry.ext, data)
         return Image(file_name=self._namer.name_for(str(bindata_id), ext), data=data), None

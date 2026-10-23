@@ -277,19 +277,24 @@ def test_shapes_hwpx(tmp_path: Path, run_cli: RunCli) -> None:
 
 
 def test_bmp(tmp_path: Path, run_cli: RunCli) -> None:
-    """BMP 는 원본 그대로 저장된다 (개수 = 탐색 BinData BMP 수, 내용이 있으면 `BM` 머리).
-    원본 BMP 스트림이 0바이트인 샘플 1개가 있어 파일별로는 내용 있는 것만 머리를 본다."""
-    real_bmp = 0
-    for idx, (src, n) in enumerate(_targets("bmp")):
+    """BMP 는 원본 그대로 저장된다. 내용 있는 BMP 수 = .bmp 파일 수, 각 파일은 `BM` 머리.
+    0바이트 BMP 는 파일을 만들지 않고 `본체 없는 그림` 으로 센다."""
+    with_content = 0
+    for idx, (src, total) in enumerate(_targets("bmp")):
+        empty = probe(src)["bmp_empty"]
+        good = total - empty
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         bmps = [f for f in conv.image_files if f.suffix == ".bmp"]
-        assert len(bmps) == n, f"#{idx}: .bmp {len(bmps)} != 탐색 {n}"
+        assert all(f.stat().st_size > 0 for f in conv.image_files), f"#{idx}: 0바이트 파일"
         for f in bmps:
-            data = f.read_bytes()
-            if data:
-                assert data.startswith(b"BM"), f"#{idx}: BMP 머리가 아님"
-                real_bmp += 1
-    assert real_bmp >= 1
+            assert f.read_bytes().startswith(b"BM"), f"#{idx}: BMP 머리가 아님"
+        assert len(bmps) >= good, f"#{idx}: .bmp {len(bmps)} < 내용 있는 BMP {good}"
+        if good == 0:
+            assert not bmps
+        if empty:
+            assert "본체 없는 그림" in conv.skipped, f"#{idx}: 건너뜀 줄에 본체 없는 그림 없음"
+        with_content += good
+    assert with_content >= 1
 
 
 def test_distribution(tmp_path: Path, run_cli: RunCli) -> None:

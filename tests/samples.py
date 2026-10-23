@@ -7,6 +7,7 @@ import functools
 import struct
 import unicodedata
 import zipfile
+import zlib
 from pathlib import Path
 from typing import Literal
 
@@ -129,6 +130,7 @@ PROBE_KEYS: tuple[str, ...] = (
     "hwpml_picture",
     "hwpml_header_footer",
     "bmp",
+    "bmp_empty",
 )
 
 _CTRL_HEADER, _LIST_HEADER, _PARA_HEADER, _PARA_TEXT = 0x47, 0x48, 0x42, 0x43
@@ -169,6 +171,17 @@ def _para_text(payload: bytes) -> str:
     return "".join(out)
 
 
+def _inflated_size(data: bytes, compressed: bool) -> int:
+    """BinData 스트림이 풀린 뒤의 바이트 수 (압축 문서가 아니면 그대로)."""
+    if not compressed:
+        return len(data)
+    inflater = zlib.decompressobj(-15)
+    try:
+        return len(inflater.decompress(data) + inflater.flush())
+    except zlib.error:
+        return len(data)
+
+
 def _walk_hwp5(path: Path) -> tuple[collections.Counter[str], dict[str, list[str]]]:
     counts: collections.Counter[str] = collections.Counter()
     texts: dict[str, list[str]] = collections.defaultdict(list)
@@ -183,9 +196,11 @@ def _walk_hwp5(path: Path) -> tuple[collections.Counter[str], dict[str, list[str
         return counts, texts
     pkg = read_hwp5_package(path)
     docinfo = parse_docinfo(pkg.docinfo)
-    for name in pkg.bin_data:
+    for name, data in pkg.bin_data.items():
         if Path(name).suffix.lower() == ".bmp":
             counts["bmp"] += 1
+            if not _inflated_size(data, pkg.header.compressed):
+                counts["bmp_empty"] += 1
     for section in pkg.sections:
         stack: list[list] = []  # [level, ctrl_id, 목록 머리 본 적 있음]
         last_text = ""
@@ -262,9 +277,9 @@ def _walk_hwpx(path: Path) -> tuple[collections.Counter[str], dict[str, list[str
     parser = etree.XMLParser(resolve_entities=False, no_network=True)
     with zipfile.ZipFile(path) as z:
         names = z.namelist()
-        counts["bmp"] += sum(
-            1 for n in names if n.startswith("BinData/") and n.lower().endswith(".bmp")
-        )
+        bmp_names = [n for n in names if n.startswith("BinData/") and n.lower().endswith(".bmp")]
+        counts["bmp"] += len(bmp_names)
+        counts["bmp_empty"] += sum(1 for n in bmp_names if z.getinfo(n).file_size == 0)
         kinds: dict[str, str] = {}
         if "Contents/header.xml" in names:
             head = etree.fromstring(z.read("Contents/header.xml"), parser)

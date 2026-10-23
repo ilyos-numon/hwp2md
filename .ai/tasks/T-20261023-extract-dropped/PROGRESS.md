@@ -567,3 +567,24 @@
 - 커밋: 514fa39 [T-20261023-extract-dropped][s23] README·결정 기록·MIT 라이선스·NOTICE
 - 다음: 0바이트 이미지 결함 수정(S24 후속) → S25
 - 메모: 실제 HWP5 BMP 1개가 0바이트로 해석되는데 빈 파일로 쓰고 이미지로 셈 → image_missing 이어야 함(스펙 위반)
+
+## [2026-10-23 19:04] P3 | hook | AUTO
+- 한 일: 도구 호출 780회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8c84270 [T-20261023-extract-dropped][s24] E2E: 실제 샘플 요소별·세 포맷 CLI
+
+## [2026-10-23 19:05] P3 | hook | AUTO
+- 한 일: 도구 호출 795회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8c84270 [T-20261023-extract-dropped][s24] E2E: 실제 샘플 요소별·세 포맷 CLI
+
+## [2026-10-23 19:07] P3 | hook | AUTO
+- 한 일: 도구 호출 810회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/bindata.py src/hwp2md/ole.py tests/unit/test_zero_byte_images.py 
+- 커밋: 8c84270 [T-20261023-extract-dropped][s24] E2E: 실제 샘플 요소별·세 포맷 CLI
+
+## [2026-10-23 19:08] S24 | implementer(opus)+test-writer(sonnet) | DONE
+- 한 일: 후속: 0바이트 그림 → image_missing(세 리더+ole), test_zero_byte_images 7, test_bmp 새 규칙(bmp_empty probe). unit 813P, e2e real/cli/image 45P
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/bindata.py src/hwp2md/ole.py tests/e2e/test_extract_real.py tests/samples.py tests/e2e/test_design_v3.py tests/e2e/test_web_extract.py tests/unit/test_zero_byte_images.py 
+- 커밋: 8c84270 [T-20261023-extract-dropped][s24] E2E: 실제 샘플 요소별·세 포맷 CLI
+- 다음: S25 대기

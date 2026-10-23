@@ -227,7 +227,7 @@ def _inflate_if_needed(data: bytes, label: str) -> bytes:
         return data
     if len(out) > MAX_BINDATA_BYTES:
         raise Hwp2mdError(f"binary item too large: {label} (> {MAX_BINDATA_BYTES} bytes)")
-    if not d.eof or not out:
+    if not d.eof:
         return data
     return out
 
@@ -311,6 +311,8 @@ class BinDataStore:
         if raw is None:
             return None
         data = _inflate_if_needed(raw, f"BINDATA {bid}")
+        if not data:  # 압축 해제 결과 0바이트 → 본체 없는 그림
+            return None
         return Image(file_name=self._namer.name_for(bid, normalize_ext(fmt, data)), data=data)
 
 

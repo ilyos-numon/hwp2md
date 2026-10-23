@@ -138,7 +138,7 @@ def _native_image(data: bytes) -> bytes | None:
     if size > len(data) - 4:
         return None
     payload = data[4 : 4 + size]
-    if sniff_ext(payload) in _NATIVE_IMAGE_EXTS:
+    if payload and sniff_ext(payload) in _NATIVE_IMAGE_EXTS:
         return payload
     return None
 
