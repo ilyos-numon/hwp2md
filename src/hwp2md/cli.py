@@ -9,12 +9,19 @@ from pathlib import Path
 
 from . import __version__
 from .convert import convert
-from .errors import Hwp2mdError, NotHwpFileError, UnsupportedHwpError
+from .errors import (
+    DrmProtectedError,
+    EncryptedDocumentError,
+    Hwp2mdError,
+    NotHwpFileError,
+    UnsupportedHwpError,
+)
+from .skips import SKIP_LABELS
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hwp2md")
-    parser.add_argument("input", metavar="INPUT", help="변환할 .hwp 파일 경로")
+    parser.add_argument("input", metavar="INPUT", help="변환할 HWP·HWPX·HWPML 파일 경로")
     parser.add_argument(
         "-o",
         "--out-dir",
@@ -56,6 +63,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         result = convert(input_arg, args.out_dir)
     except NotHwpFileError:
         return _error(f"not an HWP 5.0 file: {input_arg}", 3)
+    except DrmProtectedError:
+        return _error(f"unsupported HWP file (DRM protected): {input_arg}", 3)
+    except EncryptedDocumentError:
+        return _error(f"unsupported HWP file (password protected): {input_arg}", 3)
     except UnsupportedHwpError:
         return _error(f"unsupported HWP file (encrypted or distribution): {input_arg}", 3)
     except FileNotFoundError:
@@ -73,6 +84,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(summary)
     if result.image_files:
         print(f"  이미지: {result.image_dir}/ ({len(result.image_files)} files)")
+    if result.skipped:
+        skipped = " · ".join(f"{SKIP_LABELS[k]} {n}개" for k, n in result.skipped)
+        print(f"  건너뜀: {skipped}")
     return 0
 
 

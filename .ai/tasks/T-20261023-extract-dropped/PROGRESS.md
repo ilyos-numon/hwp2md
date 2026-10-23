@@ -438,3 +438,19 @@
 - 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
 - 다음: S19 CLI
 - 메모: §1-D 추가 2건(test_container_children_in_order, _IMAGE_BYTES 키) orchestrator 승인
+
+## [2026-10-23 18:40] S19 | orchestrator | START
+- 한 일: CLI 오류 문구·건너뜀 요약
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c3e51db [T-20261023-extract-dropped][s18] 교차 포맷 정합 (칸 그림·칸 목록·개체 배치)
+
+## [2026-10-23 18:41] S19 | hook | AUTO
+- 한 일: 도구 호출 600회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: c3e51db [T-20261023-extract-dropped][s18] 교차 포맷 정합 (칸 그림·칸 목록·개체 배치)
+
+## [2026-10-23 18:41] S19 | implementer(opus) | DONE
+- 한 일: cli.py: DRM·암호 전용 문구(rc3), 건너뜀 요약 줄, INPUT 도움말. unit 800P, CLI e2e 24P, DRM 합성 rc3, 머리말 합성 '건너뜀: 머리말·꼬리말 2개'
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: c3e51db [T-20261023-extract-dropped][s18] 교차 포맷 정합 (칸 그림·칸 목록·개체 배치)
+- 다음: P3 (S20~S23 메인 트리 동시)
