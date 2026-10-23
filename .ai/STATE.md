@@ -4,18 +4,17 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: 없음
+- 현재 태스크: T-20261023-extract-dropped (버려지던 HWP 요소 추출과 추출 한계 명시)
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
-- 플랜: `.ai/tasks/T-20261023-docs-finalize/PLAN.md` (상태: DONE)
-- 결과: `.ai/tasks/T-20261023-docs-finalize/RESULT.md`
-- 현재 단계: 없음
-- 상태: IDLE
-- 브랜치: `main` (ai/T-20261023-docs-finalize 병합 완료)
-- 마지막 체크포인트: 2026-10-23 11:16 (S3 DONE)
-- 마지막 커밋: 1ed4634 [T-20261023-docs-finalize][done]
+- 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
+- 현재 단계: S1 / 27 — 기준선 기록
+- 상태: RUNNING
+- 브랜치: `ai/T-20261023-extract-dropped`
+- 마지막 체크포인트: 2026-10-23 17:32 (S0 DONE)
+- 마지막 커밋: ae6ed95 [s0] V3 시안·기능 명세 선행 커밋
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 없음 — 1차 개발 마무리. 새 작업은 README "로드맵"에서 골라 `/plan <목표>`.
+1. `/implement` 로 S1(기준선 기록)부터. 근거: PLAN §5 Stage 1, OpenSpec `openspec/changes/extract-dropped/`.
 
 ## 차단 중이면
-- 이유: 없음 · 사용자 결정 필요: 없음 (RESULT 검토·병합 승인 대기)
+- 이유: 없음 · 사용자 결정 필요: 없음 (Q1~Q10 승인 완료)
