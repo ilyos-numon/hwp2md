@@ -6,7 +6,9 @@
     empty: "빈 파일입니다",
     too_large: "파일이 너무 큽니다 (최대 50MB)",
     not_hwp: "HWP 5.0 또는 HWPX 파일이 아닙니다",
-    unsupported: "암호화되었거나 배포용 문서라 변환할 수 없습니다",
+    unsupported: "지원하지 않는 HWP 문서라 변환할 수 없습니다",
+    drm: "문서보안(DRM)이 적용된 파일이라 변환할 수 없습니다. 보안 프로그램에서 해제한 뒤 다시 시도하세요",
+    encrypted: "암호가 설정된 문서라 변환할 수 없습니다. 한글에서 암호를 해제한 뒤 다시 시도하세요",
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -22,6 +24,7 @@
     raw: $("#raw"),
     download: $("#download"),
     error: $("#error"),
+    skipped: $("#skipped"),
   };
 
   function escapeHtml(text) {
@@ -185,6 +188,27 @@
     els.resultMeta.textContent = "";
     els.preview.innerHTML = "";
     els.raw.textContent = "";
+    clearSkipped();
+  }
+
+  const SKIPPED_PREFIX = "변환하지 못한 요소: ";
+  const SKIPPED_SUFFIX = " (자세한 이유: docs/extraction-limits.md)";
+
+  function clearSkipped() {
+    els.skipped.textContent = "";
+    els.skipped.hidden = true;
+  }
+
+  // 페이로드 skipped[] (서버·브라우저 모드 공통) 의 label 을 그대로 textContent 로 쓴다.
+  function renderSkipped(skipped) {
+    const items = Array.isArray(skipped) ? skipped.filter((s) => s && s.count > 0) : [];
+    if (!items.length) {
+      clearSkipped();
+      return;
+    }
+    const parts = items.map((s) => String(s.label) + " " + s.count + "개");
+    els.skipped.textContent = SKIPPED_PREFIX + parts.join(" · ") + SKIPPED_SUFFIX;
+    els.skipped.hidden = false;
   }
 
   function renderResult(body) {
@@ -194,6 +218,7 @@
       "개 · 이미지 " + c.images + "개";
     els.preview.innerHTML = window.marked.parse(body.preview_markdown || "");
     els.raw.textContent = body.markdown || "";
+    renderSkipped(body.skipped);
     els.download.disabled = false;
   }
 

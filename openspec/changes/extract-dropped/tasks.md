@@ -48,7 +48,7 @@
 
 ## 10. 화면
 
-- [ ] 10.1 `src/hwp2md/web/static` 화면에 오류 코드 `drm`·`encrypted` 문구, `#skipped` 경고, 한컴 공개 문서 문구를 넣고 런타임 zip 에 새 모듈이 실리는지 확인한다
+- [x] 10.1 `src/hwp2md/web/static` 화면에 오류 코드 `drm`·`encrypted` 문구, `#skipped` 경고, 한컴 공개 문서 문구를 넣고 런타임 zip 에 새 모듈이 실리는지 확인한다
 - [ ] 10.2 `design/v3` 의 `#limits`·변환 화면 `#skipped`·데모 엔진 오류 코드·한컴 문구를 갱신하고 데모 페이로드를 실제 엔진 출력으로 다시 만든다
 
 ## 11. 문서

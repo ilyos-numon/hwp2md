@@ -135,7 +135,7 @@
 | C7 | 수식·각주·링크 (inventory §4 해당 행) | C5 의 `test_equation`, `test_footnote`, `test_hyperlink` | 수식 렌더(`$…$`/`$$…$$`/코드 스팬) 수 = 탐색 `eqed` 수(3), `[^n]:` 정의 수 = 탐색 `fn  ` 수(3), http/https/mailto 링크 수 ≥ 탐색 웹 링크 수 |
 | C8 | 머리말·꼬리말 (inventory §4 해당 행) | C5 의 `test_header_footer` | CLI 마지막 줄 `  건너뜀: 머리말·꼬리말 N개` 의 N = 탐색 `head`+`foot` 수, 머리말 단락 글자가 본문 Markdown 에 없음 |
 | C9 | 배포용 문서 (inventory §4 "배포용 문서" 행 2개) | C5 의 `test_distribution` | 2개 모두 종료 코드 0, 단락 ≥ 1, 파일당 변환 30초 이하 |
-| C10 | HWPML (inventory §3 HWPML 2개) | C5 의 `test_hwpml` | 2개 모두 종료 코드 0, 표 ≥ 2, 이미지 수 ≥ inventory §3 그림 수(3, 7), 건너뜀 `머리말·꼬리말 2개` |
+| C10 | HWPML (inventory §3 HWPML 2개) | C5 의 `test_hwpml` | 2개 모두 종료 코드 0, 단락 ≥ 200, 이미지 1·5개(본문 그림), 건너뜀 `머리말·꼬리말 2개` (orchestrator 정정 2026-10-23: 두 샘플의 표 2개·그림 2개는 머리말·꼬리말 안에 있어 Q2 결정대로 제외되므로 표 0) |
 | C11 | DRM·텍스트·HWP3 거부 (inventory §3) | C5 의 `test_drm`, `test_not_hwp` | DRM 2개: 종료 코드 3, 표준 오류에 `DRM protected`, API `drm`/415. 텍스트 1개·HWP3 1개: 종료 코드 3, `not an HWP 5.0 file:` |
 | C12 | 전체 실제 샘플 무오류 | C5 의 `test_all_samples_convert` | `tests/fixtures/**` 모든 파일이 종료 코드 0, 또는 분류 `drm`/`text`/HWP3 이면 3. 종료 코드 1 은 0개 |
 | C13 | API·화면 건너뜀 표시 | `uv run pytest tests/e2e/test_web_extract.py -q` + 스크린샷 `.ai/tasks/T-20261023-extract-dropped/screenshots/s26-web-skipped.png`, `s26-web-drm.png` | pass. 스크린샷에 `#skipped` "변환하지 못한 요소: 머리말·꼬리말 1개", DRM 오류 문구가 보인다 (reviewer 가 직접 본다) |
@@ -144,7 +144,7 @@
 | C16 | 추출 한계 문서 | `uv run python -c "from hwp2md.skips import SKIP_LABELS; t=open('docs/extraction-limits.md',encoding='utf-8').read(); print(sum(l in t for l in SKIP_LABELS.values()))"` | `9` |
 | C17 | 런타임 zip 에 새 모듈 | `uv run pytest tests/unit/test_web_runtime_zip.py -q` | pass (`hwp2md/hwpml/reader.py`, `hwp2md/equation/__init__.py`, `hwp2md/hwp5/aes.py`, `hwp2md/ole.py`, `hwp2md/skips.py` 포함) |
 | C18 | 익명화 | `/Users/illi/illy-projects/scripts/sanitize-check.sh /Users/illi/illy-projects/hwp2md` | OK |
-| C19 | 실제 샘플 이름이 추적 파일에 새로 들어가지 않음 | `git diff --name-only d6f98cc -- tests src docs design \| xargs grep -lE '규정\|지침\|정관\|세칙' 2>/dev/null \| wc -l` | `0` |
+| C19 | 실제 샘플 이름이 추적 파일에 새로 들어가지 않음 | `git diff --name-only e18cd70 -- tests src docs design \| xargs grep -lE '규정\|지침\|정관\|세칙' 2>/dev/null \| wc -l` | `0` |
 
 ## 3. 실패 기준 (하나라도 해당하면 즉시 중단 → BLOCKED 기록)
 - 같은 단계 재시도 3회 초과 → BLOCKED

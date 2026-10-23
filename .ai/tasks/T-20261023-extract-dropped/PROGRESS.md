@@ -454,3 +454,74 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
 - 커밋: c3e51db [T-20261023-extract-dropped][s18] 교차 포맷 정합 (칸 그림·칸 목록·개체 배치)
 - 다음: P3 (S20~S23 메인 트리 동시)
+
+## [2026-10-23 18:41] S20 | orchestrator | START
+- 한 일: P3 메인 트리
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:41] S21 | orchestrator | START
+- 한 일: P3 메인 트리
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:41] S22 | orchestrator | START
+- 한 일: P3 메인 트리
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:41] S23 | orchestrator | START
+- 한 일: P3 메인 트리
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:43] P3 | hook | AUTO
+- 한 일: 도구 호출 615회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:43] P3 | hook | AUTO
+- 한 일: 도구 호출 630회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:44] P3 | hook | AUTO
+- 한 일: 도구 호출 645회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:44] P3 | hook | AUTO
+- 한 일: 도구 호출 660회 경과
+- 변경 파일(미커밋, .ai 제외): README.md src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:45] P3 | hook | AUTO
+- 한 일: 도구 호출 675회 경과
+- 변경 파일(미커밋, .ai 제외): README.md design/v3/app.html design/v3/css/app.css design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:46] P3 | hook | AUTO
+- 한 일: 도구 호출 690회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/system-overview.md src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:48] P3 | hook | AUTO
+- 한 일: 도구 호출 705회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE docs/extraction-limits.md tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:51] P3 | hook | AUTO
+- 한 일: 도구 호출 720회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE docs/extraction-limits.md tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:54] P3 | hook | AUTO
+- 한 일: 도구 호출 735회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE docs/extraction-limits.md tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+
+## [2026-10-23 18:55] S20 | implementer(opus) | DONE
+- 한 일: 웹 UI: ERROR_TEXT drm·encrypted·unsupported, #skipped(textContent), 바닥글 한컴 문구, test_web_runtime_zip(C17). unit 806P
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE docs/extraction-limits.md tests/unit/test_web_runtime_zip.py 
+- 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
+- 다음: S21 커밋
