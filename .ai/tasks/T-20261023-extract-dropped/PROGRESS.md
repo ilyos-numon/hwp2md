@@ -387,3 +387,10 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py tests/synth_distdoc.py tests/synth_hwpx.py .claude/ tests/unit/test_hwp5_distribution.py tests/unit/test_hwpx_lists.py 
 - 커밋: 6baa303 [T-20261023-extract-dropped][s15] HWP 5.0 번호·글머리표 목록
 - 다음: S17 커밋
+
+## [2026-10-23 18:32] S17 | implementer(opus) | DONE
+- 한 일: 배포용 문서 ViewText 복호→inflate→변환, _strip_aes_padding, ViewText 없음/inflate 실패 → UnsupportedHwpError. test_hwp5_distribution 12. 실제 배포용 2개 rc 0 (0.12s/0.08s). R3 통합: unit 762P(+4 S18), 실제 오류 0·rc 3→0 4개(HWPML2+배포용2)·md 변화 17, reviewer PASS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/reader.py tests/synth_distdoc.py .claude/ tests/unit/test_hwp5_distribution.py 
+- 커밋: edc21b6 [T-20261023-extract-dropped][s16] HWPX 번호·글머리표 목록
+- 다음: S18 교차 포맷
+- 메모: 비차단: inflate 실패·패딩 제거 직접 단위 테스트 없음(간접 커버)
