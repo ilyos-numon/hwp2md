@@ -531,3 +531,10 @@
 - 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml LICENSE docs/extraction-limits.md 
 - 커밋: 1a5e96d [T-20261023-extract-dropped][s20] 웹 UI 오류 코드·건너뜀 경고·한컴 고지
 - 다음: S22 커밋
+
+## [2026-10-23 18:55] S22 | implementer(opus) | DONE
+- 한 일: docs/extraction-limits.md(45행 표, 실측: 69개 중 65 변환·rc1 0, 칸 그림 14/14, 수식 3/3, 각주 3/3, 배포용 2/2, HWPML 2/2, DRM 2/2), feature-reference 갱신
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml LICENSE docs/extraction-limits.md 
+- 커밋: 1001bdd [T-20261023-extract-dropped][s21] design/v3 추출 한계 명시·건너뜀 경고
+- 다음: S23 커밋
+- 메모: PLAN C10 정정(HWPML 표는 머리말 안), C19 기준 커밋 e18cd70 정정

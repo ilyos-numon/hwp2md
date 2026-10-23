@@ -53,7 +53,7 @@
 
 ## 11. 문서
 
-- [ ] 11.1 `docs/extraction-limits.md` 를 새로 쓰고 `docs/feature-reference.md` 의 엔진·렌더·API·UI·오류·포맷 차이·한계 절을 갱신한다
+- [x] 11.1 `docs/extraction-limits.md` 를 새로 쓰고 `docs/feature-reference.md` 의 엔진·렌더·API·UI·오류·포맷 차이·한계 절을 갱신한다
 - [ ] 11.2 README 지원 범위·로드맵·한컴 문구·배포용 문서 고지, `docs/decisions.md` 결정 기록, `LICENSE`, `NOTICE` 를 갱신한다
 
 ## 12. E2E
