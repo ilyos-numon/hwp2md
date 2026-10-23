@@ -264,3 +264,16 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_web_api.py 
 - 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
 - 다음: S11 진행 중 → S10
+
+## [2026-10-23 10:42] S11 | subagent | DONE
+- 한 일: 문서 README decisions
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: 6b2a932 [T-20261023-web-preview][s9] e2e: web api, no-disk, serve cli
+- 다음: review PASS
+- 메모: implementer(opus) DONE; 문서 diff 는 orchestrator 가 직접 대조(사실 일치), sanitize OK
+
+## [2026-10-23 10:42] S11 | orchestrator | DONE
+- 한 일: 문서 README decisions 검증 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
+- 커밋: 6b2a932 [T-20261023-web-preview][s9] e2e: web api, no-disk, serve cli
+- 다음: S10 — E2E 화면 두 모드 시작

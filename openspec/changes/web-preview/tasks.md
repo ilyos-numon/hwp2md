@@ -41,7 +41,7 @@
 
 ## 9. 문서
 
-- [ ] 9.1 `README.md` 에 `hwp2md[web]` 설치·`hwp2md serve`·브라우저 전용 모드(CDN 필요)·`./serve` 주의를, `docs/decisions.md` 에 결정 4건을 적고 `sanitize-check.sh` OK 를 확인한다
+- [x] 9.1 `README.md` 에 `hwp2md[web]` 설치·`hwp2md serve`·브라우저 전용 모드(CDN 필요)·`./serve` 주의를, `docs/decisions.md` 에 결정 4건을 적고 `sanitize-check.sh` OK 를 확인한다
 
 ## 10. 리뷰·기록
 
