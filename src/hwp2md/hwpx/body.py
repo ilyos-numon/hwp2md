@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from lxml import etree
 
@@ -20,9 +20,13 @@ from ..blocks import (
     NoteRef,
     Paragraph,
     Table,
+    iter_images,
     make_paragraph,
+    make_table,
+    plain_text,
 )
 from ..equation import to_latex
+from ..ole import chart_xml_to_blocks, ole_to_outcome, unwrap_hwpx_ole
 from ..skips import SkipCounter, SkipKind
 from .header import EMPTY_HEADER, HeaderInfo
 
@@ -54,6 +58,23 @@ HP_EQUATION = f"{{{NS_HP}}}equation"
 HP_SCRIPT = f"{{{NS_HP}}}script"
 HP_MEMOGROUP = f"{{{NS_HP}}}memogroup"
 HP_MEMO = f"{{{NS_HP}}}memo"
+HP_CAPTION = f"{{{NS_HP}}}caption"
+HP_DRAW_TEXT = f"{{{NS_HP}}}drawText"
+HP_CHART = f"{{{NS_HP}}}chart"
+HP_OLE = f"{{{NS_HP}}}ole"
+HP_TEXTART = f"{{{NS_HP}}}textart"
+# 글상자를 가질 수 있는 도형 (hp:drawText/hp:subList/hp:p)
+SHAPE_ELEMENTS = frozenset(
+    f"{{{NS_HP}}}{name}" for name in ("rect", "ellipse", "arc", "polygon", "curve", "connectLine")
+)
+FORM_ELEMENTS = frozenset(
+    f"{{{NS_HP}}}{name}"
+    for name in ("btn", "checkBtn", "radioBtn", "comboBox", "listBox", "edit", "scrollBar")
+)
+# 단락 run 직계에서 앵커 단락 뒤로 미루는 개체 (hp:pic·hp:tbl 은 등장 위치에서 나눈다)
+DRAWING_ELEMENTS = frozenset(
+    {HP_CONTAINER, HP_CHART, HP_OLE, HP_TEXTART, *SHAPE_ELEMENTS, *FORM_ELEMENTS}
+)
 NOTE_KINDS: dict[str, NoteKind] = {HP_FOOTNOTE: "footnote", HP_ENDNOTE: "endnote"}
 # 하위 트리를 통째로 건너뛰고 세는 요소 (run 직계 또는 hp:ctrl 안)
 SKIPPED_ELEMENTS: dict[str, SkipKind] = {
@@ -168,27 +189,87 @@ def parse_paragraph(
         close_link_segment()
         buf.append(item)
 
+    # 도형·묶음·차트·OLE 블록: 앵커 단락(다음 flush 의 단락) 뒤에 둔다
+    pending: list[Block] = []
+
     def flush() -> None:
         close_link_segment()
         para = make_paragraph(buf, level)
         buf.clear()
         if para is not None:
             blocks.append(para)
+        blocks.extend(pending)
+        pending.clear()
 
-    def append_image(pic: etree._Element) -> None:
+    def sub_blocks(owner: etree._Element | None) -> list[Block]:
+        """owner/hp:subList/hp:p 단락들 → 블록 (캡션·글상자)."""
+        sub = None if owner is None else owner.find(HP_SUBLIST)
+        if sub is None:
+            return []
+        out: list[Block] = []
+        for sub_p in sub.iterchildren(HP_P):
+            out.extend(parse_paragraph(sub_p, header, bin_items, doc))
+        return out
+
+    def picture(pic: etree._Element) -> list[Block]:
+        """그림 + 캡션 단락. 해석 불가 그림은 image_missing 으로 센다."""
+        out: list[Block] = []
+        if bin_items is not None:
+            img = pic.find(HC_IMG)
+            ref = None if img is None else img.get("binaryItemIDRef")
+            image = bin_items.resolve(ref) if ref else None
+            if image is None:
+                doc.skips.add("image_missing")
+            else:
+                out.append(image)
+        out.extend(sub_blocks(pic.find(HP_CAPTION)))
+        return out
+
+    def chart(el: etree._Element) -> list[Block]:
         if bin_items is None:
-            return
-        img = pic.find(HC_IMG)
-        if img is None:
-            return
-        ref = img.get("binaryItemIDRef")
-        if not ref:
-            return
-        image = bin_items.resolve(ref)
-        if image is None:
-            return
-        flush()
-        blocks.append(image)
+            return []
+        ref = el.get("chartIDRef")
+        data = bin_items.chart(ref) if ref else None
+        out = chart_xml_to_blocks(data) if data is not None else []
+        if not out:
+            doc.skips.add("chart_legacy")
+        return out
+
+    def ole(el: etree._Element) -> list[Block]:
+        if bin_items is None:
+            return []
+        ref = el.get("binaryItemIDRef")
+        data = bin_items.raw(ref) if ref else None
+        if data is None:
+            doc.skips.add("ole")
+            return []
+        outcome = ole_to_outcome(unwrap_hwpx_ole(data), f"ole:{ref}", bin_items.make_image)
+        if outcome.skipped is not None:
+            doc.skips.add(outcome.skipped)
+        return list(outcome.blocks)
+
+    def drawing(el: etree._Element) -> list[Block]:
+        """그리기 개체 하나 → 블록 (묶음은 자식 저장 순서대로 재귀)."""
+        tag = el.tag
+        if tag == HP_PIC:
+            return picture(el)
+        if tag in SHAPE_ELEMENTS:
+            return sub_blocks(el.find(HP_DRAW_TEXT))
+        if tag == HP_CONTAINER:
+            out: list[Block] = []
+            for sub in el:
+                if isinstance(sub.tag, str):
+                    out.extend(drawing(sub))
+            return out
+        if tag == HP_CHART:
+            return chart(el)
+        if tag == HP_OLE:
+            return ole(el)
+        if tag == HP_TEXTART:
+            doc.skips.add("textart")
+        elif tag in FORM_ELEMENTS:
+            doc.skips.add("form_control")
+        return []
 
     def field_begin(el: etree._Element) -> None:
         if link or el.get("type") != "HYPERLINK":
@@ -226,14 +307,17 @@ def parse_paragraph(
             add_text(text_of_t(child))
         elif tag == HP_TBL:
             flush()
-            table = parse_table(child, doc)
+            table = parse_table(child, doc, header, bin_items)
             if table is not None:
                 blocks.append(table)
+            blocks.extend(sub_blocks(child.find(HP_CAPTION)))
         elif tag == HP_PIC:
-            append_image(child)
-        elif tag == HP_CONTAINER:
-            for pic in child.iter(HP_PIC):
-                append_image(pic)
+            items = picture(child)
+            if items:
+                flush()
+                blocks.extend(items)
+        elif tag in DRAWING_ELEMENTS:
+            pending.extend(drawing(child))
         elif tag == HP_CTRL:
             for sub in child:
                 if sub.tag in CTRL_CHILDREN:
@@ -248,7 +332,7 @@ def parse_paragraph(
             equation(child)
         elif tag in SKIPPED_ELEMENTS:
             doc.skips.add(SKIPPED_ELEMENTS[tag])
-        # 그 외(secPr, colPr, autoNum, rect, ...)는 무시
+        # 그 외(secPr, colPr, autoNum, line, ...)는 무시
 
     for run in p.iterchildren(HP_RUN):
         for child in run:
@@ -290,7 +374,12 @@ def _note_paragraphs(
     return tuple(out)
 
 
-def parse_table(tbl: etree._Element, ctx: DocContext | None = None) -> Table | None:
+def parse_table(
+    tbl: etree._Element,
+    ctx: DocContext | None = None,
+    header: HeaderInfo = EMPTY_HEADER,
+    bin_items: BinItemStore | None = None,
+) -> Table | None:
     trs = list(tbl.iterchildren(HP_TR))
     row_cnt = _int_attr(tbl, "rowCnt")
     col_cnt = _int_attr(tbl, "colCnt")
@@ -304,6 +393,7 @@ def parse_table(tbl: etree._Element, ctx: DocContext | None = None) -> Table | N
     if rows <= 0 or cols <= 0:
         return None
     cells: list[CellSpec] = []
+    contents: list[tuple[Inline, ...]] = []
     for r_idx, tr in enumerate(trs):
         for tc in tr.iterchildren(HP_TC):
             addr = tc.find(HP_CELL_ADDR)
@@ -312,37 +402,63 @@ def parse_table(tbl: etree._Element, ctx: DocContext | None = None) -> Table | N
             col = _int_attr(addr, "colAddr")
             row_span = _int_attr(span, "rowSpan")
             col_span = _int_attr(span, "colSpan")
+            inlines = _cell_inlines(tc, ctx, header, bin_items)
             cells.append(
                 CellSpec(
                     row=r_idx if row is None else row,
                     col=-1 if col is None else col,
                     row_span=1 if row_span is None else row_span,
                     col_span=1 if col_span is None else col_span,
-                    text=_cell_text(tc, ctx),
+                    text=plain_text(inlines).strip(),
                 )
             )
-    return Table(rows=_place_cells(rows, cols, cells))
+            contents.append(inlines)
+    return make_table(_place_grid(rows, cols, cells, contents, ()))
 
 
-def _cell_text(tc: etree._Element, ctx: DocContext | None = None) -> str:
+def _cell_inlines(
+    tc: etree._Element,
+    ctx: DocContext | None = None,
+    header: HeaderInfo = EMPTY_HEADER,
+    bin_items: BinItemStore | None = None,
+) -> tuple[Inline, ...]:
+    """칸 subList 의 블록들 → 칸 인라인. 블록 사이에 "\n". 칸 안 표는 글자를 공백으로 이어 붙이고
+    그 안의 그림은 칸 인라인 끝에 붙인다."""
     sub = tc.find(HP_SUBLIST)
     if sub is None:
-        return ""
-    parts: list[str] = []
+        return ()
+    doc = DocContext() if ctx is None else ctx
+    parts: list[tuple[Inline, ...]] = []
+    tail: list[Inline] = []
     for p in sub.iterchildren(HP_P):
-        for b in parse_paragraph(p, ctx=ctx):
+        for b in parse_paragraph(p, header, bin_items, doc):
             if isinstance(b, Paragraph):
-                parts.append(b.text)
+                parts.append(b.inlines or (b.text,))
             elif isinstance(b, Table):
                 flat = " ".join(c for row in b.rows for c in row if c)
                 if flat:
-                    parts.append(flat)
-    return "\n".join(parts)
+                    parts.append((flat,))
+                tail.extend(iter_images([b]))
+            elif isinstance(b, Image):
+                parts.append((b,))
+    out: list[Inline] = []
+    for k, part in enumerate(parts):
+        if k:
+            out.append("\n")
+        out.extend(part)
+    out.extend(tail)
+    return tuple(out)
 
 
-def _place_cells(rows: int, cols: int, cells: Sequence[CellSpec]) -> list[list[str]]:
-    grid: list[list[str | None]] = [[None] * cols for _ in range(rows)]
-    for cell in cells:
+_T = TypeVar("_T")
+
+
+def _place_grid(
+    rows: int, cols: int, cells: Sequence[CellSpec], values: Sequence[_T], fill: _T
+) -> list[list[_T]]:
+    """cells[i] 자리에 values[i] 를 둔다. 병합으로 덮인 칸·빈 칸은 fill."""
+    grid: list[list[_T | None]] = [[None] * cols for _ in range(rows)]
+    for cell, value in zip(cells, values, strict=True):
         r, c = cell.row, cell.col
         if not (0 <= r < len(grid) and 0 <= c < cols) or grid[r][c] is not None:
             # 좌표가 범위 밖이거나 이미 찬 자리 → 읽기 순서로 첫 빈 칸
@@ -354,12 +470,16 @@ def _place_cells(rows: int, cols: int, cells: Sequence[CellSpec]) -> list[list[s
                 grid.append([None] * cols)
                 slot = (len(grid) - 1, 0)
             r, c = slot
-        grid[r][c] = cell.text
+        grid[r][c] = value
         for rr in range(r, min(r + max(cell.row_span, 1), len(grid))):
             for cc in range(c, min(c + max(cell.col_span, 1), cols)):
                 if (rr, cc) != (r, c) and grid[rr][cc] is None:
-                    grid[rr][cc] = ""  # 병합으로 덮인 칸
-    return [[x if x is not None else "" for x in row] for row in grid]
+                    grid[rr][cc] = fill  # 병합으로 덮인 칸
+    return [[x if x is not None else fill for x in row] for row in grid]
+
+
+def _place_cells(rows: int, cols: int, cells: Sequence[CellSpec]) -> list[list[str]]:
+    return _place_grid(rows, cols, cells, [cell.text for cell in cells], "")
 
 
 def _int_attr(el: etree._Element | None, name: str) -> int | None:
