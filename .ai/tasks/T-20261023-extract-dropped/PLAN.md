@@ -262,6 +262,7 @@ def render_blocks(blocks: Sequence[Block], *, image_dir: str = "") -> str   # �
 - 인라인: `str` 그대로(이스케이프 없음, 기존 원칙) · `Link` → `safe_link_url` 이 값이면 `[글자](값)`(글자의 `[`·`]` → `\[`·`\]`), 아니면 글자만 · `NoteRef` → `[^n]`(각주)·`[^en]`(미주) · `Math` → latex 가 있으면 `$latex$`, 단락 인라인이 (공백뿐인 str 을 빼면) Math 하나뿐이면 `$$latex$$`; latex 가 None 이면 스크립트 안 가장 긴 백틱 연속보다 1개 많은 백틱으로 감싼 코드 스팬(내용이 백틱으로 시작·끝나면 양쪽 공백 1칸) · `Image` → `![그림 N](경로)` (N 은 문서 전체 이미지 카운터, 블록 이미지와 공유).
 - 인라인 렌더 결과는 앞뒤 strip. 제목은 `\n` → 공백 후 `#` × min(level, 6) + 공백.
 - 목록: 글머리표 `- 글자`, 숫자 머리(`^\d{1,9}[.)]$`) `머리 글자`, 그 밖 머리 `머리 글자`(목록 문법 아님, 들여쓰기 없음). 들여쓰기 = 공백 4 × 유효 수준, 유효 수준 = 직전 렌더 블록이 목록 문법 항목(글머리표·숫자)이 아니면 0, 맞으면 min(depth, 직전 유효 수준 + 1). 목록 문법 항목끼리는 `"\n"` 하나로 잇고, 그 밖은 지금처럼 `"\n\n"`.
+- 표 칸 안 목록 단락 (orchestrator 추가 2026-10-23, S15 결과: 실제 목록 단락 26개 중 22개가 칸 안): 리더는 칸 단락에 ListInfo 가 있으면 그 머리 글자를 칸 인라인 맨 앞에 `str` 로 붙인다(글머리표 `"- "`, 숫자·기타 머리 `"<머리> "`). 칸 안에서는 목록 문법·들여쓰기를 쓰지 않는다. 구현은 S18(세 리더 body.py).
 - 표 칸: `cells` 가 있으면 칸 인라인을 렌더해 `\n` → `<br>`, `str`·링크 글자의 `|` → `\|`, strip.
 - Note: `[^n]: ` + 첫 단락 렌더, 둘째 단락부터 `"\n\n    "` + 단락(단락 안 줄바꿈 뒤에도 공백 4칸). 미주는 `[^en]: `.
 - 개수(`_count_blocks`): 단락 = 텍스트가 있는 level 0 Paragraph(목록 포함, Note 안 단락 제외) · 제목 = level ≥ 1 · 표 = 최상위 Table · 이미지 = `len(list(iter_images(blocks)))`.
@@ -593,7 +594,7 @@ EXT_IDS_BY_STAGE = {"inline": [...S9·S10 대상 10개], "objects": [...S12·S13
 - 담당: implementer(opus) · 병렬 가능: 아니오 · 선행: R3 합침
 - 입력: §1-D, OpenSpec `element-extraction` "세 입력 포맷은…", `tests/synth_items.py`
 - 쓰기 범위: `tests/synth_hwp5.py`(`EXPECTED_*_IMAGE_IN_CELL` 4개 상수와 주석만), `tests/unit/test_cross_format_extract.py`(신규), `src/hwp2md/hwp5/body.py`, `src/hwp2md/hwpx/body.py`, `src/hwp2md/hwpml/body.py` (차이를 고칠 때만)
-- 산출물: 칸 그림 기대값(OpenSpec "셀 그림과 본문 그림" 시나리오 값), EXT_FIXTURES 16개 × 3포맷 Markdown·skipped 동일 테스트 + 기존 `FIXTURE_ITEMS_*` 의 HWPML 판 동일 테스트
+- 산출물: 칸 그림 기대값(OpenSpec "셀 그림과 본문 그림" 시나리오 값), 표 칸 안 목록 머리 글자(§4-D 추가 줄, 세 리더), 글자-개체-글자 혼합 단락 교차 확인(R2 리뷰), EXT_FIXTURES 16개 × 3포맷 Markdown·skipped 동일 테스트 + 기존 `FIXTURE_ITEMS_*` 의 HWPML 판 동일 테스트
 - 검증: `STD_VERIFY`(CELL_DESELECT 없이) → failed 0 · `uv run pytest tests/unit/test_cross_format_extract.py -q` → pass
 - 완료 조건: 위 통과
 - 실패 시: 포맷 차이를 계약 변경 없이 못 고치면 BLOCKED

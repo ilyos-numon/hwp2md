@@ -319,3 +319,65 @@
 - 커밋: 663b98f [T-20261023-extract-dropped][s12] HWP 5.0 개체 (칸 그림·캡션·글상자·묶음·OLE)
 - 다음: R3 (S15~S17)
 - 메모: S18: 글자-개체-글자 혼합 단락 교차 fixture 추가해 HWPX(개체 뒤)·HWPML(분할) 배치 차이 확인. S14 CAPTION·DRAWTEXT·OLE 위치는 샘플 없이 추정
+
+## [2026-10-23 18:23] R2 | hook | AUTO
+- 한 일: 도구 호출 420회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:23] S15 | orchestrator | START
+- 한 일: R3 worktree .claude/worktrees/s15
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:23] S16 | orchestrator | START
+- 한 일: R3 worktree .claude/worktrees/s16
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:23] S17 | orchestrator | START
+- 한 일: R3 worktree .claude/worktrees/s17
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:24] R3 | hook | AUTO
+- 한 일: 도구 호출 435회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:25] R3 | hook | AUTO
+- 한 일: 도구 호출 450회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:25] R3 | hook | AUTO
+- 한 일: 도구 호출 465회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:26] R3 | hook | AUTO
+- 한 일: 도구 호출 480회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:27] R3 | hook | AUTO
+- 한 일: 도구 호출 495회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:28] R3 | hook | AUTO
+- 한 일: 도구 호출 510회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:31] R3 | hook | AUTO
+- 한 일: 도구 호출 525회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py tests/synth_distdoc.py tests/synth_hwp5.py tests/synth_hwpx.py .claude/ tests/unit/test_hwp5_distribution.py tests/unit/test_hwp5_lists.py tests/unit/test_hwpx_lists.py 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+
+## [2026-10-23 18:32] S15 | implementer(opus) | DONE
+- 한 일: HWP5 ParaShape head_id(@30, 1-기준), NUMBERING(문단 머리 12B, 수준별 시작번호)·BULLET, 단락 ListInfo. test_hwp5_lists 19. 실제: 본문 목록 4/4, 칸 안 22개는 계약상 미표시
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwp5/docinfo.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/header.py tests/synth_distdoc.py tests/synth_hwp5.py tests/synth_hwpx.py .claude/ tests/unit/test_hwp5_distribution.py tests/unit/test_hwp5_lists.py tests/unit/test_hwpx_lists.py 
+- 커밋: 81169a0 [T-20261023-extract-dropped][s14] HWPML 요소 (링크·각주·수식·캡션·글상자·목록·OLE)
+- 다음: S16 커밋
+- 메모: 칸 안 목록 머리 글자 → PLAN §4-D 추가, S18 구현
