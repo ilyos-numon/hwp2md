@@ -98,7 +98,7 @@ def browser_context(browser: Browser) -> Iterator[BrowserContext]:
 
 @pytest.fixture(scope="module")
 def browser_page(browser_context: BrowserContext, web_server: WebServer) -> Page:
-    """Pyodide 를 1회만 로드한 브라우저 모드 페이지. CDN 을 못 받으면 skip."""
+    """Pyodide 를 1회만 로드한 브라우저 모드 페이지. CDN 을 못 받으면 그대로 실패한다."""
     page = browser_context.new_page()
     page.goto(web_server.base_url + "/", wait_until="commit")
     page.wait_for_selector('body[data-state="idle"]', timeout=TIMEOUT_MS)
@@ -107,11 +107,9 @@ def browser_page(browser_context: BrowserContext, web_server: WebServer) -> Page
         '#mode-status[data-state="browser"], #mode-status[data-state="error"]',
         timeout=PYODIDE_TIMEOUT_MS,
     )
-    state = page.locator("#mode-status").get_attribute("data-state")
-    if state != "browser":
-        pytest.skip(
-            f"브라우저 모드 로드 실패 (CDN 접근 불가): {page.locator('#mode-status').inner_text()}"
-        )
+    assert page.locator("#mode-status").get_attribute("data-state") == "browser", page.locator(
+        "#mode-status"
+    ).inner_text()
     return page
 
 
