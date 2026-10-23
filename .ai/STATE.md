@@ -10,7 +10,7 @@
 - 현재 단계: S10 — E2E 화면 두 모드
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-web-preview`
-- 마지막 체크포인트: 2026-10-23 10:42 (S11 DONE)
+- 마지막 체크포인트: 2026-10-23 10:42 (S10 START)
 - 마지막 커밋: 51416b6 [T-20261022-image-extract][s8] e2e: image extraction both formats, reuse/cell/missing, real samples
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)

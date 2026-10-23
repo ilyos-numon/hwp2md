@@ -277,3 +277,8 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md 
 - 커밋: 6b2a932 [T-20261023-web-preview][s9] e2e: web api, no-disk, serve cli
 - 다음: S10 — E2E 화면 두 모드 시작
+
+## [2026-10-23 10:42] S10 | orchestrator | START
+- 한 일: E2E 화면 두 모드·무전송·출력 동일·스크린샷
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: d6f3d8c [T-20261023-web-preview][s11] docs: web preview usage and decisions
