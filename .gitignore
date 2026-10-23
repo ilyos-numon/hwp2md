@@ -53,3 +53,6 @@ tests/fixtures/**
 !tests/fixtures/.gitkeep
 !tests/fixtures/README.md
 tests/e2e/screenshots/
+
+# 실제 샘플 변환 결과·스크린샷 증거는 올리지 않는다 (문서 내용 포함)
+.ai/tasks/*/screenshots/*
