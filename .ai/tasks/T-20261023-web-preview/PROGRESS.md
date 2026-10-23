@@ -192,3 +192,36 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/marked.min.js .impeccable/ 
 - 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
 - 다음: S8 — 브라우저 전용 모드 시작
+
+## [2026-10-23 10:31] S8 | orchestrator | START
+- 한 일: 브라우저 전용 모드 (+ serve 포트 시험 SO_REUSEADDR 수정, 플랜 외 추가)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+
+## [2026-10-23 10:32] S8 | hook | AUTO
+- 한 일: 도구 호출 165회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+
+## [2026-10-23 10:34] S8 | hook | AUTO
+- 한 일: 도구 호출 180회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/server.py src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html tests/unit/test_web_app.py src/hwp2md/web/static/pyodide-runner.js 
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+
+## [2026-10-23 10:37] S8 | hook | AUTO
+- 한 일: 도구 호출 195회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/server.py src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/pyodide-runner.js src/hwp2md/web/static/style.css tests/unit/test_web_app.py 
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+
+## [2026-10-23 10:37] S8 | subagent | DONE
+- 한 일: 브라우저 전용 모드
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/server.py src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/pyodide-runner.js src/hwp2md/web/static/style.css tests/unit/test_web_app.py 
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+- 다음: review PASS
+- 메모: implementer(opus) DONE; smoke browser 업로드 0·5/5 동일, 384 passed; reviewer PASS; 플랜 외 추가: server.py SO_REUSEADDR + 회귀 테스트 2개
+
+## [2026-10-23 10:37] S8 | orchestrator | DONE
+- 한 일: 브라우저 전용 모드 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/server.py src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/pyodide-runner.js src/hwp2md/web/static/style.css tests/unit/test_web_app.py 
+- 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
+- 다음: S9+S11 — E2E API / 문서 (병렬) 시작

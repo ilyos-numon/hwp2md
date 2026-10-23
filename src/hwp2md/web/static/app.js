@@ -131,7 +131,28 @@
         return await resp.blob();
       },
     },
+    // 브라우저 모드: Pyodide 안에서 처리하고 파일 바이트를 보내지 않는다. 로딩 중이면 끝날 때까지 기다린다.
+    browser: {
+      async convert(file) {
+        return await window.Hwp2mdBrowser.convert(file);
+      },
+      async zip(file) {
+        return await window.Hwp2mdBrowser.zip(file);
+      },
+    },
   };
+
+  const MODE_STATUS_TEXT = {
+    server: "서버 모드",
+    loading: "브라우저 모드 준비 중…",
+    browser: "브라우저 모드: 파일이 서버로 전송되지 않습니다",
+    error: "브라우저 모드를 불러오지 못했습니다: ",
+  };
+
+  function setModeStatus(name, detail) {
+    els.modeStatus.dataset.state = name;
+    els.modeStatus.textContent = MODE_STATUS_TEXT[name] + (detail || "");
+  }
 
   const state = {
     mode: "server",
@@ -248,6 +269,33 @@
     els.fileInput.value = "";
   });
   els.download.addEventListener("click", handleDownload);
+
+  // 모드 토글: 켜면 Pyodide 를 불러와 브라우저 모드, 끄면 서버 모드 (Pyodide 는 메모리에 유지).
+  async function handleModeToggle() {
+    if (!els.modeToggle.checked) {
+      state.mode = "server";
+      setModeStatus("server");
+      return;
+    }
+    if (!window.Hwp2mdBrowser) {
+      els.modeToggle.checked = false;
+      setModeStatus("error", "pyodide-runner.js 없음");
+      return;
+    }
+    state.mode = "browser";
+    setModeStatus("loading");
+    try {
+      await window.Hwp2mdBrowser.load();
+      if (els.modeToggle.checked) setModeStatus("browser");
+    } catch (err) {
+      if (!els.modeToggle.checked) return;
+      els.modeToggle.checked = false;
+      state.mode = "server";
+      setModeStatus("error", String((err && err.message) || err));
+    }
+  }
+  els.modeToggle.disabled = false;
+  els.modeToggle.addEventListener("change", handleModeToggle);
 
   // 다음 단계(브라우저 모드)가 모드를 추가·전환할 수 있게 노출한다.
   window.Hwp2mdApp = {

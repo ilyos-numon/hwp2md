@@ -272,3 +272,33 @@ def test_serve_keyboard_interrupt(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_server_defaults() -> None:
     assert server.DEFAULT_HOST == "localhost"
     assert server.DEFAULT_PORT == 8765
+
+
+def test_port_available_after_time_wait() -> None:
+    """방금 끈 서버 포트(TIME_WAIT 잔여 연결)는 사용 가능으로 판정한다."""
+    with _localhost_socket() as listener:
+        listener.bind(("localhost", 0))
+        listener.listen(1)
+        host, port = listener.getsockname()[:2]
+        with socket.create_connection((host, port)) as client:
+            conn, _addr = listener.accept()
+            conn.close()  # 서버 쪽이 먼저 닫아 서버 포트에 TIME_WAIT 를 남긴다
+            client.recv(1)
+    assert server._port_available("localhost", port) is True
+
+
+def test_port_available_sets_reuseaddr(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[int, int, int]] = []
+    real_socket = socket.socket
+
+    class SpySocket(real_socket):  # type: ignore[misc, valid-type]
+        def setsockopt(self, level: int, optname: int, value: Any) -> None:  # type: ignore[override]
+            calls.append((level, optname, value))
+            super().setsockopt(level, optname, value)
+
+    monkeypatch.setattr(server.socket, "socket", SpySocket)
+    with _localhost_socket() as sock:
+        sock.bind(("localhost", 0))
+        port = sock.getsockname()[1]
+    assert server._port_available("localhost", port) is True
+    assert (socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) in calls

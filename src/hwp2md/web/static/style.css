@@ -141,6 +141,8 @@ body {
 #mode-status[data-state="browser"]::before { background: var(--accent); }
 #mode-status[data-state="error"] { color: var(--danger); border-color: var(--danger); }
 #mode-status[data-state="error"]::before { background: var(--danger); }
+#mode-status[data-state="loading"]::before { background: var(--accent); animation: mode-pulse 1s ease-in-out infinite alternate; }
+@keyframes mode-pulse { from { opacity: 0.25; } to { opacity: 1; } }
 
 .layout {
   max-width: 1440px;
