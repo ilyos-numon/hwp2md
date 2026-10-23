@@ -1,7 +1,8 @@
 """실제 샘플 구조 탐색 E2E (PLAN §2 C5~C12).
 
 샘플 이름·문서 글자는 코드에 쓰지 않는다. 대상은 samples.samples_with(요소) 로 구조 탐색해서 고르고,
-기대 개수는 probe 결과(레코드/XML 요소 수)에서 얻는다. 해당 샘플이 없는 머신에서는 skip.
+기대 개수는 probe 결과(레코드/XML 요소 수)에서 얻는다.
+대상은 모듈 수준에서 수집해 parametrize 로 넘긴다(없으면 케이스 미생성).
 Markdown 사본은 gitignored 증거 디렉터리(ILLY_SHOT_DIR 또는 tests/e2e/screenshots)에만 쓴다.
 """
 
@@ -12,9 +13,10 @@ import re
 import subprocess
 import time
 import zipfile
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pytest
 from lxml import etree
@@ -111,16 +113,52 @@ def _squash(text: str) -> str:
     return re.sub(r"\s+", "", text)
 
 
-def _targets(feature: str) -> list[tuple[Path, int]]:
-    hits = samples_with(feature)
-    if not hits:
-        pytest.skip(f"이 머신에는 '{feature}' 요소가 있는 실제 샘플이 없다")
-    return hits
+def _cases(targets: Sequence[Any]) -> pytest.MarkDecorator:
+    """대상 목록 하나를 매개변수 `targets` 로 넘긴다. 목록이 비면 케이스가 생성되지 않는다."""
+    values = [list(targets)] if targets else []
+    return pytest.mark.parametrize("targets", values, ids=["0"][: len(values)])
 
 
-def test_cell_image(tmp_path: Path, run_cli: RunCli) -> None:
+def _hwpx_container_count(path: Path) -> int:
+    parser = etree.XMLParser(resolve_entities=False, no_network=True)
+    total = 0
+    with zipfile.ZipFile(path) as z:
+        for name in z.namelist():
+            if name.startswith("Contents/section") and name.endswith(".xml"):
+                root = etree.fromstring(z.read(name), parser)
+                total += sum(1 for _ in root.iter("{*}container"))
+    return total
+
+
+_HITS = {
+    feature: samples_with(feature)
+    for feature in (
+        "cell_image",
+        "header_footer_image",
+        "textbox",
+        "ole",
+        "equation",
+        "hyperlink_web",
+        "footnote",
+        "header_footer",
+        "numbered",
+        "bullet",
+        "field_clk",
+        "bmp",
+        "distribution",
+        "hwpml_header_footer",
+    )
+}
+_SAMPLES = all_samples()
+_SHAPED = [p for p in _SAMPLES if classify(p) == "hwpx" and _hwpx_container_count(p) > 0]
+_DRM = [p for p in _SAMPLES if classify(p) == "drm"]
+_NOT_HWP = [p for p in _SAMPLES if classify(p) in ("text", "unknown")]
+
+
+@_cases(_HITS["cell_image"])
+def test_cell_image(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C6: 표 칸 안 그림이 링크와 이미지 파일로 나온다."""
-    hits = _targets("cell_image")
+    hits = targets
     for idx, (src, expected) in enumerate(hits):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         links = len(_IMAGE_LINK.findall(conv.md))
@@ -135,9 +173,10 @@ def test_cell_image(tmp_path: Path, run_cli: RunCli) -> None:
     _evidence("extract_real_cell_image.md", top.md)
 
 
-def test_header_footer_image(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["header_footer_image"])
+def test_header_footer_image(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """머리말·꼬리말 안 그림은 내보내지 않고 본문 그림만 나온다 (C8 의 그림 쪽)."""
-    for idx, (src, _n) in enumerate(_targets("header_footer_image")):
+    for idx, (src, _n) in enumerate(targets):
         counts = probe(src)
         body = counts["body_image"] + counts["cell_image"]
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
@@ -147,10 +186,11 @@ def test_header_footer_image(tmp_path: Path, run_cli: RunCli) -> None:
         assert conv.skipped.get("머리말·꼬리말") == counts["header_footer"]
 
 
-def test_textbox(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["textbox"])
+def test_textbox(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """글상자 안 글: 비어 있지 않은 단락이 모두 Markdown 에 있다."""
     total = 0
-    for idx, (src, boxes) in enumerate(_targets("textbox")):
+    for idx, (src, boxes) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         flat = _squash(conv.md)
         paragraphs = [t for t in probe_texts(src, "textbox") if t.strip()]
@@ -162,10 +202,11 @@ def test_textbox(tmp_path: Path, run_cli: RunCli) -> None:
     assert total >= 1
 
 
-def test_chart_ole(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["ole"])
+def test_chart_ole(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """실제 OLE 샘플은 스트림이 빈 CFB 라 차트 표가 아니라 `OLE 개체 1개` 건너뜀이 정답.
     OOXML 차트 표 추출은 test_extract_cli.py 의 합성 chart 가 검증한다."""
-    for idx, (src, n) in enumerate(_targets("ole")):
+    for idx, (src, n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         assert conv.skipped.get("OLE 개체") == n
         assert "  건너뜀: " in conv.stdout
@@ -173,9 +214,10 @@ def test_chart_ole(tmp_path: Path, run_cli: RunCli) -> None:
         assert "chart_legacy" not in conv.stdout
 
 
-def test_equation(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["equation"])
+def test_equation(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C7: 수식 렌더(`$$…$$`, `$…$`) 수 = 탐색 수식 수."""
-    for idx, (src, n) in enumerate(_targets("equation")):
+    for idx, (src, n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         display = _DISPLAY_MATH.findall(conv.md)
         inline = _INLINE_MATH.findall(_DISPLAY_MATH.sub("", conv.md))
@@ -183,16 +225,18 @@ def test_equation(tmp_path: Path, run_cli: RunCli) -> None:
         _evidence(f"extract_real_equation_{idx}.md", conv.md)
 
 
-def test_hyperlink(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["hyperlink_web"])
+def test_hyperlink(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C7: http/https/mailto 링크 수 ≥ 탐색 웹 링크 수."""
-    for idx, (src, n) in enumerate(_targets("hyperlink_web")):
+    for idx, (src, n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         assert len(_WEB_LINK.findall(conv.md)) >= n
 
 
-def test_footnote(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["footnote"])
+def test_footnote(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C7: 각주 정의 `[^n]:` 수 = 탐색 각주 수, 참조도 같은 수."""
-    for idx, (src, n) in enumerate(_targets("footnote")):
+    for idx, (src, n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         assert len(_FOOTNOTE_DEF.findall(conv.md)) == n
         refs = re.findall(r"\[\^\d+\](?!:)", conv.md)
@@ -200,9 +244,10 @@ def test_footnote(tmp_path: Path, run_cli: RunCli) -> None:
         _evidence(f"extract_real_footnote_{idx}.md", conv.md)
 
 
-def test_header_footer(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["header_footer"])
+def test_header_footer(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C8: 건너뜀 N = 탐색 머리말+꼬리말 수, 머리말 글자가 본문에 새로 섞이지 않는다."""
-    for idx, (src, n) in enumerate(_targets("header_footer")):
+    for idx, (src, n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         assert conv.skipped.get("머리말·꼬리말") == n
         assert re.search(rf"^  건너뜀: .*머리말·꼬리말 {n}개", conv.stdout, re.M)
@@ -215,10 +260,10 @@ def test_header_footer(tmp_path: Path, run_cli: RunCli) -> None:
                 assert flat.count(key) <= body.count(key), f"#{idx}: 머리말 글자가 본문에 섞임"
 
 
-def _check_list_marks(kind: str, tmp_path: Path, run_cli: RunCli) -> None:
+def _check_list_marks(kind: str, targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """목록 단락(본문·표 칸 안)의 글 앞에 번호·글머리표 머리 글자가 붙는다."""
     checked = 0
-    for idx, (src, _n) in enumerate(_targets(kind)):
+    for idx, (src, _n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         for text in (t for t in probe_texts(src, kind) if t.strip()):
             head = [c for c in text if not c.isspace()][:8]
@@ -230,17 +275,20 @@ def _check_list_marks(kind: str, tmp_path: Path, run_cli: RunCli) -> None:
     assert checked >= 1
 
 
-def test_numbered_list(tmp_path: Path, run_cli: RunCli) -> None:
-    _check_list_marks("numbered", tmp_path, run_cli)
+@_cases(_HITS["numbered"])
+def test_numbered_list(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
+    _check_list_marks("numbered", targets, tmp_path, run_cli)
 
 
-def test_bullet_list(tmp_path: Path, run_cli: RunCli) -> None:
-    _check_list_marks("bullet", tmp_path, run_cli)
+@_cases(_HITS["bullet"])
+def test_bullet_list(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
+    _check_list_marks("bullet", targets, tmp_path, run_cli)
 
 
-def test_field_text(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["field_clk"])
+def test_field_text(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """누름틀 필드의 표시 글자는 본문에 남는다."""
-    for idx, (src, _n) in enumerate(_targets("field_clk")):
+    for idx, (src, _n) in enumerate(targets):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
         flat = _squash(conv.md)
         texts = [t for t in probe_texts(src, "field_clk") if t.strip()]
@@ -249,23 +297,10 @@ def test_field_text(tmp_path: Path, run_cli: RunCli) -> None:
             assert _squash(text) in flat
 
 
-def _hwpx_container_count(path: Path) -> int:
-    parser = etree.XMLParser(resolve_entities=False, no_network=True)
-    total = 0
-    with zipfile.ZipFile(path) as z:
-        for name in z.namelist():
-            if name.startswith("Contents/section") and name.endswith(".xml"):
-                root = etree.fromstring(z.read(name), parser)
-                total += sum(1 for _ in root.iter("{*}container"))
-    return total
-
-
-def test_shapes_hwpx(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_SHAPED)
+def test_shapes_hwpx(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """도형·묶음 개체가 많은 HWPX: 오류 없이 변환되고 그 안의 그림이 빠지지 않는다."""
-    shaped = [p for p in all_samples() if classify(p) == "hwpx" and _hwpx_container_count(p) > 0]
-    if not shaped:
-        pytest.skip("묶음 개체가 있는 HWPX 샘플이 없다")
-    for idx, src in enumerate(shaped):
+    for idx, src in enumerate(targets):
         counts = probe(src)
         pictures = counts["body_image"] + counts["cell_image"]
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
@@ -276,11 +311,12 @@ def test_shapes_hwpx(tmp_path: Path, run_cli: RunCli) -> None:
         assert conv.stderr == ""
 
 
-def test_bmp(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["bmp"])
+def test_bmp(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """BMP 는 원본 그대로 저장된다. 내용 있는 BMP 수 = .bmp 파일 수, 각 파일은 `BM` 머리.
     0바이트 BMP 는 파일을 만들지 않고 `본체 없는 그림` 으로 센다."""
     with_content = 0
-    for idx, (src, total) in enumerate(_targets("bmp")):
+    for idx, (src, total) in enumerate(targets):
         empty = probe(src)["bmp_empty"]
         good = total - empty
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
@@ -297,9 +333,10 @@ def test_bmp(tmp_path: Path, run_cli: RunCli) -> None:
     assert with_content >= 1
 
 
-def test_distribution(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["distribution"])
+def test_distribution(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C9: 배포용 문서는 종료 코드 0, 단락 ≥ 1, 변환 30초 이하."""
-    hits = _targets("distribution")
+    hits = targets
     assert len(hits) >= 1
     for idx, (src, _n) in enumerate(hits):
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
@@ -308,9 +345,10 @@ def test_distribution(tmp_path: Path, run_cli: RunCli) -> None:
         assert conv.md_path.exists()
 
 
-def test_hwpml(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_HITS["hwpml_header_footer"])
+def test_hwpml(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C10: HWPML 은 표 0, 본문 그림 수 = 탐색 수, 머리말·꼬리말 안은 건너뜀."""
-    hits = _targets("hwpml_header_footer")
+    hits = targets
     for idx, (src, in_header) in enumerate(hits):
         counts = probe(src)
         conv = _convert_ok(run_cli, src, tmp_path, str(idx))
@@ -323,39 +361,33 @@ def test_hwpml(tmp_path: Path, run_cli: RunCli) -> None:
         assert in_header == 2
 
 
-def test_drm(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_DRM)
+def test_drm(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C11: DRM 파일은 종료 코드 3 과 `DRM protected` 오류."""
-    drm = [p for p in all_samples() if classify(p) == "drm"]
-    if not drm:
-        pytest.skip("DRM 샘플이 없다")
-    for idx, src in enumerate(drm):
+    for idx, src in enumerate(targets):
         conv = _convert(run_cli, src, tmp_path, str(idx))
         assert conv.returncode == 3, conv.stderr
         assert "DRM protected" in conv.stderr
         assert not conv.md_path.exists()
 
 
-def test_not_hwp(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_NOT_HWP)
+def test_not_hwp(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C11: HWP 가 아닌 텍스트 파일과 HWP 3.x 는 종료 코드 3 과 `not an HWP 5.0 file:`."""
-    others = [p for p in all_samples() if classify(p) in ("text", "unknown")]
-    if not others:
-        pytest.skip("HWP 아님 샘플이 없다")
-    for idx, src in enumerate(others):
+    for idx, src in enumerate(targets):
         conv = _convert(run_cli, src, tmp_path, str(idx))
         assert conv.returncode == 3, conv.stderr
         assert "not an HWP 5.0 file:" in conv.stderr
         assert not conv.md_path.exists()
 
 
-def test_all_samples_convert(tmp_path: Path, run_cli: RunCli) -> None:
+@_cases(_SAMPLES)
+def test_all_samples_convert(targets: list[Any], tmp_path: Path, run_cli: RunCli) -> None:
     """C12: 모든 실제 샘플이 종료 코드 0, 거부 대상(drm/text/HWP3)이면 3. 종료 코드 1 은 0개."""
-    samples = all_samples()
-    if not samples:
-        pytest.skip("실제 샘플이 없다")
     rejected = {"drm", "text", "unknown"}
     crashed: list[int] = []
     wrong: list[tuple[int, int, str]] = []
-    for idx, src in enumerate(samples):
+    for idx, src in enumerate(targets):
         kind = classify(src)
         want = 3 if kind in rejected else 0
         conv = _convert(run_cli, src, tmp_path, str(idx))
