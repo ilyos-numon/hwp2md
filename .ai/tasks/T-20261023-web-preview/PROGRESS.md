@@ -235,3 +235,32 @@
 - 한 일: 문서 (S9와 병렬, worktree)
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 805d653 [T-20261023-web-preview][s8] web ui: browser-only mode via pyodide; serve port probe SO_REUSEADDR
+
+## [2026-10-23 10:39] S9 | test-writer(sonnet) | RETRY
+- 한 일: worktree가 원격 main(스캐폴드 커밋)에서 만들어져 작업 불가
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
+- 다음: S9→S11 순차, 메인 체크아웃에서 실행
+- 메모: S11 병렬 에이전트 중단
+
+## [2026-10-23 10:39] S9+S11 | hook | AUTO
+- 한 일: 도구 호출 210회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
+
+## [2026-10-23 10:41] S9+S11 | hook | AUTO
+- 한 일: 도구 호출 225회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_web_api.py 
+- 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
+
+## [2026-10-23 10:41] S9 | test-writer(sonnet) | DONE
+- 한 일: E2E API 16 tests, 400 passed
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_web_api.py 
+- 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
+- 다음: review PASS
+
+## [2026-10-23 10:41] S9 | orchestrator | DONE
+- 한 일: E2E API 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/conftest.py tests/e2e/test_web_api.py 
+- 커밋: f762ee4 [T-20261023-web-preview][record] S9/S11 start
+- 다음: S11 진행 중 → S10
