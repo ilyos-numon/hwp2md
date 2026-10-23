@@ -31,7 +31,7 @@
 
 ## 7. 화면
 
-- [ ] 7.1 `src/hwp2md/web/static/index.html`·`app.js`·`style.css`·`vendor/marked.min.js` 로 서버 모드 화면(드롭·파일 선택·미리보기·원문·zip 다운로드·오류 표시)을 만들고 UI 스모크 스크립트 스크린샷으로 확인한다
+- [x] 7.1 `src/hwp2md/web/static/index.html`·`app.js`·`style.css`·`vendor/marked.min.js` 로 서버 모드 화면(드롭·파일 선택·미리보기·원문·zip 다운로드·오류 표시)을 만들고 UI 스모크 스크립트 스크린샷으로 확인한다
 - [ ] 7.2 `src/hwp2md/web/static/pyodide-runner.js` 와 `app.js`·`index.html` 의 토글로 브라우저 전용 모드(Pyodide 로딩 상태, 브라우저 안 변환·zip)를 만들고 UI 스모크 스크립트로 무전송·출력 동일을 확인한다
 
 ## 8. E2E

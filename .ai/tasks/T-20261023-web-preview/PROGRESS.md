@@ -153,3 +153,42 @@
 - 변경 파일(미커밋, .ai 제외): CLAUDE.md src/hwp2md/cli.py 
 - 커밋: 4e110e4 [T-20261023-web-preview][s5] web app: convert/zip/health/pkg endpoints, serve()
 - 다음: S7 — 서버 모드 화면 시작
+
+## [2026-10-23 10:24] S7 | orchestrator | START
+- 한 일: 서버 모드 화면
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+
+## [2026-10-23 10:25] S7 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+
+## [2026-10-23 10:28] S7 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/index.html src/hwp2md/web/static/app.js src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/ 
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+
+## [2026-10-23 10:28] S7 | reviewer(sonnet) | RETRY
+- 한 일: 리뷰 FAIL 1건: marked link/image href 미필터 → javascript: 링크 XSS
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/marked.min.js .impeccable/ 
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+- 다음: implementer(opus)에 허용목록 렌더러 수정 요청
+
+## [2026-10-23 10:30] S7 | hook | AUTO
+- 한 일: 도구 호출 150회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/marked.min.js .impeccable/ 
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+
+## [2026-10-23 10:31] S7 | subagent | DONE
+- 한 일: 서버 모드 화면
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/marked.min.js .impeccable/ 
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+- 다음: review PASS
+- 메모: implementer(opus) DONE; reviewer FAIL(javascript: 링크 XSS) → 허용목록 렌더러 수정 → 재리뷰 PASS, XSS OK 16/16; impeccable side-tab 오탐(blockquote) ignore-value 처리(.impeccable/config.json); serve() 포트 bind 시험이 TIME_WAIT 오판 → S8에 server.py 수정 추가
+
+## [2026-10-23 10:31] S7 | orchestrator | DONE
+- 한 일: 서버 모드 화면 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/vendor/marked.min.js .impeccable/ 
+- 커밋: 0001cd3 [T-20261023-web-preview][s6] cli: serve subcommand; claude.md dev commands
+- 다음: S8 — 브라우저 전용 모드 시작
