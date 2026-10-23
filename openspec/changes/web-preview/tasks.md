@@ -21,9 +21,9 @@
 
 ## 5. 웹 서버 앱
 
-- [ ] 5.1 `src/hwp2md/web/app.py` 의 `create_app()` 에 `GET /`·`/static/*`·`/api/health`·`POST /api/convert`·`POST /api/zip` 을 구현한다(Content-Length 상한 선검사, 디스크 쓰기 없음)
-- [ ] 5.2 `build_runtime_zip()` 과 `GET /pkg/hwp2md.zip`(hwp2md 소스 중 `web/` 제외 + olefile `*.py`)을 구현하고 `src/hwp2md/web/server.py` 의 `serve()`(포트 사용 중 검사, 브라우저 열기, uvicorn 실행)를 구현한다
-- [ ] 5.3 `tests/unit/test_web_app.py`(Starlette TestClient)로 엔드포인트 상태 코드·본문, 413 선검사, 런타임 zip 목록, 쓰기 차단 가드를 확인한다
+- [x] 5.1 `src/hwp2md/web/app.py` 의 `create_app()` 에 `GET /`·`/static/*`·`/api/health`·`POST /api/convert`·`POST /api/zip` 을 구현한다(Content-Length 상한 선검사, 디스크 쓰기 없음)
+- [x] 5.2 `build_runtime_zip()` 과 `GET /pkg/hwp2md.zip`(hwp2md 소스 중 `web/` 제외 + olefile `*.py`)을 구현하고 `src/hwp2md/web/server.py` 의 `serve()`(포트 사용 중 검사, 브라우저 열기, uvicorn 실행)를 구현한다
+- [x] 5.3 `tests/unit/test_web_app.py`(Starlette TestClient)로 엔드포인트 상태 코드·본문, 413 선검사, 런타임 zip 목록, 쓰기 차단 가드를 확인한다
 
 ## 6. CLI
 

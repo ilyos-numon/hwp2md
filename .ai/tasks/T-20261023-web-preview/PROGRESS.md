@@ -107,3 +107,26 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/errors.py src/hwp2md/memory.py tests/unit/test_memory.py 
 - 커밋: 4ca0f5f [T-20261023-web-preview][s3] readers accept bytes via BytesIO
 - 다음: S5 — 웹 서버 앱 시작
+
+## [2026-10-23 10:19] S5 | orchestrator | START
+- 한 일: 웹 서버 앱
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 7bdaab6 [T-20261023-web-preview][s4] memory conversion API (convert_bytes, zip, payload)
+
+## [2026-10-23 10:21] S5 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/ tests/unit/test_web_app.py 
+- 커밋: 7bdaab6 [T-20261023-web-preview][s4] memory conversion API (convert_bytes, zip, payload)
+
+## [2026-10-23 10:23] S5 | subagent | DONE
+- 한 일: 웹 서버 앱
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/__init__.py src/hwp2md/web/app.py src/hwp2md/web/server.py src/hwp2md/web/static/index.html tests/unit/test_web_app.py 
+- 커밋: 7bdaab6 [T-20261023-web-preview][s4] memory conversion API (convert_bytes, zip, payload)
+- 다음: review PASS
+- 메모: implementer(opus) DONE 22 tests, 382 passed; reviewer(sonnet) PASS; sanitize 1회 실패(테스트의 IPv4 리터럴→localhost); starlette TestClient httpx deprecation warning
+
+## [2026-10-23 10:23] S5 | orchestrator | DONE
+- 한 일: 웹 서버 앱 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/__init__.py src/hwp2md/web/app.py src/hwp2md/web/server.py src/hwp2md/web/static/index.html tests/unit/test_web_app.py 
+- 커밋: 7bdaab6 [T-20261023-web-preview][s4] memory conversion API (convert_bytes, zip, payload)
+- 다음: S6 — CLI serve 시작
