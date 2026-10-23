@@ -225,3 +225,13 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/server.py src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/pyodide-runner.js src/hwp2md/web/static/style.css tests/unit/test_web_app.py 
 - 커밋: 4bb016c [T-20261023-web-preview][s7] web ui: server mode preview, raw, zip download
 - 다음: S9+S11 — E2E API / 문서 (병렬) 시작
+
+## [2026-10-23 10:38] S9 | orchestrator | START
+- 한 일: E2E API (S11과 병렬, worktree)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 805d653 [T-20261023-web-preview][s8] web ui: browser-only mode via pyodide; serve port probe SO_REUSEADDR
+
+## [2026-10-23 10:38] S11 | orchestrator | START
+- 한 일: 문서 (S9와 병렬, worktree)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 805d653 [T-20261023-web-preview][s8] web ui: browser-only mode via pyodide; serve port probe SO_REUSEADDR
