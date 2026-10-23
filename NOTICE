@@ -1,0 +1,29 @@
+hwp2md
+Third-party notices
+
+------------------------------------------------------------------------
+python-hwpx — equation converter (vendored)
+
+Source repository: https://github.com/airmang/python-hwpx
+Commit: 7ca45822076b9feb7cf3a7cfb2c924d121162b4b
+License: Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+Copyright 2025-2026 airmang
+
+Vendored files:
+  src/hwpx/equation/eqedit.py  -> src/hwp2md/equation/eqedit.py
+  src/hwpx/equation/tokens.py  -> src/hwp2md/equation/tokens.py
+
+Changes made:
+  - Moved into the package hwp2md.equation (relative imports unchanged).
+  - eqedit.py: added a "# ruff: noqa: E501" line after the SPDX header so the
+    project linter accepts the original long comment lines. No logic changes.
+  - Added src/hwp2md/equation/__init__.py (new, not from python-hwpx) with a
+    to_latex() wrapper that returns None on empty input or conversion failure.
+
+Upstream NOTICE excerpt (python-hwpx):
+  This product includes software developed by airmang.
+  Licensed under the Apache License, Version 2.0.
+  - OpenBapul/hml-equation-parser (Apache-2.0): HULK-style EqEdit <-> LaTeX
+    token mapping, referenced for reader-direction <hp:equation> script
+    rendering. The token maps are a clean-room re-derivation from the public
+    EqEdit grammar; no source code was copied, translated, or vendored.
