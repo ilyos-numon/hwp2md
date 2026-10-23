@@ -11,7 +11,12 @@ from typing import Any
 import olefile
 
 from ..blocks import Block, Image, Paragraph
-from ..errors import NotHwpFileError, UnsupportedHwpError
+from ..errors import (
+    DrmProtectedError,
+    EncryptedDocumentError,
+    NotHwpFileError,
+    UnsupportedHwpError,
+)
 from ..images import ImageNamer, normalize_ext
 from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
@@ -25,6 +30,8 @@ FILE_HEADER_SIZE = 256
 _PROP_COMPRESSED = 0x1
 _PROP_ENCRYPTED = 0x2
 _PROP_DISTRIBUTION = 0x4
+_PROP_DRM = 0x10  # bit 4: DRM 보안 문서
+_PROP_CERT_DRM = 0x400  # bit 10: 공인인증서 DRM 보안 문서
 
 
 @dataclass(frozen=True)
@@ -77,9 +84,13 @@ def read_hwp5_package(path: Source) -> Hwp5Package:
     try:
         if not ole.exists("FileHeader"):
             raise NotHwpFileError(f"FileHeader stream missing: {label}")
-        header = parse_file_header(_read_stream(ole, "FileHeader"))
+        raw_header = _read_stream(ole, "FileHeader")
+        header = parse_file_header(raw_header)
+        (properties,) = struct.unpack("<I", raw_header[36:40])
         if header.encrypted:
-            raise UnsupportedHwpError(f"encrypted document: {label}")
+            raise EncryptedDocumentError(f"encrypted document: {label}")
+        if properties & (_PROP_DRM | _PROP_CERT_DRM):
+            raise DrmProtectedError(f"DRM-protected document: {label}")
         if header.distribution:
             raise UnsupportedHwpError(f"distribution document: {label}")
         docinfo = b""

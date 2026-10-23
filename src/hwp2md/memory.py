@@ -11,18 +11,29 @@ from typing import Any, Literal
 
 from .blocks import iter_images
 from .convert import _count_blocks, read_blocks
-from .errors import EmptyInputError, InputTooLargeError, NotHwpFileError, UnsupportedHwpError
+from .errors import (
+    DrmProtectedError,
+    EmptyInputError,
+    EncryptedDocumentError,
+    InputTooLargeError,
+    NotHwpFileError,
+    UnsupportedHwpError,
+)
 from .images import image_dir_name
 from .render import render_blocks
 from .skips import SKIP_LABELS, SkipCounter, SkipKind
 
 MAX_INPUT_BYTES = 50 * 1024 * 1024  # 52428800
-ErrorCode = Literal["empty", "too_large", "not_hwp", "unsupported", "convert_failed"]
+ErrorCode = Literal[
+    "empty", "too_large", "not_hwp", "unsupported", "drm", "encrypted", "convert_failed"
+]
 STATUS_BY_CODE: dict[ErrorCode, int] = {
     "empty": 400,
     "too_large": 413,
     "not_hwp": 415,
     "unsupported": 415,
+    "drm": 415,
+    "encrypted": 415,
     "convert_failed": 422,
 }
 MIME_BY_EXT = {
@@ -153,6 +164,10 @@ def error_code(exc: BaseException) -> ErrorCode:
         return "empty"
     if isinstance(exc, InputTooLargeError):
         return "too_large"
+    if isinstance(exc, DrmProtectedError):
+        return "drm"
+    if isinstance(exc, EncryptedDocumentError):
+        return "encrypted"
     if isinstance(exc, UnsupportedHwpError):
         return "unsupported"
     if isinstance(exc, NotHwpFileError):
