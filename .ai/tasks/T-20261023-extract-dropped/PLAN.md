@@ -109,6 +109,7 @@
 | `tests/unit/test_memory.py::test_constants`, `::test_convert_to_response_errors` 의 `unsupported` 케이스 | 오류 코드 `drm`·`encrypted` 추가, 속성 `0x3` 문서가 `encrypted` 로 바뀜 (`unsupported` 케이스는 `UnsupportedHwpError` 를 내도록 monkeypatch 한 입력으로 유지) | S5 |
 | `tests/unit/test_hwpx_body.py::test_ctrl_header_and_footnote_ignored` | 각주를 이제 추출 → 이름 `test_ctrl_header_skipped_footnote_extracted`, 기대값 각주 참조·정의 | S10 |
 | `tests/synth_hwp5.py` 의 `EXPECTED_BLOCKS/MARKDOWN/COUNTS/IMAGE_FILES_IMAGE_IN_CELL` (→ `test_hwp5_bindata[in_cell]`, `test_hwpx_bindata[in_cell]`, `test_cross_format::test_image_fixtures_same_result_both_formats[in_cell]`, `test_synth_*` 중 이 상수를 쓰는 것) | 셀 그림 추출·번호 소비 | S18 |
+| `tests/unit/test_cross_format.py::test_image_fixture_no_jpg_file_when_only_in_cell` (S13 실행 중 발견, orchestrator 추가 2026-10-23) | 칸 그림 추출로 칸 JPG 도 파일이 됨 → 새 규칙 기대값으로 갱신 | S18 |
 | `tests/e2e/test_cli_image.py::test_image_in_table_cell_not_extracted_both_formats` | 셀 그림 추출 → 이름 `test_image_in_table_cell_extracted_both_formats`, 파일 2개 | S24 |
 | `tests/e2e/test_cli_image.py::test_real_fixture_images` 의 `len(lines) == 3` | 건너뜀 줄이 있으면 4 | S24 |
 | `tests/e2e/test_cli_heading.py::REAL_EXPECTED`, `test_cli_hwpx.py::REAL_HWPX_EXPECTED`, `test_cli_image.py::REAL_IMAGE_EXPECTED`, `test_web_ui.py` 의 `#preview table` 개수 | 기존 5개 샘플의 수가 캡션·글상자·차트로 바뀐 경우에만. 바뀐 값마다 S1 기준선 값과 구조 탐색 개수를 주석으로 남긴다 | S24·S25 |
@@ -406,7 +407,7 @@ EXT_IDS_BY_STAGE = {"inline": [...S9·S10 대상 10개], "objects": [...S12·S13
 **공통 규칙 (모든 단계)**
 - 모든 Bash 는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. Read/Glob 은 절대경로.
 - 표준 검증 `STD_VERIFY` = `uv run ruff check src tests && uv run ruff format --check src tests && uv run mypy src && uv run pytest tests/unit -q`
-- 칸 그림 허용 제외 `CELL_DESELECT` = `--deselect "tests/unit/test_hwp5_bindata.py::test_read_blocks_image_fixtures[in_cell]" --deselect "tests/unit/test_hwpx_bindata.py::test_read_blocks_image_fixtures[in_cell]" --deselect "tests/unit/test_cross_format.py::test_image_fixtures_same_result_both_formats[in_cell]"` — S12·S13·S14·S15·S16·S17 의 검증에서만 `STD_VERIFY` 의 마지막 `uv run pytest tests/unit -q` 뒤에 붙인다(표기 `STD_VERIFY CELL_DESELECT`). S18 부터는 붙이지 않는다.
+- 칸 그림 허용 제외 `CELL_DESELECT` = `--deselect "tests/unit/test_hwp5_bindata.py::test_read_blocks_image_fixtures[in_cell]" --deselect "tests/unit/test_hwpx_bindata.py::test_read_blocks_image_fixtures[in_cell]" --deselect "tests/unit/test_cross_format.py::test_image_fixtures_same_result_both_formats[in_cell]" --deselect "tests/unit/test_cross_format.py::test_image_fixture_no_jpg_file_when_only_in_cell" --deselect "tests/unit/test_hwpml.py::test_image_fixtures_same_as_hwpx[in_cell]"` (뒤 두 개는 S13 실행 중 orchestrator 추가) — S12·S13·S14·S15·S16·S17 의 검증에서만 `STD_VERIFY` 의 마지막 `uv run pytest tests/unit -q` 뒤에 붙인다(표기 `STD_VERIFY CELL_DESELECT`). S18 부터는 붙이지 않는다.
 - 단계마다 새 단위 테스트를 쓴다(파일 이름은 각 단계에 명시). 실제 샘플을 쓰는 단위 테스트는 만들지 않는다(E2E 에서만).
 - 실제 샘플 확인이 필요한 단계(S9·S12·S15·S17)는 임시 스크립트를 `/private/tmp/claude-501/-Users-illi-illy-projects/4b7ad5a2-bb97-4539-bbfd-1f4c9f6f768a/scratchpad/` 아래에 두고, 결과는 `.ai/tasks/T-20261023-extract-dropped/logs/s<n>-*.log` 에 개수만 남긴다(문서 글자를 로그·보고에 옮기지 않는다).
 - 단계 완료 = 검증 통과 + PROGRESS 기록 + 커밋 `[T-20261023-extract-dropped][s<n>] …` (커밋은 orchestrator).

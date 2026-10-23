@@ -238,3 +238,77 @@
 - 커밋: 50f20a9 [T-20261023-extract-dropped][s10] HWPX 단락 안 요소
 - 다음: R2 (S12~S14)
 - 메모: orchestrator: synth_hwpml 의 SubVersion 속성 1줄 삭제(sanitize IPv4 오탐, 리더 미사용). reviewer 가 git add -N 으로 .claude worktree 를 인덱스에 올린 것 git reset 으로 제거. worktree venv 가 Python 3.14 로 생성됨 → 다음 묶음은 uv sync --python 3.12
+
+## [2026-10-23 18:12] S12 | orchestrator | START
+- 한 일: R2 worktree .claude/worktrees/s12
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:12] S13 | orchestrator | START
+- 한 일: R2 worktree .claude/worktrees/s13
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:12] S14 | orchestrator | START
+- 한 일: R2 worktree .claude/worktrees/s14
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:13] R2 | hook | AUTO
+- 한 일: 도구 호출 285회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:13] R2 | hook | AUTO
+- 한 일: 도구 호출 300회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:13] R2 | hook | AUTO
+- 한 일: 도구 호출 315회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:14] R2 | hook | AUTO
+- 한 일: 도구 호출 330회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:15] R2 | hook | AUTO
+- 한 일: 도구 호출 345회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:17] R2 | hook | AUTO
+- 한 일: 도구 호출 360회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:19] R2 | hook | AUTO
+- 한 일: 도구 호출 375회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:20] R2 | hook | AUTO
+- 한 일: 도구 호출 390회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:21] S13 | implementer(opus) | DONE
+- 한 일: HWPX 칸 인라인(make_table, 칸 그림·각주 참조), 캡션, 도형 drawText·container 재귀, chart/ole, textart·form_control·image_missing. test_hwpx_objects 41. 실제 HWPX 11개 오류 0, 칸 그림 XML 수와 일치
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+- 다음: S12·S14 대기 후 R2 합침
+- 메모: 옛 칸 그림 단언 2개 실패 → PLAN §1-D·CELL_DESELECT 보완(orchestrator)
+
+## [2026-10-23 18:21] R2 | hook | AUTO
+- 한 일: 도구 호출 405회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+
+## [2026-10-23 18:21] S12 | implementer(opus) | DONE
+- 한 일: HWP5 칸 인라인 그림(번호 소비), 캡션 LIST_HEADER 분리(30B vs 칸 47B), gso 하위 글상자·묶음·OLE(ID 오프셋 12, 4B 길이 접두 CFB)·글맵시, image_link/missing. test_hwp5_objects 20. 실제: 칸 그림 11/11, 글상자 2/2·10/10, 차트 샘플 OLE 는 스트림 0개 빈 CFB → ole 1
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: d59ecd1 [T-20261023-extract-dropped][s11] HWPML 2.x 입력 (판별·본문·표·그림)
+- 다음: S14 대기 후 R2 합침
+- 메모: 실제 OOXML 차트 샘플 없음 → 차트 추출은 합성으로만 검증 (S22 한계 문서에 기록). collect_images 가 TEXTBOX_IMAGE 도 수집(합침 후 S13·S14 테스트 재확인)

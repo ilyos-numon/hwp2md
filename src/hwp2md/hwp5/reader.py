@@ -18,10 +18,17 @@ from ..errors import (
     UnsupportedHwpError,
 )
 from ..images import ImageNamer, normalize_ext
-from ..skips import SkipCounter
+from ..skips import SkipCounter, SkipKind
 from ..source import Source, as_binary_io, source_label
 from .body import ReadContext, parse_blocks
-from .docinfo import BIN_DATA_EMBEDDING, DocInfo, parse_docinfo
+from .docinfo import (
+    BIN_DATA_EMBEDDING,
+    BIN_DATA_LINK,
+    BIN_DATA_STORAGE,
+    BinDataEntry,
+    DocInfo,
+    parse_docinfo,
+)
 from .records import iter_records
 
 HWP5_SIGNATURE = b"HWP Document File" + b"\x00" * 15  # 32 bytes
@@ -121,24 +128,45 @@ def read_streams(path: Source) -> tuple[bytes, list[bytes]]:
 
 
 class BinDataStore:
-    """ImageResolver 구현. 문서 하나당 인스턴스 하나(ImageNamer 포함)."""
+    """ImageResolver·ObjectResolver 구현. 문서 하나당 인스턴스 하나(ImageNamer 포함).
+    skips 가 있으면 해석하지 못한 그림 참조를 참조 1개당 1 센다
+    (LINK → image_link, 항목·본체 없음 → image_missing)."""
 
-    def __init__(self, docinfo: DocInfo, streams: Mapping[str, bytes], *, compressed: bool) -> None:
+    def __init__(
+        self,
+        docinfo: DocInfo,
+        streams: Mapping[str, bytes],
+        *,
+        compressed: bool,
+        skips: SkipCounter | None = None,
+    ) -> None:
         self._docinfo = docinfo
         self._streams = streams
         self._compressed = compressed
+        self._skips = skips
         self._namer = ImageNamer()
-        self._cache: dict[int, Image | None] = {}
+        self._cache: dict[int, tuple[Image | None, SkipKind | None]] = {}
 
     def resolve(self, bindata_id: int) -> Image | None:
         if bindata_id not in self._cache:
             self._cache[bindata_id] = self._resolve(bindata_id)
-        return self._cache[bindata_id]
+        image, reason = self._cache[bindata_id]
+        if reason is not None and self._skips is not None:
+            self._skips.add(reason)
+        return image
 
-    def _resolve(self, bindata_id: int) -> Image | None:
+    def ole_data(self, bindata_id: int) -> bytes | None:
+        """OLE 개체 BinData 스트림(압축이면 해제). 항목·스트림이 없으면 None."""
         entry = self._docinfo.bin_data_entry(bindata_id)
-        if entry is None or entry.storage_type != BIN_DATA_EMBEDDING:
+        if entry is None or entry.storage_type not in (BIN_DATA_EMBEDDING, BIN_DATA_STORAGE):
             return None
+        return self._stream_data(entry)
+
+    def make_image(self, key: str, data: bytes) -> Image:
+        """OLE 안 원본 그림 → 이름 붙은 Image (그림과 같은 번호 체계)."""
+        return Image(file_name=self._namer.name_for(key, normalize_ext(None, data)), data=data)
+
+    def _stream_data(self, entry: BinDataEntry) -> bytes | None:
         exact = f"BIN{entry.storage_id:04X}.{entry.ext}".upper()
         prefix = f"BIN{entry.storage_id:04X}.".upper()
         name = next((k for k in self._streams if k.upper() == exact), None)
@@ -153,14 +181,24 @@ class BinDataStore:
             inflate = True
         else:
             inflate = self._compressed
-        data = raw
-        if inflate:
-            try:
-                data = _inflate(raw)
-            except zlib.error:
-                data = raw
+        if not inflate:
+            return raw
+        try:
+            return _inflate(raw)
+        except zlib.error:
+            return raw
+
+    def _resolve(self, bindata_id: int) -> tuple[Image | None, SkipKind | None]:
+        entry = self._docinfo.bin_data_entry(bindata_id)
+        if entry is not None and entry.storage_type == BIN_DATA_LINK:
+            return None, "image_link"
+        if entry is None or entry.storage_type != BIN_DATA_EMBEDDING:
+            return None, "image_missing"
+        data = self._stream_data(entry)
+        if data is None:
+            return None, "image_missing"
         ext = normalize_ext(entry.ext, data)
-        return Image(file_name=self._namer.name_for(str(bindata_id), ext), data=data)
+        return Image(file_name=self._namer.name_for(str(bindata_id), ext), data=data), None
 
 
 def read_sections(path: Source) -> list[bytes]:
@@ -171,11 +209,11 @@ def read_sections(path: Source) -> list[bytes]:
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
     """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙이고,
     문서 끝에 각주(번호순)·미주(번호순) Note 블록을 둔다.
-    skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모)를 셀 카운터."""
+    skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모·차트·OLE·글맵시·그림 참조)를 셀 카운터."""
     pkg = read_hwp5_package(path)
     docinfo = parse_docinfo(pkg.docinfo)
-    store = BinDataStore(docinfo, pkg.bin_data, compressed=pkg.header.compressed)
     ctx = ReadContext(skips)  # 각주 번호·건너뜀을 섹션을 넘어 유지
+    store = BinDataStore(docinfo, pkg.bin_data, compressed=pkg.header.compressed, skips=ctx.skips)
     blocks: list[Block] = []
     for section in pkg.sections:
         blocks.extend(parse_blocks(iter_records(section), docinfo, store, ctx))

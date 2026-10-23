@@ -6,7 +6,7 @@ import re
 import struct
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, replace
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from ..blocks import (
     Block,
@@ -19,11 +19,13 @@ from ..blocks import (
     NoteRef,
     Paragraph,
     Table,
+    iter_images,
     make_paragraph,
     make_table,
 )
 from ..equation import to_latex
 from ..errors import Hwp2mdError
+from ..ole import ole_to_outcome, unwrap_hwpx_ole
 from ..skips import SkipCounter
 from .docinfo import EMPTY_DOCINFO, DocInfo
 from .records import (
@@ -44,7 +46,10 @@ from .records import (
     HWPTAG_MEMO_LIST,
     HWPTAG_PARA_HEADER,
     HWPTAG_PARA_TEXT,
+    HWPTAG_SHAPE_COMPONENT,
+    HWPTAG_SHAPE_COMPONENT_OLE,
     HWPTAG_SHAPE_COMPONENT_PICTURE,
+    HWPTAG_SHAPE_COMPONENT_TEXTART,
     HWPTAG_TABLE,
     CtrlMark,
     Record,
@@ -54,6 +59,17 @@ from .records import (
 
 class ImageResolver(Protocol):
     def resolve(self, bindata_id: int) -> Image | None: ...
+
+
+@runtime_checkable
+class ObjectResolver(Protocol):
+    """ImageResolver 가 OLE 개체도 다룰 수 있으면 이 메서드도 갖는다."""
+
+    def resolve(self, bindata_id: int) -> Image | None: ...
+
+    def ole_data(self, bindata_id: int) -> bytes | None: ...
+
+    def make_image(self, key: str, data: bytes) -> Image: ...
 
 
 @dataclass(frozen=True)
@@ -84,6 +100,17 @@ def parse_cell_header(payload: bytes) -> CellHeader:
         raise Hwp2mdError("truncated LIST_HEADER record")
     col, row, col_span, row_span = struct.unpack_from("<HHHH", payload, 8)
     return CellHeader(col=col, row=row, col_span=col_span, row_span=row_span)
+
+
+OLE_BINDATA_ID_OFFSET = 12  # 속성 UINT32, extent x·y INT32 다음 UINT16 (실제 샘플로 확인)
+
+
+def parse_ole_bindata_id(payload: bytes) -> int | None:
+    """SHAPE_COMPONENT_OLE 의 BinData ID. 잘렸으면 None."""
+    if len(payload) < OLE_BINDATA_ID_OFFSET + 2:
+        return None
+    (bindata_id,) = struct.unpack_from("<H", payload, OLE_BINDATA_ID_OFFSET)
+    return int(bindata_id)
 
 
 def parse_picture_bindata_id(payload: bytes) -> int:
@@ -327,12 +354,12 @@ def _handle_control(
     r = recs[start]
     ctrl_id = r.payload[:4]
     if ctrl_id == CTRL_ID_TABLE:
-        table, _ = _parse_table(recs, start, r.level, docinfo, ctx)
+        table, captions, _ = _parse_table(recs, start, r.level, docinfo, bin_data, ctx)
         if table is not None:
             trailing.append(table)
+        trailing.extend(captions)
     elif ctrl_id == CTRL_ID_GSO:
-        images, _ = _parse_gso(recs, start, r.level, bin_data)
-        trailing.extend(images)
+        trailing.extend(_parse_gso(recs, start, stop, docinfo, bin_data, ctx))
     elif code == FIELD_START:
         if ctrl_id == CTRL_ID_HYPERLINK:
             builder.field_start(hyperlink_url(parse_field_command(r.payload)), link=True)
@@ -431,62 +458,188 @@ def _flatten_table(table: Table) -> str:
     return " ".join(c for row in table.rows for c in row if c)
 
 
+def _paragraph_blocks(
+    recs: Sequence[Record],
+    j: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> tuple[list[Block], int]:
+    """recs[j] (PARA_HEADER) 단락 하나 → [단락, 뒤 블록...] 과 다음 인덱스."""
+    inlines, heading, trailing, j = _parse_paragraph(recs, j, recs[j].level, docinfo, bin_data, ctx)
+    para = make_paragraph(inlines, heading)
+    out: list[Block] = [para] if para is not None else []
+    out.extend(trailing)
+    return out, j
+
+
 def _parse_gso(
-    recs: Sequence[Record], i: int, ctrl_level: int, bin_data: ImageResolver | None
-) -> tuple[list[Image], int]:
-    """gso 서브트리 안의 모든 SHAPE_COMPONENT_PICTURE 를 순서대로 Image 로."""
-    i += 1
-    images: list[Image] = []
-    while i < len(recs) and recs[i].level > ctrl_level:
-        r = recs[i]
-        if r.tag_id == HWPTAG_SHAPE_COMPONENT_PICTURE:
-            bid = parse_picture_bindata_id(r.payload)
+    recs: Sequence[Record],
+    start: int,
+    stop: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> list[Block]:
+    """그리기 개체 하나 → 블록. 개체 앞 캡션(LIST_HEADER + 단락)은 개체 블록 뒤에 둔다."""
+    ctrl_level = recs[start].level
+    blocks: list[Block] = []
+    captions: list[Block] = []
+    in_caption = False
+    j = start + 1
+    while j < stop:
+        r = recs[j]
+        if r.level != ctrl_level + 1:
+            j += 1
+        elif r.tag_id == HWPTAG_SHAPE_COMPONENT:
+            in_caption = False
+            end = _subtree_end(recs, j)
+            blocks.extend(_parse_shape(recs, j, end, docinfo, bin_data, ctx))
+            j = end
+        elif r.tag_id == HWPTAG_LIST_HEADER:
+            in_caption = True
+            j += 1
+        elif r.tag_id == HWPTAG_PARA_HEADER and in_caption:
+            out, j = _paragraph_blocks(recs, j, docinfo, bin_data, ctx)
+            captions.extend(out)
+        else:
+            j += 1
+    return blocks + captions
+
+
+def _parse_shape(
+    recs: Sequence[Record],
+    start: int,
+    stop: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> list[Block]:
+    """SHAPE_COMPONENT 하나(recs[start]) 의 하위 트리를 저장 순서대로 순회한다.
+    글상자 단락 · 그림 · OLE · 글맵시 · 묶음 자식 개체(재귀)."""
+    blocks: list[Block] = []
+    j = start + 1
+    while j < stop:
+        r = recs[j]
+        if r.tag_id == HWPTAG_SHAPE_COMPONENT:
+            end = _subtree_end(recs, j)
+            blocks.extend(_parse_shape(recs, j, end, docinfo, bin_data, ctx))
+            j = end
+        elif r.tag_id == HWPTAG_PARA_HEADER:
+            out, j = _paragraph_blocks(recs, j, docinfo, bin_data, ctx)
+            blocks.extend(out)
+        elif r.tag_id == HWPTAG_SHAPE_COMPONENT_PICTURE:
             if bin_data is not None:
-                image = bin_data.resolve(bid)
+                image = bin_data.resolve(parse_picture_bindata_id(r.payload))
                 if image is not None:
-                    images.append(image)
-        i += 1
-    return images, i
+                    blocks.append(image)
+            j += 1
+        elif r.tag_id == HWPTAG_SHAPE_COMPONENT_OLE:
+            blocks.extend(_parse_ole(r.payload, bin_data, ctx))
+            j += 1
+        elif r.tag_id == HWPTAG_SHAPE_COMPONENT_TEXTART:
+            ctx.skips.add("textart")
+            j += 1
+        else:
+            j += 1
+    return blocks
+
+
+def _parse_ole(payload: bytes, bin_data: ImageResolver | None, ctx: ReadContext) -> list[Block]:
+    """OLE 개체 → 차트 블록 / 이미지. 꺼낼 수 없으면 chart_legacy·ole 로 센다."""
+    bindata_id = parse_ole_bindata_id(payload)
+    data: bytes | None = None
+    if bindata_id is not None and isinstance(bin_data, ObjectResolver):
+        data = bin_data.ole_data(bindata_id)
+    if data is None or not isinstance(bin_data, ObjectResolver):
+        ctx.skips.add("ole")
+        return []
+    outcome = ole_to_outcome(unwrap_hwpx_ole(data), str(bindata_id), bin_data.make_image)
+    if outcome.skipped is not None:
+        ctx.skips.add(outcome.skipped)
+    return list(outcome.blocks)
 
 
 CellParas = list[list[Inline]]
 
 
+def _cell_paragraphs(blocks: Sequence[Block]) -> CellParas:
+    """칸 단락 하나의 블록(단락 + 뒤 블록) → 칸 단락 인라인 목록.
+    그림은 바로 앞 칸 단락 끝에 붙이고, 중첩 표는 글자를 공백으로 이어 붙인 뒤
+    그 안의 그림을 같은 칸 단락 끝에 붙인다."""
+    paras: CellParas = []
+
+    def tail() -> list[Inline]:
+        if not paras:
+            paras.append([])
+        return paras[-1]
+
+    for b in blocks:
+        if isinstance(b, Paragraph):
+            paras.append(list(b.inlines) if b.inlines else [b.text])
+        elif isinstance(b, Image):
+            tail().append(b)
+        elif isinstance(b, Table):
+            flat = _flatten_table(b)
+            if flat:
+                paras.append([flat])
+            for image in iter_images([b]):
+                tail().append(image)
+    return [p for p in paras if p]
+
+
 def _parse_table(
-    recs: Sequence[Record], i: int, ctrl_level: int, docinfo: DocInfo, ctx: ReadContext
-) -> tuple[Table | None, int]:
+    recs: Sequence[Record],
+    i: int,
+    ctrl_level: int,
+    docinfo: DocInfo,
+    bin_data: ImageResolver | None,
+    ctx: ReadContext,
+) -> tuple[Table | None, list[Block], int]:
+    """(표, 캡션 블록, 다음 인덱스). TABLE 레코드 앞의 LIST_HEADER 는 캡션이다.
+    TABLE 레코드가 없으면 표도 캡션도 없다."""
+    stop = _subtree_end(recs, i)
+    table_at = next(
+        (
+            k
+            for k in range(i + 1, stop)
+            if recs[k].tag_id == HWPTAG_TABLE and recs[k].level == ctrl_level + 1
+        ),
+        None,
+    )
+    if table_at is None:
+        return None, [], stop
     i += 1
     header: TableHeader | None = None
     cells: list[tuple[CellHeader, CellParas]] = []
+    captions: list[Block] = []
     current: tuple[CellHeader, CellParas] | None = None
+    in_caption = False
     while i < len(recs) and recs[i].level > ctrl_level:
         r = recs[i]
         if r.tag_id == HWPTAG_TABLE and r.level == ctrl_level + 1:
             header = parse_table_header(r.payload)
+            in_caption = False
             i += 1
         elif r.tag_id == HWPTAG_LIST_HEADER and r.level == ctrl_level + 1:
-            current = (parse_cell_header(r.payload), [])
-            cells.append(current)
+            if header is None:
+                in_caption = True
+            else:
+                current = (parse_cell_header(r.payload), [])
+                cells.append(current)
             i += 1
+        elif r.tag_id == HWPTAG_PARA_HEADER and r.level == ctrl_level + 1 and in_caption:
+            out, i = _paragraph_blocks(recs, i, docinfo, bin_data, ctx)
+            captions.extend(out)
         elif r.tag_id == HWPTAG_PARA_HEADER and r.level == ctrl_level + 1 and current is not None:
             # 셀 단락은 인라인만 쓴다 (수준은 버린다)
-            inlines, _, trailing, i = _parse_paragraph(recs, i, ctrl_level + 1, docinfo, None, ctx)
-            para = make_paragraph(inlines)
-            if para is not None:
-                current[1].append(list(para.inlines) if para.inlines else [para.text])
-            for b in trailing:
-                # 셀 안의 중첩 표·컨트롤 단락 → 부모 셀 인라인으로 평탄화
-                if isinstance(b, Paragraph):
-                    current[1].append(list(b.inlines) if b.inlines else [b.text])
-                elif isinstance(b, Table):
-                    flat = _flatten_table(b)
-                    if flat:
-                        current[1].append([flat])
+            out, i = _paragraph_blocks(recs, i, docinfo, bin_data, ctx)
+            current[1].extend(_cell_paragraphs(out))
         else:
             i += 1
     if header is None or header.row_count == 0 or header.col_count == 0:
-        return None, i
-    return make_table(_place_cells(header, cells)), i
+        return None, captions, i
+    return make_table(_place_cells(header, cells)), captions, i
 
 
 def _place_cells(
