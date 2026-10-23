@@ -125,15 +125,15 @@ def test_image_reuse_single_file_both_formats(tmp_path: Path, run_cli: RunCli) -
     _copy_evidence(md5, "image_reuse.md")
 
 
-def test_image_in_table_cell_not_extracted_both_formats(tmp_path: Path, run_cli: RunCli) -> None:
+def test_image_in_table_cell_extracted_both_formats(tmp_path: Path, run_cli: RunCli) -> None:
     lines5, linesx, md5, mdx, dir5, dirx = _both_formats(
         tmp_path, run_cli, FIXTURE_ITEMS_IMAGE_IN_CELL, "cell"
     )
     for lines, md, d in ((lines5, md5, dir5), (linesx, mdx, dirx)):
-        assert lines[1] == "  단락 0개 · 표 1개 · 이미지 1개"
-        assert lines[2] == f"  이미지: {d}/ (1 files)"
+        assert lines[1] == "  단락 0개 · 표 1개 · 이미지 2개"
+        assert lines[2] == f"  이미지: {d}/ (2 files)"
         assert md.read_text(encoding="utf-8") == EXPECTED_MARKDOWN_IMAGE_IN_CELL
-        assert sorted(os.listdir(d)) == ["img_001.png"]
+        assert sorted(os.listdir(d)) == ["img_001.jpg", "img_002.png"]
     assert md5.read_bytes() == mdx.read_bytes()
     _copy_evidence(md5, "image_cell.md")
 
@@ -234,7 +234,9 @@ def test_real_fixture_images(real: Path, tmp_path: Path, run_cli: RunCli) -> Non
     assert all(mm[2].startswith(prefix) for mm in link_lines)
 
     if images == 0:
-        assert len(lines) == 3
+        # 건너뜀 줄(`  건너뜀: …`)이 붙으면 줄 수가 4
+        has_skipped = any(ln.startswith("  건너뜀: ") for ln in lines)
+        assert len(lines) == (4 if has_skipped else 3)
         assert not images_dir.exists()
     else:
         m3 = STDOUT_LINE3.match(lines[2])
