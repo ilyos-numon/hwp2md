@@ -59,3 +59,25 @@
 - 커밋: bced79e [T-20261023-extract-dropped][s2] 실제 샘플 선정 규칙 고정 (tests/samples.py)
 - 다음: S4 결과·페이로드 건너뜀
 - 메모: 수식 기대값은 to_latex('a over b')=='\frac{a}{b}' 가정(S6/S9 확인). _count_blocks 는 S4 에서 iter_images·Note 반영
+
+## [2026-10-23 17:47] S4 | orchestrator | START
+- 한 일: 결과·페이로드 건너뜀 연결
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 85410e8 [T-20261023-extract-dropped][s3] 블록 모델·렌더 계약
+
+## [2026-10-23 17:48] S4 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 85410e8 [T-20261023-extract-dropped][s3] 블록 모델·렌더 계약
+
+## [2026-10-23 17:49] S4 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py tests/unit/test_memory.py tests/unit/test_convert_skipped.py 
+- 커밋: 85410e8 [T-20261023-extract-dropped][s3] 블록 모델·렌더 계약
+
+## [2026-10-23 17:50] S4 | implementer(opus) | DONE
+- 한 일: convert/memory/__init__/리더 read_blocks(skips) 연결, ConvertResult·MemoryResult.skipped, 페이로드 skipped, _count_blocks·_write_images iter_images, 한컴 문구 docstring. unit 417P, 기준선 diffs 0
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/__init__.py src/hwp2md/convert.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py tests/unit/test_memory.py tests/unit/test_convert_skipped.py 
+- 커밋: 85410e8 [T-20261023-extract-dropped][s3] 블록 모델·렌더 계약
+- 다음: P1 (S5~S8 병렬)
+- 메모: test_memory 의 _raise_value_error 스텁이 skips 인자를 못 받아 TypeError 로 convert_failed 통과 → S5 에서 스텁 시그니처 보정

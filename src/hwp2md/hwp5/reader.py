@@ -13,6 +13,7 @@ import olefile
 from ..blocks import Block, Image, Paragraph
 from ..errors import NotHwpFileError, UnsupportedHwpError
 from ..images import ImageNamer, normalize_ext
+from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
 from .body import parse_blocks
 from .docinfo import BIN_DATA_EMBEDDING, DocInfo, parse_docinfo
@@ -156,8 +157,9 @@ def read_sections(path: Source) -> list[bytes]:
     return read_streams(path)[1]
 
 
-def read_blocks(path: Source) -> list[Block]:
-    """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다."""
+def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
+    """각 섹션에 iter_records → parse_blocks 를 적용해 섹션 순서대로 이어 붙인다.
+    skips: 건너뛴 요소를 셀 카운터 (아직 세지 않는다)."""
     pkg = read_hwp5_package(path)
     docinfo = parse_docinfo(pkg.docinfo)
     store = BinDataStore(docinfo, pkg.bin_data, compressed=pkg.header.compressed)

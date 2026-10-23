@@ -200,7 +200,15 @@ def test_markdown_with_data_uris_handles_spaces() -> None:
 def test_to_payload_shape() -> None:
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
     payload = to_payload(result)
-    assert set(payload) == {"name", "markdown", "preview_markdown", "image_dir", "images", "counts"}
+    assert set(payload) == {
+        "name",
+        "markdown",
+        "preview_markdown",
+        "image_dir",
+        "images",
+        "counts",
+        "skipped",
+    }
     assert payload["name"] == BROTHER.stem
     assert payload["markdown"] == result.markdown
     assert payload["preview_markdown"] == markdown_with_data_uris(result)
@@ -212,6 +220,9 @@ def test_to_payload_shape() -> None:
         "headings": result.heading_count,
         "images": result.image_count,
     }
+    assert payload["skipped"] == [
+        {"kind": k, "label": memory.SKIP_LABELS[k], "count": n} for k, n in result.skipped
+    ]
 
 
 @pytest.mark.parametrize(

@@ -6,12 +6,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from .blocks import Block, Image, Paragraph, Table
+from .blocks import Block, Paragraph, Table, iter_images
 from .detect import detect_format
 from .hwp5.reader import read_blocks as read_hwp5_blocks
 from .hwpx.reader import read_blocks as read_hwpx_blocks
 from .images import image_dir_name
 from .render import render_blocks
+from .skips import SkipCounter, SkipKind
 from .source import Source
 
 
@@ -28,12 +29,13 @@ class ConvertResult:
         None  # image_files 가 비어 있지 않을 때만 out_dir / image_dir_name(stem)
     )
     image_files: tuple[Path, ...] = ()  # 실제로 쓴 파일(고유 file_name 첫 등장 순)
+    skipped: tuple[tuple[SkipKind, int], ...] = ()  # SkipCounter.items() — count > 0, 보고 순서
 
 
 def _write_images(blocks: Sequence[Block], target: Path) -> tuple[Path, ...]:
     """처음 보는 file_name 마다 target / file_name 에 data 를 쓴다.
     Image 가 0개면 target 을 만들지 않는다."""
-    images = [b for b in blocks if isinstance(b, Image)]
+    images = list(iter_images(blocks))
     if not images:
         return ()
     target.mkdir(parents=True, exist_ok=True)
@@ -49,21 +51,23 @@ def _write_images(blocks: Sequence[Block], target: Path) -> tuple[Path, ...]:
 
 def _count_blocks(blocks: Sequence[Block]) -> tuple[int, int, int, int]:
     """(paragraph_count, table_count, heading_count, image_count). convert 와 memory 가 공유."""
+    # 최상위 블록만 센다: Note 안 단락은 제외, 목록 단락은 포함. 이미지는 인라인 포함.
     paragraph_count = sum(
         isinstance(b, Paragraph) and bool(b.text) and b.level == 0 for b in blocks
     )
     heading_count = sum(isinstance(b, Paragraph) and bool(b.text) and b.level >= 1 for b in blocks)
     table_count = sum(isinstance(b, Table) for b in blocks)
-    image_count = sum(isinstance(b, Image) for b in blocks)
+    image_count = len(list(iter_images(blocks)))
     return paragraph_count, table_count, heading_count, image_count
 
 
-def read_blocks(path: Source) -> list[Block]:
+def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
     """포맷을 감지해 리더를 고른다.
-    "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks. 예외는 그대로 전파."""
+    "hwp5" → read_hwp5_blocks, "hwpx" → read_hwpx_blocks. 예외는 그대로 전파.
+    skips 는 리더에 그대로 넘긴다 (건너뛴 요소를 센다)."""
     if detect_format(path) == "hwpx":
-        return read_hwpx_blocks(path)
-    return read_hwp5_blocks(path)
+        return read_hwpx_blocks(path, skips)
+    return read_hwp5_blocks(path, skips)
 
 
 def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
@@ -71,7 +75,8 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
     source = Path(path)
     if not source.is_file():
         raise FileNotFoundError(str(path))
-    blocks = read_blocks(source)
+    counter = SkipCounter()
+    blocks = read_blocks(source, skips=counter)
     image_dir_rel = image_dir_name(source.stem)
     markdown = render_blocks(blocks, image_dir=image_dir_rel)
     paragraph_count, table_count, heading_count, image_count = _count_blocks(blocks)
@@ -91,4 +96,5 @@ def convert(path: str | Path, out_dir: str | Path = ".") -> ConvertResult:
         image_count=image_count,
         image_dir=target_dir / image_dir_rel if files else None,
         image_files=files,
+        skipped=counter.items(),
     )

@@ -10,6 +10,7 @@ from lxml import etree
 
 from ..blocks import Block
 from ..errors import Hwp2mdError, NotHwpFileError
+from ..skips import SkipCounter
 from ..source import Source, as_binary_io, source_label
 from .bindata import (
     BIN_DATA_PREFIX,
@@ -111,7 +112,8 @@ def parse_section_xml(data: bytes) -> etree._Element:
     return root
 
 
-def read_blocks(path: Source) -> list[Block]:
+def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
+    """skips: 건너뛴 요소를 셀 카운터 (아직 세지 않는다)."""
     pkg = read_hwpx_package(path)
     info = EMPTY_HEADER if pkg.header is None else parse_header(parse_header_xml(pkg.header))
     manifest = parse_manifest(pkg.manifest) if pkg.manifest is not None else {}
