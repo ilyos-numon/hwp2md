@@ -679,7 +679,7 @@ EXT_IDS_BY_STAGE = {"inline": [...S9·S10 대상 10개], "objects": [...S12·S13
 
 ### Stage 27 — 리뷰·결과 기록
 - 담당: reviewer(sonnet) → scribe(haiku) · 선행: S26
-- 입력: `git diff d6f98cc..HEAD`, 스크린샷 4개(reviewer 가 직접 연다), §1-D 목록, C1~C19 결과, OpenSpec change
+- 입력: `git diff e18cd70..HEAD`, 스크린샷 4개(reviewer 가 직접 연다), §1-D 목록, C1~C19 결과, OpenSpec change
 - 쓰기 범위: `.ai/tasks/T-20261023-extract-dropped/RESULT.md`, `.ai/STATE.md`(scribe 전체 재작성)
 - 산출물: reviewer PASS/FAIL(§1-D 밖 기존 테스트 수정 0, pyhwp 흔적 0, 실제 샘플 이름 신규 추적 0, 스크린샷 기대 요소), RESULT.md(결론 3줄, 요소별 결과 표, PARTIAL 항목, 남은 한계 → extraction-limits)
 - 검증: `test -f .ai/tasks/T-20261023-extract-dropped/RESULT.md` · reviewer 결과 PASS

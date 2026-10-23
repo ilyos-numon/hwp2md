@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261023-extract-dropped
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
-- 현재 단계: S1 / 27 — 기준선 기록
+- 현재 단계: S2 / 27 — 실제 샘플 선정 규칙 고정
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-extract-dropped`
-- 마지막 체크포인트: 2026-10-23 17:32 (S0 DONE)
+- 마지막 체크포인트: 2026-10-23 17:35 (S1 DONE)
 - 마지막 커밋: ae6ed95 [s0] V3 시안·기능 명세 선행 커밋
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` 로 S1(기준선 기록)부터. 근거: PLAN §5 Stage 1, OpenSpec `openspec/changes/extract-dropped/`.
+1. S2(test-writer): tests/samples.py + 기존 테스트 샘플 집합을 기존 5개로 고정 (PLAN §5 Stage 2)
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (Q1~Q10 승인 완료)
