@@ -16,7 +16,7 @@
 
 ## 4. 독립 모듈
 
-- [ ] 4.1 python-hwpx 수식 변환기를 `src/hwp2md/equation/` 에 벤더링하고 `to_latex()` 와 NOTICE 를 추가한다
+- [x] 4.1 python-hwpx 수식 변환기를 `src/hwp2md/equation/` 에 벤더링하고 `to_latex()` 와 NOTICE 를 추가한다
 - [ ] 4.2 `src/hwp2md/ole.py` 에 HWPX 길이 접두 벗기기·CFB 스트림 판별·OOXML 차트 캐시값 → 블록·Ole10Native 이미지 판별을 구현한다
 - [ ] 4.3 `src/hwp2md/hwp5/aes.py`(AES-128-ECB 복호)와 `hwp5/distdoc.py`(ViewText 레코드 복호)를 구현하고 합성 암호화 도우미로 왕복 검증한다
 

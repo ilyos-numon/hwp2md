@@ -139,3 +139,9 @@
 - 변경 파일(미커밋, .ai 제외): NOTICE src/hwp2md/__init__.py src/hwp2md/detect.py src/hwp2md/equation/__init__.py src/hwp2md/equation/eqedit.py src/hwp2md/equation/tokens.py src/hwp2md/errors.py src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/memory.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_memory.py tests/unit/test_ole_chart.py tests/unit/test_protection.py 
 - 커밋: 425f05a [T-20261023-extract-dropped][s4] 결과·페이로드 건너뜀 연결
 - 다음: S6 커밋
+
+## [2026-10-23 17:59] S6 | implementer(opus) | DONE
+- 한 일: python-hwpx 7ca4582 수식 변환기 벤더링(eqedit·tokens, noqa 1줄), to_latex 래퍼, NOTICE. to_latex('a over b')=\frac{a}{b}. test_equation 15
+- 변경 파일(미커밋, .ai 제외): NOTICE src/hwp2md/equation/__init__.py src/hwp2md/equation/eqedit.py src/hwp2md/equation/tokens.py src/hwp2md/hwp5/aes.py src/hwp2md/hwp5/distdoc.py src/hwp2md/ole.py tests/synth_distdoc.py tests/synth_ole.py tests/unit/test_distdoc.py tests/unit/test_equation.py tests/unit/test_ole_chart.py 
+- 커밋: 85e5abd [T-20261023-extract-dropped][s5] 보호 문서 판별 (DRM·비밀번호 전용 예외·오류 코드)
+- 다음: S7 커밋
