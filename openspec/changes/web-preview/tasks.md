@@ -27,7 +27,7 @@
 
 ## 6. CLI
 
-- [ ] 6.1 `src/hwp2md/cli.py` 에 첫 인자 `serve` 분기(`--host`, `--port`, `--no-browser`, web extra 미설치 안내 종료 코드 1)를 추가하고 기존 변환 경로·`--help` 출력이 바뀌지 않았음을 확인한다
+- [x] 6.1 `src/hwp2md/cli.py` 에 첫 인자 `serve` 분기(`--host`, `--port`, `--no-browser`, web extra 미설치 안내 종료 코드 1)를 추가하고 기존 변환 경로·`--help` 출력이 바뀌지 않았음을 확인한다
 
 ## 7. 화면
 

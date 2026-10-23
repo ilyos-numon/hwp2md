@@ -130,3 +130,26 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/__init__.py src/hwp2md/web/app.py src/hwp2md/web/server.py src/hwp2md/web/static/index.html tests/unit/test_web_app.py 
 - 커밋: 7bdaab6 [T-20261023-web-preview][s4] memory conversion API (convert_bytes, zip, payload)
 - 다음: S6 — CLI serve 시작
+
+## [2026-10-23 10:23] S6 | orchestrator | START
+- 한 일: CLI serve
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4e110e4 [T-20261023-web-preview][s5] web app: convert/zip/health/pkg endpoints, serve()
+
+## [2026-10-23 10:23] S6 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4e110e4 [T-20261023-web-preview][s5] web app: convert/zip/health/pkg endpoints, serve()
+
+## [2026-10-23 10:24] S6 | subagent | DONE
+- 한 일: CLI serve
+- 변경 파일(미커밋, .ai 제외): CLAUDE.md src/hwp2md/cli.py 
+- 커밋: 4e110e4 [T-20261023-web-preview][s5] web app: convert/zip/health/pkg endpoints, serve()
+- 다음: review PASS
+- 메모: implementer(opus) DONE; help diff 0, C8 exit=1, health OK, 382 passed; diff 21줄로 계약 그대로라 orchestrator 직접 리뷰(reviewer 생략)
+
+## [2026-10-23 10:24] S6 | orchestrator | DONE
+- 한 일: CLI serve 검증 통과
+- 변경 파일(미커밋, .ai 제외): CLAUDE.md src/hwp2md/cli.py 
+- 커밋: 4e110e4 [T-20261023-web-preview][s5] web app: convert/zip/health/pkg endpoints, serve()
+- 다음: S7 — 서버 모드 화면 시작

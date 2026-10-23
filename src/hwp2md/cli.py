@@ -30,8 +30,27 @@ def _error(message: str, code: int) -> int:
     return code
 
 
+def _serve_main(argv: Sequence[str]) -> int:
+    parser = argparse.ArgumentParser(prog="hwp2md serve")
+    parser.add_argument("--host", default="localhost", help='바인드 호스트 (기본값 "localhost")')
+    parser.add_argument("--port", type=int, default=8765, help="포트 (기본값 8765)")
+    parser.add_argument("--no-browser", action="store_true", help="브라우저를 자동으로 열지 않음")
+    ns = parser.parse_args(list(argv))
+    try:
+        from .web.server import serve
+    except ImportError:
+        return _error("web extra not installed — pip install 'hwp2md[web]'", 1)
+    host: str = ns.host
+    port: int = ns.port
+    no_browser: bool = ns.no_browser
+    return serve(host, port, open_browser=not no_browser)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
-    args = _build_parser().parse_args(argv)
+    argv_list = list(sys.argv[1:] if argv is None else argv)
+    if argv_list[:1] == ["serve"]:
+        return _serve_main(argv_list[1:])
+    args = _build_parser().parse_args(argv_list)
     input_arg: str = args.input
     try:
         result = convert(input_arg, args.out_dir)
