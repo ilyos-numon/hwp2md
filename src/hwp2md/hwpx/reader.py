@@ -5,12 +5,12 @@ from __future__ import annotations
 import re
 import zipfile
 from dataclasses import dataclass
-from pathlib import Path
 
 from lxml import etree
 
 from ..blocks import Block
 from ..errors import Hwp2mdError, NotHwpFileError
+from ..source import Source, as_binary_io, source_label
 from .bindata import (
     BIN_DATA_PREFIX,
     HWPX_CONTENT_HPF,
@@ -55,11 +55,11 @@ class HwpxPackage:
     bin_data: dict[str, bytes]  # "BinData/" 로 시작하는 파일 엔트리 전부 (키 = 엔트리 전체 이름)
 
 
-def read_hwpx_package(path: Path) -> HwpxPackage:
+def read_hwpx_package(path: Source) -> HwpxPackage:
     try:
-        zf = zipfile.ZipFile(path)
+        zf = zipfile.ZipFile(as_binary_io(path))
     except zipfile.BadZipFile as exc:
-        raise NotHwpFileError(f"not a zip archive: {path}") from exc
+        raise NotHwpFileError(f"not a zip archive: {source_label(path)}") from exc
     with zf:
         out: list[bytes] = []
         for name in section_names(zf):
@@ -91,13 +91,13 @@ def read_hwpx_package(path: Path) -> HwpxPackage:
         return HwpxPackage(header=header, sections=out, manifest=manifest, bin_data=bin_data)
 
 
-def read_package(path: Path) -> tuple[bytes | None, list[bytes]]:
+def read_package(path: Source) -> tuple[bytes | None, list[bytes]]:
     """(header.xml 바이트 — 엔트리 없으면 None ; 섹션 바이트 목록)."""
     pkg = read_hwpx_package(path)
     return pkg.header, pkg.sections
 
 
-def read_sections(path: Path) -> list[bytes]:
+def read_sections(path: Source) -> list[bytes]:
     return read_package(path)[1]
 
 
@@ -111,7 +111,7 @@ def parse_section_xml(data: bytes) -> etree._Element:
     return root
 
 
-def read_blocks(path: Path) -> list[Block]:
+def read_blocks(path: Source) -> list[Block]:
     pkg = read_hwpx_package(path)
     info = EMPTY_HEADER if pkg.header is None else parse_header(parse_header_xml(pkg.header))
     manifest = parse_manifest(pkg.manifest) if pkg.manifest is not None else {}

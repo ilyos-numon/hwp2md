@@ -49,10 +49,33 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 5e68dd4 [T-20261023-web-preview][s1] deps: web extra, dev starlette/uvicorn/httpx/playwright
 - 다음: S3
-- 메모: PYODIDE_VERSION=0.27.7 LXML=5.2.1 LOAD=65.04,1.02,1.01 (콜드 로드 65s → S8/S10 타임아웃 넉넉히, goto wait_until=commit)
+- 메모: PYODIDE_VERSION=0.27.7 LXML=5.2.1(build 0) LOAD=65.04,1.02,1.01 (콜드 로드 65s → S8/S10 타임아웃 넉넉히, goto wait_until=commit)
 
 ## [2026-10-23 10:13] S2 | orchestrator | DONE
 - 한 일: Pyodide 스파이크 검증 통과
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 5e68dd4 [T-20261023-web-preview][s1] deps: web extra, dev starlette/uvicorn/httpx/playwright
 - 다음: S3 시작
+
+## [2026-10-23 10:13] S3 | orchestrator | START
+- 한 일: 리더 바이트 입력
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2d3fe1f [T-20261023-web-preview][s2] spike: pyodide 0.27.7 + lxml converts 5/5 samples
+
+## [2026-10-23 10:14] S3 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/detect.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/source.py 
+- 커밋: 2d3fe1f [T-20261023-web-preview][s2] spike: pyodide 0.27.7 + lxml converts 5/5 samples
+
+## [2026-10-23 10:16] S3 | subagent | DONE
+- 한 일: 리더 바이트 입력
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/detect.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/source.py tests/unit/test_source_bytes.py 
+- 커밋: 2d3fe1f [T-20261023-web-preview][s2] spike: pyodide 0.27.7 + lxml converts 5/5 samples
+- 다음: review PASS
+- 메모: implementer(opus) DONE 19 tests, 305 passed; reviewer(sonnet) PASS
+
+## [2026-10-23 10:16] S3 | orchestrator | DONE
+- 한 일: 리더 바이트 입력 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/detect.py src/hwp2md/hwp5/reader.py src/hwp2md/hwpx/reader.py src/hwp2md/source.py tests/unit/test_source_bytes.py 
+- 커밋: 2d3fe1f [T-20261023-web-preview][s2] spike: pyodide 0.27.7 + lxml converts 5/5 samples
+- 다음: S4 — 메모리 변환 API 시작

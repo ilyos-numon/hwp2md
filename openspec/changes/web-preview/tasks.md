@@ -10,8 +10,8 @@
 
 ## 3. 바이트 입력 리더
 
-- [ ] 3.1 `src/hwp2md/source.py`(`Source`, `source_label`, `as_binary_io`)를 추가하고 `detect_format`·`read_hwp5_package`·`read_hwpx_package`·두 `read_blocks` 가 `Path | bytes` 를 받도록 바꾼다(bytes 는 `io.BytesIO` 로 감싼다, 경로 메시지 불변)
-- [ ] 3.2 `tests/unit/test_source_bytes.py` 로 샘플 5개의 bytes/경로 블록 동일성, 100바이트 입력이 경로로 열리지 않음, bytes 오류 메시지의 `<memory>` 라벨을 확인한다
+- [x] 3.1 `src/hwp2md/source.py`(`Source`, `source_label`, `as_binary_io`)를 추가하고 `detect_format`·`read_hwp5_package`·`read_hwpx_package`·두 `read_blocks` 가 `Path | bytes` 를 받도록 바꾼다(bytes 는 `io.BytesIO` 로 감싼다, 경로 메시지 불변)
+- [x] 3.2 `tests/unit/test_source_bytes.py` 로 샘플 5개의 bytes/경로 블록 동일성, 100바이트 입력이 경로로 열리지 않음, bytes 오류 메시지의 `<memory>` 라벨을 확인한다
 
 ## 4. 메모리 변환 API
 
