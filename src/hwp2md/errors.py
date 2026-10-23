@@ -11,3 +11,11 @@ class NotHwpFileError(Hwp2mdError):
 
 class UnsupportedHwpError(Hwp2mdError):
     """암호화 또는 배포용 문서 (종료 코드 3)"""
+
+
+class EmptyInputError(Hwp2mdError):
+    """메모리 변환 입력이 0바이트"""
+
+
+class InputTooLargeError(Hwp2mdError):
+    """메모리 변환 입력이 MAX_INPUT_BYTES 초과"""
