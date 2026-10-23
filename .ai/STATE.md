@@ -4,7 +4,7 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: T-20261023-extract-dropped (버려지던 HWP 요소 추출과 추출 한계 명시)
+- 현재 태스크: T-20261023-extract-dropped
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
 - 현재 단계: S1 / 27 — 기준선 기록
