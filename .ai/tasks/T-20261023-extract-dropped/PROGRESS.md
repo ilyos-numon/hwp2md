@@ -158,3 +158,69 @@
 - 커밋: c5b1bc5 [T-20261023-extract-dropped][s7] OLE·OOXML 차트 모듈
 - 다음: R1 (S9~S11)
 - 메모: P1 worktree 가 main 에서 생성돼 S5·S7 은 메인 트리 재실행, S6·S8 은 새 파일만이라 복사로 합침. 메모리 기록 갱신
+
+## [2026-10-23 17:59] S9 | orchestrator | START
+- 한 일: R1 worktree .claude/worktrees/s9
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 17:59] S10 | orchestrator | START
+- 한 일: R1 worktree .claude/worktrees/s10
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 17:59] S11 | orchestrator | START
+- 한 일: R1 worktree .claude/worktrees/s11
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:00] R1 | hook | AUTO
+- 한 일: 도구 호출 150회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:00] R1 | hook | AUTO
+- 한 일: 도구 호출 165회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:01] R1 | hook | AUTO
+- 한 일: 도구 호출 180회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:03] R1 | hook | AUTO
+- 한 일: 도구 호출 195회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:04] R1 | hook | AUTO
+- 한 일: 도구 호출 210회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:05] R1 | hook | AUTO
+- 한 일: 도구 호출 225회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:06] R1 | hook | AUTO
+- 한 일: 도구 호출 240회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:08] R1 | hook | AUTO
+- 한 일: 도구 호출 255회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/ 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:10] R1 | hook | AUTO
+- 한 일: 도구 호출 270회 경과
+- 변경 파일(미커밋, .ai 제외): .claude/worktrees/s10 .claude/worktrees/s11 .claude/worktrees/s9 src/hwp2md/convert.py src/hwp2md/detect.py src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwpml/__init__.py src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/synth_hwp5.py tests/synth_hwpml.py tests/synth_hwpx.py tests/unit/test_hwp5_inline.py tests/unit/test_hwpml.py tests/unit/test_hwpx_body.py tests/unit/test_hwpx_inline.py 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+
+## [2026-10-23 18:11] S9 | implementer(opus) | DONE
+- 한 일: decode_para_runs·CtrlMark, 컨트롤 1:1 대응(불일치 폴백), %hlk→Link, fn/en→NoteRef+Note, eqed→Math, head/foot·tcmt·memo 건너뜀. 실제: 수식 3/3, 각주 3/3, 링크 2, 머리말 5/5, 누름틀 1/1
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/convert.py src/hwp2md/detect.py src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwpml/__init__.py src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/synth_hwp5.py tests/synth_hwpml.py tests/synth_hwpx.py tests/unit/test_hwp5_inline.py tests/unit/test_hwpml.py tests/unit/test_hwpx_body.py tests/unit/test_hwpx_inline.py 
+- 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
+- 다음: S10 커밋
