@@ -55,6 +55,23 @@
 .error__close:hover { background: color-mix(in srgb, var(--status-error) 12%, transparent); }
 .error__close svg { width: 16px; height: 16px; }
 
+/* ---------- 건너뛴 요소 경고 ---------- */
+#skipped[hidden] { display: none; }
+#skipped {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+  padding: 10px 16px; border-radius: var(--radius-md);
+  background: var(--status-warning-soft); color: var(--status-warning);
+  border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent);
+  font-weight: 500; font-size: 14px;
+}
+#skipped a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
+
+/* ---------- 바닥 고지 ---------- */
+.app-foot { margin-top: 8px; text-align: center; font-size: 13px; color: var(--text-muted); }
+.app-foot p + p { margin-top: 4px; }
+.app-foot a { color: inherit; text-underline-offset: 3px; }
+.app-foot a:hover { color: var(--text-primary); }
+
 /* ---------- drop zone ---------- */
 #drop-zone {
   position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;

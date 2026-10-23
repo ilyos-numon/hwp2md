@@ -7,12 +7,14 @@
   "use strict";
 
   const MAX_INPUT_BYTES = 52428800;
-  const STATUS = { empty: 400, too_large: 413, not_hwp: 415, unsupported: 415, convert_failed: 422 };
+  const STATUS = { empty: 400, too_large: 413, not_hwp: 415, unsupported: 415, drm: 415, encrypted: 415, convert_failed: 422 };
   const MESSAGE = {
     empty: "빈 파일입니다",
     too_large: "파일이 너무 큽니다",
     not_hwp: "not an HWP 5.0 or HWPX file: <memory>",
-    unsupported: "encrypted document: <memory>",
+    unsupported: "distribution document: ViewText missing: <memory>",
+    drm: "DRM-protected document: <memory>",
+    encrypted: "encrypted document: <memory>",
     convert_failed: "truncated record at offset 120",
   };
 

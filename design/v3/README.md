@@ -8,7 +8,7 @@ Stitch V2 시안(`design/stitch/`)의 색·레이아웃·문구를 잇고 GSAP �
 | `js/effects.js` | `gsap.registerEffect` 로 등록한 재사용 효과: `riseChars`, `scrambleIn`(Markdown 기호로 해독), `drawIn`, `tagPop`, `typeLines`, `countTo`. 모두 `extendTimeline` 이라 `tl.scrambleIn(...)` 처럼 타임라인에서 바로 쓴다 |
 | `app.html` + `css/app.css` + `js/app.js` | 변환 화면. 기존 UI 의 id·`data-state`·오류 문구 계약 유지 |
 | `css/base.css`, `js/theme.js` | 공통 토큰(라이트·다크), 헤더, 버튼, 테마 전환 |
-| `js/demo-engine.js`, `js/demo-payload.js` | **임시** 변환 엔진. 실제 엔진이 `demo.hwpx` 를 변환한 `/api/convert` 응답을 그대로 담았다 |
+| `js/demo-engine.js`, `js/demo-payload.js` | **임시** 변환 엔진. 실제 엔진이 합성 데모 HWPX 를 변환한 `/api/convert` 응답을 그대로 담았다 |
 
 ## 보는 법
 
@@ -26,3 +26,11 @@ Stitch V2 시안(`design/stitch/`)의 색·레이아웃·문구를 잇고 GSAP �
 ## 바뀐 문구 (V2 대비)
 
 V2 시안 중 실제 동작과 다른 문구를 [기능 명세](../../docs/feature-reference.md)에 맞춰 고쳤다: 브라우저 모드 준비(서버의 20MB 번들 → CDN 의 Python 실행 환경 + 서버의 변환 코드, 첫 준비 약 1분), 각주·목록·서식 변환 주장 삭제, 지원 한계에 병합 칸·표 칸 안 그림·WMF/EMF 추가.
+
+## 추출 한계 표기 (2026-10-23)
+
+- 변환 화면: 응답의 `skipped` 가 비어 있지 않으면 `#skipped`(role=status)에 `변환하지 못한 요소: 머리말·꼬리말 1개 · …` 와 [추출 한계 문서](../../docs/extraction-limits.md) 링크("왜 빠졌나요?")를 보인다. 라벨은 `skipped[].label` 그대로, `textContent` 로만 넣는다.
+- 오류 문구: `drm`·`encrypted` 를 추가하고 `unsupported` 문구를 바꿨다(`js/app.js` 의 `ERROR_TEXT`). 데모 엔진도 두 코드를 415 로 돌려주고, 데모 도크에 "DRM 오류" 버튼이 있다.
+- 서비스 소개 `#limits`: 불가·부분·제외·예정·범위 밖 칩으로 다시 썼고, 이번에 된 것(각주·미주, 하이퍼링크, 수식, 번호·글머리표 목록, 표 칸·글상자 안 그림, 배포용 문서, HWPML)은 기능 쪽 문구로 옮겼다.
+- 바닥글(`index.html`)과 변환 화면 아래(`app.html`)에 한컴 공개 문서 참고 고지가 있다.
+- 데모 응답 다시 만들기: `uv run python .ai/tasks/T-20261023-extract-dropped/demo/make_payload.py` (합성 HWPX: 제목·링크·각주·글머리표·칸 그림 표·수식·머리말 → `js/demo-payload.js`).

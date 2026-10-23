@@ -525,3 +525,9 @@
 - 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css LICENSE docs/extraction-limits.md tests/unit/test_web_runtime_zip.py 
 - 커밋: 1b855d4 [T-20261023-extract-dropped][s19] CLI 보호 문서 문구·건너뜀 요약
 - 다음: S21 커밋
+
+## [2026-10-23 18:55] S21 | implementer(opus) | DONE
+- 한 일: design/v3: #limits 불가6·부분5·제외4·예정3·범위밖1 + extraction-limits 링크, 된 항목 기능으로 이동, 변환 화면 #skipped + '왜 빠졌나요?', drm·encrypted 문구·DRM 데모 버튼, 한컴 고지, demo-payload 재생성(make_payload.py). impeccable 0. 리뷰 불일치 3건 수정
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md design/v3/app.html design/v3/css/app.css design/v3/index.html design/v3/js/app.js design/v3/js/demo-engine.js design/v3/js/demo-payload.js docs/decisions.md docs/feature-reference.md docs/system-overview.md pyproject.toml LICENSE docs/extraction-limits.md 
+- 커밋: 1a5e96d [T-20261023-extract-dropped][s20] 웹 UI 오류 코드·건너뜀 경고·한컴 고지
+- 다음: S22 커밋
