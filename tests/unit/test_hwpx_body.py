@@ -1,6 +1,6 @@
 from lxml import etree
 
-from hwp2md.blocks import Paragraph, Table
+from hwp2md.blocks import Note, NoteRef, Paragraph, Table
 from hwp2md.hwpx import body, reader
 from hwp2md.hwpx.body import parse_section
 from hwp2md.hwpx.reader import NS_HP, NS_HS, parse_section_xml
@@ -134,7 +134,7 @@ def test_missing_cell_addr_uses_first_empty_slot() -> None:
     assert parse_section(_sec(_p(_tbl(2, 2, trs)))) == [Table([["a", "b"], ["c", "d"]])]
 
 
-def test_ctrl_header_and_footnote_ignored() -> None:
+def test_ctrl_header_skipped_footnote_extracted() -> None:
     ctrl = (
         "<hp:ctrl><hp:header><hp:subList>"
         + _p(_t("머리말"))
@@ -142,7 +142,10 @@ def test_ctrl_header_and_footnote_ignored() -> None:
     )
     foot = "<hp:footNote><hp:subList>" + _p(_t("각주")) + "</hp:subList></hp:footNote>"
     xml = "<hp:p><hp:run>" + ctrl + _t("본문") + foot + "</hp:run></hp:p>"
-    assert parse_section(_sec(xml)) == [Paragraph("본문")]
+    assert parse_section(_sec(xml)) == [
+        Paragraph("본문", inlines=("본문", NoteRef("footnote", 1))),
+        Note("footnote", 1, (Paragraph("각주"),)),
+    ]
 
 
 def test_secpr_and_pic_ignored() -> None:

@@ -11,6 +11,7 @@ from xml.sax.saxutils import escape
 from hwp2md.blocks import Paragraph
 from hwp2md.hwpx.reader import HWPX_MIMETYPE, NS_HP, NS_HS
 from synth_hwp5 import (  # 재정의 금지
+    PNG_1X1,
     Item,
     SynthCell,
     SynthHeading,
@@ -18,6 +19,16 @@ from synth_hwp5 import (  # 재정의 금지
     SynthTable,
     collect_images,
     has_heading,
+)
+from synth_items import (
+    ExtItem,
+    Run,
+    SynthField,
+    SynthHeaderFooter,
+    SynthHidden,
+    SynthLink,
+    SynthNote,
+    SynthRich,
 )
 
 NS_HC = "http://www.hancom.co.kr/hwpml/2011/core"
@@ -143,10 +154,151 @@ def table_xml(
     )
 
 
-def section_xml(items: Sequence[Item], images: Sequence[SynthImage] | None = None) -> bytes:
-    imgs = collect_images(items) if images is None else images
+HEADER_IMAGE = SynthImage(PNG_1X1, "png")  # SynthHeaderFooter(with_image=True) 의 그림
+
+
+def all_images(items: Sequence[Item | ExtItem]) -> list[SynthImage]:
+    """collect_images + 머리말·꼬리말 안 그림 (문서 순서, 중복 제외)."""
+    found = collect_images([x for x in items if not isinstance(x, SynthHeaderFooter)])  # type: ignore[arg-type]
+    for item in items:
+        if isinstance(item, SynthHeaderFooter) and item.with_image and HEADER_IMAGE not in found:
+            found.append(HEADER_IMAGE)
+    return found
+
+
+def _command_escape(url: str) -> str:
+    """하이퍼링크 command 의 대상 이스케이프 (`\\` `:` `?` `;` `#` `|` 앞에 `\\`)."""
+    return "".join("\\" + ch if ch in "\\:?;#|" else ch for ch in url)
+
+
+def _t_run(text: str) -> str:
+    return f'<hp:run charPrIDRef="0"><hp:t>{text_xml(text)}</hp:t></hp:run>'
+
+
+def _field_runs(field_id: int, ftype: str, params: str, text: str) -> str:
+    return (
+        f'<hp:run charPrIDRef="0"><hp:ctrl><hp:fieldBegin id="{field_id}" type="{ftype}" '
+        f'name="" editable="1" dirty="0" zorder="-1" fieldid="{field_id}">'
+        f"<hp:parameters>{params}</hp:parameters></hp:fieldBegin></hp:ctrl></hp:run>"
+        + _t_run(text)
+        + f'<hp:run charPrIDRef="0"><hp:ctrl><hp:fieldEnd beginIDRef="{field_id}" '
+        f'fieldid="{field_id}"/></hp:ctrl></hp:run>'
+    )
+
+
+def _sub_paragraphs_xml(paragraphs: Sequence[str], *, prefix: str = "") -> str:
+    """subList 안 단락들. prefix 는 첫 단락 첫 run 안(예: autoNum ctrl)."""
+    out = []
+    for i, text in enumerate(paragraphs):
+        head = prefix if i == 0 else ""
+        out.append(
+            f'<hp:p id="0" {P_ATTRS}><hp:run charPrIDRef="0">{head}'
+            f"<hp:t>{text_xml(text)}</hp:t></hp:run></hp:p>"
+        )
+    return "".join(out)
+
+
+def run_xml(run: Run, *, field_id: int) -> str:
+    """SynthRich 의 run 하나 → hp:run XML (필드는 run 3개)."""
+    if isinstance(run, str):
+        return _t_run(run)
+    if isinstance(run, SynthLink):
+        params = (
+            '<hp:integerParam name="Prop">0</hp:integerParam>'
+            f'<hp:stringParam name="Command">{escape(_command_escape(run.url))};1;0;0;'
+            "</hp:stringParam>"
+            f'<hp:stringParam name="Path">{escape(run.url)}</hp:stringParam>'
+            '<hp:stringParam name="Category">HWPHYPERLINK_TYPE_URL</hp:stringParam>'
+        )
+        return _field_runs(field_id, "HYPERLINK", params, run.text)
+    if isinstance(run, SynthField):
+        params = '<hp:stringParam name="Direction"></hp:stringParam>'
+        return _field_runs(field_id, "CLICK_HERE", params, run.text)
+    if isinstance(run, SynthNote):
+        tag, num_type = (
+            ("footNote", "FOOTNOTE") if run.kind == "footnote" else ("endNote", "ENDNOTE")
+        )
+        auto = f'<hp:ctrl><hp:autoNum num="1" numType="{num_type}"/></hp:ctrl>'
+        return (
+            f'<hp:run charPrIDRef="0"><hp:ctrl><hp:{tag} number="0" suffixChar="41" '
+            f'instId="{field_id}"><hp:subList {SUBLIST_ATTRS}>'
+            + _sub_paragraphs_xml(run.paragraphs, prefix=auto)
+            + f"</hp:subList></hp:{tag}></hp:ctrl></hp:run>"
+        )
+    return (
+        f'<hp:run charPrIDRef="0"><hp:equation id="{field_id}" zOrder="0" '
+        'numberingType="EQUATION" version="Equation Version 60" baseLine="85" '
+        'textColor="#000000" baseUnit="1000" lineMode="CHAR" font="HYhwpEQ">'
+        "<hp:shapeComment>수식입니다.</hp:shapeComment>"
+        f"<hp:script>{escape(run.script)}</hp:script></hp:equation></hp:run>"
+    )
+
+
+def rich_paragraph_xml(item: SynthRich, *, para_id: int, first: bool = False) -> str:
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + "".join(run_xml(r, field_id=3000 + para_id * 100 + k) for k, r in enumerate(item.runs))
+        + "</hp:p>"
+    )
+
+
+def header_footer_paragraph_xml(
+    item: SynthHeaderFooter,
+    *,
+    para_id: int,
+    first: bool = False,
+    images: Sequence[SynthImage] = (),
+) -> str:
+    pic = (
+        f'<hp:p id="0" {P_ATTRS}><hp:run charPrIDRef="0">'
+        + pic_xml(images.index(HEADER_IMAGE) + 1, pic_id=4000 + para_id)
+        + "</hp:run></hp:p>"
+        if item.with_image
+        else ""
+    )
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0"><hp:ctrl><hp:{item.kind} id="{para_id}" '
+        f'applyPageType="BOTH"><hp:subList {SUBLIST_ATTRS}>'
+        + _sub_paragraphs_xml(item.paragraphs)
+        + pic
+        + f"</hp:subList></hp:{item.kind}></hp:ctrl></hp:run></hp:p>"
+    )
+
+
+def hidden_paragraph_xml(item: SynthHidden, *, para_id: int, first: bool = False) -> str:
+    return (
+        f'<hp:p id="{para_id}" {P_ATTRS}>'
+        + (SECPR_RUN if first else "")
+        + f'<hp:run charPrIDRef="0"><hp:ctrl><hp:hiddenComment><hp:subList {SUBLIST_ATTRS}>'
+        + _sub_paragraphs_xml(item.paragraphs)
+        + "</hp:subList></hp:hiddenComment></hp:ctrl></hp:run></hp:p>"
+    )
+
+
+def ext_item_xml(
+    item: object, *, para_id: int, first: bool, images: Sequence[SynthImage]
+) -> str | None:
+    """단락 안 요소 항목(SynthRich·SynthHeaderFooter·SynthHidden) → 단락 XML. 그 밖 None."""
+    if isinstance(item, SynthRich):
+        return rich_paragraph_xml(item, para_id=para_id, first=first)
+    if isinstance(item, SynthHeaderFooter):
+        return header_footer_paragraph_xml(item, para_id=para_id, first=first, images=images)
+    if isinstance(item, SynthHidden):
+        return hidden_paragraph_xml(item, para_id=para_id, first=first)
+    return None
+
+
+def section_xml(
+    items: Sequence[Item | ExtItem], images: Sequence[SynthImage] | None = None
+) -> bytes:
+    imgs = all_images(items) if images is None else images
     body = "".join(
-        paragraph_xml(item, para_id=i, first=(i == 0))
+        ext
+        if (ext := ext_item_xml(item, para_id=i, first=(i == 0), images=imgs)) is not None
+        else paragraph_xml(item, para_id=i, first=(i == 0))
         if isinstance(item, str)
         else paragraph_xml(item.text, para_id=i, first=(i == 0), para_pr_id=item.level)
         if isinstance(item, SynthHeading)
@@ -213,16 +365,16 @@ def manifest_items(images: Sequence[SynthImage]) -> str:
 
 
 def hwpx_entries(
-    items: Sequence[Item], *, more_sections: Sequence[Sequence[Item]] = ()
+    items: Sequence[Item | ExtItem], *, more_sections: Sequence[Sequence[Item | ExtItem]] = ()
 ) -> dict[str, bytes]:
     """삽입 순서: mimetype, version.xml, META-INF/container.xml, Contents/content.hpf,
     Contents/header.xml, BinData/image{k}.{ext} (missing 제외),
     Contents/section0.xml, (Contents/section1.xml, …)."""
-    sections: list[Sequence[Item]] = [items, *more_sections]
+    sections: list[Sequence[Item | ExtItem]] = [items, *more_sections]
     n = len(sections)
     images: list[SynthImage] = []
     for sec in sections:
-        for img in collect_images(sec):
+        for img in all_images(sec):
             if img not in images:
                 images.append(img)
     version = (
@@ -253,7 +405,7 @@ def hwpx_entries(
         + "".join(f'<opf:itemref idref="section{i}" linear="yes"/>' for i in range(n))
         + "</opf:spine></opf:package>"
     )
-    header = header_xml(n, outline=any(has_heading(s) for s in sections))
+    header = header_xml(n, outline=any(has_heading(s) for s in sections))  # type: ignore[arg-type]
     entries: dict[str, bytes] = {
         "mimetype": HWPX_MIMETYPE,
         "version.xml": version.encode("utf-8"),
@@ -282,12 +434,17 @@ def build_zip(entries: Mapping[str, bytes]) -> bytes:
     return buf.getvalue()
 
 
-def build_hwpx(items: Sequence[Item], *, more_sections: Sequence[Sequence[Item]] = ()) -> bytes:
+def build_hwpx(
+    items: Sequence[Item | ExtItem], *, more_sections: Sequence[Sequence[Item | ExtItem]] = ()
+) -> bytes:
     return build_zip(hwpx_entries(items, more_sections=more_sections))
 
 
 def write_hwpx(
-    path: Path, items: Sequence[Item], *, more_sections: Sequence[Sequence[Item]] = ()
+    path: Path,
+    items: Sequence[Item | ExtItem],
+    *,
+    more_sections: Sequence[Sequence[Item | ExtItem]] = (),
 ) -> Path:
     """부모 디렉터리 생성 후 저장, path 반환."""
     path.parent.mkdir(parents=True, exist_ok=True)

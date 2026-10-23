@@ -19,7 +19,7 @@ from .bindata import (
     BinItemStore,
     parse_manifest,
 )
-from .body import parse_section
+from .body import DocContext, parse_section
 from .header import EMPTY_HEADER, parse_header, parse_header_xml
 
 HWPX_MIMETYPE = b"application/hwp+zip"
@@ -137,12 +137,15 @@ def parse_section_xml(data: bytes) -> etree._Element:
 
 
 def read_blocks(path: Source, skips: SkipCounter | None = None) -> list[Block]:
-    """skips: 건너뛴 요소를 셀 카운터 (아직 세지 않는다)."""
+    """skips: 건너뛴 요소(머리말·꼬리말·숨은 설명·메모)를 셀 카운터.
+    각주·미주 Note 블록은 모든 섹션 뒤에 둔다."""
     pkg = read_hwpx_package(path)
     info = EMPTY_HEADER if pkg.header is None else parse_header(parse_header_xml(pkg.header))
     manifest = parse_manifest(pkg.manifest) if pkg.manifest is not None else {}
     store = BinItemStore(manifest, pkg.bin_data)
+    ctx = DocContext(skips=SkipCounter() if skips is None else skips)
     blocks: list[Block] = []
     for data in pkg.sections:
-        blocks.extend(parse_section(parse_section_xml(data), info, store))
+        blocks.extend(parse_section(parse_section_xml(data), info, store, ctx))
+    blocks.extend(ctx.note_blocks())
     return blocks

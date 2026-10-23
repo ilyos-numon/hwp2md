@@ -224,3 +224,10 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/convert.py src/hwp2md/detect.py src/hwp2md/hwp5/body.py src/hwp2md/hwp5/reader.py src/hwp2md/hwp5/records.py src/hwp2md/hwpml/__init__.py src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/synth_hwp5.py tests/synth_hwpml.py tests/synth_hwpx.py tests/unit/test_hwp5_inline.py tests/unit/test_hwpml.py tests/unit/test_hwpx_body.py tests/unit/test_hwpx_inline.py 
 - 커밋: 1acb24c [T-20261023-extract-dropped][s8] 배포용 문서 복호 모듈 (순수 파이썬 AES)
 - 다음: S10 커밋
+
+## [2026-10-23 18:11] S10 | implementer(opus) | DONE
+- 한 일: HWPX fieldBegin HYPERLINK→Link, footNote/endNote→NoteRef+Note(DocContext), equation→Math, header/footer·hiddenComment·memo 건너뜀. test_hwpx_body §1-D 1개 갱신. 실제 HWPX 11개 header_footer 2
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/convert.py src/hwp2md/detect.py src/hwp2md/hwpml/__init__.py src/hwp2md/hwpml/body.py src/hwp2md/hwpml/reader.py src/hwp2md/hwpx/body.py src/hwp2md/hwpx/reader.py tests/synth_hwpml.py tests/synth_hwpx.py tests/unit/test_hwpml.py tests/unit/test_hwpx_body.py tests/unit/test_hwpx_inline.py 
+- 커밋: 398fb83 [T-20261023-extract-dropped][s9] HWP 5.0 단락 안 요소 (링크·각주·수식·필드, 머리말 건너뜀)
+- 다음: S11 커밋
+- 메모: 표 칸 안 각주 참조는 칸이 글자만이라 미표시 → S13 칸 인라인에서 해결
