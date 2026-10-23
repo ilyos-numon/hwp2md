@@ -70,7 +70,7 @@
   <main class="app" id="main">
     <div class="app-head">
       <h1>한글 문서를 Markdown으로</h1>
-      <p>HWP·HWPX 파일을 선택하고 변환 결과를 확인하세요.</p>
+      <p>HWP·HWPX·HWPML 파일을 선택하고 변환 결과를 확인하세요.</p>
     </div>
 
     <div class="error-wrap">
@@ -81,12 +81,14 @@
       </div>
     </div>
 
-    <section id="drop-zone" tabindex="0" role="button" aria-label="HWP 또는 HWPX 파일 선택" aria-describedby="drop-hint">
+    <div id="skipped" role="status" hidden></div>
+
+    <section id="drop-zone" tabindex="0" role="button" aria-label="HWP·HWPX·HWPML 파일 선택" aria-describedby="drop-hint">
       <svg class="drop-zone__frame" aria-hidden="true" preserveAspectRatio="none"><rect x="1" y="1" rx="13" ry="13"/></svg>
-      <input type="file" id="file-input" accept=".hwp,.hwpx" hidden>
+      <input type="file" id="file-input" accept=".hwp,.hwpx,.hml" hidden>
       <span class="drop-zone__icon" aria-hidden="true"><svg><use href="#i-upload"/></svg></span>
       <p class="drop-zone__title"><span class="t-idle">파일을 놓거나 선택하세요</span><span class="t-drag">여기에 놓으면 바로 변환합니다</span></p>
-      <p class="drop-zone__hint" id="drop-hint">HWP · HWPX · 최대 50MB</p>
+      <p class="drop-zone__hint" id="drop-hint">HWP · HWPX · HWPML · 최대 50MB</p>
       <button type="button" class="drop-zone__sample" id="demo-sample">예시 문서로 해 보기</button>
     </section>
 
@@ -142,6 +144,11 @@
         </div>
       </article>
     </section>
+
+    <footer class="app-foot">
+      <p>본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</p>
+      <p>변환하지 못하는 요소와 이유는 <a href="../../docs/extraction-limits.md">추출 한계 문서</a>에 있습니다.</p>
+    </footer>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -152,6 +159,7 @@
       <span class="demo-dock__note">백엔드 연결 전: 어떤 파일이든 예시 결과를 보여 줍니다</span>
       <button type="button" data-demo="sample">예시 변환</button>
       <button type="button" data-demo="error">오류 보기</button>
+      <button type="button" data-demo="drm">DRM 오류</button>
       <button type="button" data-demo="reset">처음으로</button>
     </div>
   </details>

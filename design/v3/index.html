@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>hwp2md · 한글 문서를 Markdown으로</title>
-  <meta name="description" content="한컴오피스 없이 HWP·HWPX 문서를 제목 구조·표·이미지가 살아 있는 Markdown으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.">
+  <meta name="description" content="한컴오피스 없이 HWP·HWPX·HWPML 문서를 제목 구조·표·이미지가 살아 있는 Markdown으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.">
   <script>
     (function () {
       document.documentElement.classList.add("js");
@@ -116,7 +116,7 @@
           <a class="btn btn--ghost btn--lg magnetic" href="#pipeline">작동 원리 보기</a>
         </div>
         <ul class="hero__facts" aria-label="핵심 사실">
-          <li><code>HWP 5.0</code><code>HWPX</code> 내용으로 판별</li>
+          <li><code>HWP 5.0</code><code>HWPX</code><code>HWPML</code> 내용으로 판별</li>
           <li>의존성 <code>olefile</code><code>lxml</code> 두 개</li>
           <li>CLI·웹·라이브러리 출력 바이트 동일</li>
         </ul>
@@ -291,8 +291,8 @@
       <ul class="feat-list">
         <li class="feat">
           <svg class="feat__icon"><use href="#i-files"/></svg>
-          <div><h3>HWP 5.0과 HWPX, 같은 명령</h3><p>바이너리 HWP 5.0(OLE)과 XML 기반 HWPX(zip)를 모두 읽습니다. 확장자가 아니라 파일 내용으로 판별해, HWPX에 .hwp 확장자가 붙은 배포 파일도 그대로 변환합니다.</p></div>
-          <code class="feat__sample" data-scramble>OLE → hwp5 · zip → hwpx</code>
+          <div><h3>HWP 5.0·HWPX·HWPML, 같은 명령</h3><p>바이너리 HWP 5.0(OLE), XML 기반 HWPX(zip), 단일 XML인 HWPML 2.x를 모두 읽습니다. 확장자가 아니라 파일 내용으로 판별해, HWPX에 .hwp 확장자가 붙은 파일도 그대로 변환합니다. 복사·인쇄를 막은 배포용 문서도 공개된 방식으로 풀어 본문을 꺼냅니다.</p></div>
+          <code class="feat__sample" data-scramble>OLE → hwp5 · zip → hwpx · xml → hwpml</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-heading"/></svg>
@@ -306,8 +306,13 @@
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-image"/></svg>
-          <div><h3>그림은 원본 파일 그대로</h3><p>본문 그림을 img_001.png처럼 순서대로 꺼내 제자리에 링크합니다. 같은 그림을 다시 쓰면 파일은 하나, 링크는 여러 개입니다.</p></div>
+          <div><h3>그림은 원본 파일 그대로</h3><p>본문·표 칸·글상자 안 그림을 img_001.png처럼 순서대로 꺼내 제자리에 링크합니다. 같은 그림을 다시 쓰면 파일은 하나, 링크는 여러 개입니다. 글상자·도형 안 글과 표·그림 캡션도 본문 단락으로 옮깁니다.</p></div>
           <code class="feat__sample" data-scramble>![그림 1](demo_images/img_001.png)</code>
+        </li>
+        <li class="feat">
+          <svg class="feat__icon"><use href="#i-code"/></svg>
+          <div><h3>각주·링크·수식·목록도 Markdown 문법으로</h3><p>각주·미주는 [^1] 참조와 문서 끝 정의로, 하이퍼링크는 [글자](주소)로(http·https·mailto만), 수식은 LaTeX $…$로, 번호·글머리표 목록은 - 와 1. 목록으로 옮깁니다(가.·① 같은 번호는 글자로 앞에 붙입니다). 번호는 한글 화면과 다를 수 있는 근사값이고, 수식을 바꾸지 못하면 원래 수식 문자열을 코드로 남깁니다.</p></div>
+          <code class="feat__sample" data-scramble>[^1] · [링크](https://…) · $\frac{a}{b}$ · - 목록</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-zip"/></svg>
@@ -333,7 +338,7 @@
           <article class="case">
             <span class="case__who">RAG 개발자</span>
             <h3>공공기관 HWP 수천 개를 지식베이스에</h3>
-            <p>개요 수준이 Markdown 제목이 되어 제목 단위로 자르기 좋습니다. HWPX의 머리말·쪽번호는 본문에 섞지 않아 청크에 잡음이 들어가지 않습니다.</p>
+            <p>개요 수준이 Markdown 제목이 되어 제목 단위로 자르기 좋습니다. 머리말·꼬리말·쪽 번호는 본문에 섞지 않아 청크에 잡음이 들어가지 않습니다.</p>
             <pre class="case__snip"><code><em class="k">##</em> 1. 사업 개요
 …
 <em class="k">##</em> 2. 추진 절차
@@ -417,21 +422,28 @@
       <div class="limits__box">
         <div class="limits__head">
           <h2 id="limits-title"><svg><use href="#i-alert"/></svg>지원 범위와 한계</h2>
-          <p>지금 안 되는 것을 먼저 밝힙니다. <span class="chip chip--plan">예정</span> 표시가 붙은 항목은 다음 개발 목록에 있습니다.</p>
+          <p>지금 꺼내지 못하는 것을 먼저 밝힙니다. 변환할 때 빠진 요소는 화면과 CLI가 종류별 개수로 알려 줍니다. <a href="../../docs/extraction-limits.md">변환하지 못하는 요소 전체 목록과 이유</a></p>
         </div>
         <ul>
-          <li><span>각주·미주를 Markdown 각주(<code>[^1]</code>)로 바꾸지 않습니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>병합된 표 칸은 빈 칸으로 남습니다. Markdown 표는 병합을 표현할 수 없어서입니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>배포용 문서는 변환할 수 없습니다.</span><span class="chip chip--plan">예정</span></li>
+          <li><span>문서보안(DRM)이 걸린 파일은 변환할 수 없습니다. 공개된 형식이 없습니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>암호를 건 문서는 변환할 수 없습니다. 암호화 방식이 공개되지 않았고 암호가 필요합니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>HWP 3.0 이하 문서는 변환할 수 없습니다. 파일 형식이 전혀 다릅니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>구형 차트는 데이터를 꺼내지 못하고 건너뜁니다. 객체 직렬화 형식이 수십 종이라 이번 범위에서 뺐습니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>쪽 번호·자동 번호는 출력하지 않습니다. 값을 알려면 쪽 나눔 계산이 필요합니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>WMF·EMF 그림은 PNG로 바꾸지 않고 원본 그대로 저장합니다. 순수 파이썬 변환기가 없어 브라우저에서 안 보일 수 있습니다.</span><span class="chip chip--plan">부분</span></li>
+          <li><span>문서 밖 파일에 연결된 그림과 본체가 빠진 그림은 꺼낼 수 없습니다. 문서 안에 그림 데이터가 없습니다.</span><span class="chip chip--out">불가</span></li>
+          <li><span>차트는 캐시된 값으로 제목과 표를 만듭니다. 실제 한글 문서의 차트로는 아직 확인하지 못했습니다.</span><span class="chip chip--plan">부분</span></li>
+          <li><span>그 밖의 OLE 개체는 안에 든 원본 그림만 꺼내고 나머지는 건너뜁니다. 개체마다 형식이 다릅니다.</span><span class="chip chip--plan">부분</span></li>
+          <li><span>단락 중간에 놓인 그림은 HWP 5.0에서는 단락 글자 뒤에 나오고, HWPX·HWPML에서는 그림 자리에서 단락이 나뉩니다. 위치를 맞추면 기존 출력이 넓게 바뀌어 보류했습니다.</span><span class="chip chip--plan">부분</span></li>
+          <li><span>머리말·꼬리말은 본문에 넣지 않고 건너뛴 개수로만 알립니다. 쪽마다 반복되는 글이라 본문을 흐립니다.</span><span class="chip chip--out">제외</span></li>
+          <li><span>메모와 숨은 설명은 넣지 않고 개수로만 알립니다. 작성자 정보가 들어 있을 수 있습니다.</span><span class="chip chip--out">제외</span></li>
+          <li><span>글맵시·양식 개체는 건너뛰고 개수로 알립니다. 확인할 샘플 문서가 없습니다.</span><span class="chip chip--out">제외</span></li>
+          <li><span>책갈피는 출력하지 않습니다. 본문 내용이 없고 Markdown에 표준 앵커가 없습니다.</span><span class="chip chip--out">제외</span></li>
+          <li><span>병합된 표 칸은 빈 칸으로 남습니다. Markdown 표는 병합을 표현할 수 없어서입니다. 병합 보존(<code>--table html</code>)은 예정입니다.</span><span class="chip chip--plan">부분</span></li>
           <li><span>문서 하나당 .md 파일 하나로 나옵니다. 제목 단위 분할과 메타데이터 JSON은 아직 없습니다.</span><span class="chip chip--plan">예정</span></li>
           <li><span>한 번에 파일 하나씩 변환합니다. 폴더 일괄 변환은 아직 없습니다.</span><span class="chip chip--plan">예정</span></li>
           <li><span>아직 PyPI에 배포하지 않아 소스에서 설치합니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>번호·글머리표 목록은 목록이 아니라 본문 단락으로 나옵니다.</span></li>
-          <li><span>암호화 문서와 HWP 3.0 이하 문서는 변환할 수 없습니다.</span></li>
-          <li><span>표 칸·머리말·글상자 안 그림은 추출하지 않습니다.</span></li>
-          <li><span>HWP 5.0의 머리말·꼬리말·각주 텍스트가 본문 단락에 섞일 수 있습니다.</span></li>
-          <li><span>그림 형식은 바꾸지 않습니다. WMF·EMF는 브라우저에서 안 보일 수 있습니다. 파일 하나는 50MB까지.</span></li>
-          <li><span>글꼴·색·정렬 같은 서식은 옮기지 않습니다. 목표는 구조와 내용입니다.</span><span class="chip chip--out">범위 밖</span></li>
+          <li><span>글꼴·색·정렬·굵게 같은 서식은 옮기지 않습니다. 목표는 구조와 내용입니다. 파일 하나는 50MB까지.</span><span class="chip chip--out">범위 밖</span></li>
         </ul>
       </div>
     </section>
@@ -453,7 +465,7 @@
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <span><b>hwp2md</b> · 한컴오피스 없이 HWP·HWPX를 Markdown으로</span>
+      <span><b>hwp2md</b> · 한컴오피스 없이 HWP·HWPX·HWPML을 Markdown으로<br>본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</span>
       <nav aria-label="바닥글">
         <a href="app.html">변환 도구</a>
         <a href="#pipeline">작동 원리</a>

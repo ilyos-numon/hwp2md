@@ -8,8 +8,11 @@
     empty: "빈 파일입니다",
     too_large: "파일이 너무 큽니다 (최대 50MB)",
     not_hwp: "HWP 5.0 또는 HWPX 파일이 아닙니다",
-    unsupported: "암호화되었거나 배포용 문서라 변환할 수 없습니다",
+    unsupported: "지원하지 않는 HWP 문서라 변환할 수 없습니다",
+    drm: "문서보안(DRM)이 적용된 파일이라 변환할 수 없습니다. 보안 프로그램에서 해제한 뒤 다시 시도하세요",
+    encrypted: "암호가 설정된 문서라 변환할 수 없습니다. 한글에서 암호를 해제한 뒤 다시 시도하세요",
   };
+  const LIMITS_DOC = "../../docs/extraction-limits.md";
   const MODE_STATUS_TEXT = {
     server: "서버 모드",
     loading: "브라우저 모드 준비 중…",
@@ -38,6 +41,7 @@
     error: $("#error"),
     errorText: $("#error-text"),
     errorClose: $("#error-close"),
+    skipped: $("#skipped"),
     toast: $("#toast"),
   };
   const PREVIEW_EMPTY = els.preview.innerHTML;
@@ -113,8 +117,23 @@
   function showError(text) { els.errorText.textContent = text; els.error.hidden = false; }
   function clearError() { els.errorText.textContent = ""; els.error.hidden = true; }
 
+  // 건너뛴 요소 경고. 라벨은 응답의 skipped[].label 그대로, 글자는 textContent 로만 넣는다.
+  function renderSkipped(list) {
+    const items = Array.isArray(list) ? list.filter((s) => s && Number(s.count) > 0) : [];
+    els.skipped.textContent = "";
+    if (!items.length) { els.skipped.hidden = true; return; }
+    const text = document.createElement("span");
+    text.textContent = "변환하지 못한 요소: " + items.map((s) => String(s.label) + " " + Number(s.count) + "개").join(" · ");
+    const link = document.createElement("a");
+    link.href = LIMITS_DOC;
+    link.textContent = "왜 빠졌나요?";
+    els.skipped.append(text, " ", link);
+    els.skipped.hidden = false;
+  }
+
   function clearResult() {
     state.result = null;
+    renderSkipped([]);
     els.download.disabled = true;
     els.copy.disabled = true;
     els.resultMeta.textContent = "";
@@ -134,7 +153,7 @@
     const ext = (file.name.split(".").pop() || "").toLowerCase();
     els.fileName.textContent = file.name;
     els.fileName.title = file.name;
-    els.fileBadge.textContent = ext === "hwpx" ? "HWPX" : ext === "hwp" ? "HWP" : "";
+    els.fileBadge.textContent = ext === "hwpx" ? "HWPX" : ext === "hwp" ? "HWP" : ext === "hml" ? "HWPML" : "";
     els.fileBadge.className = "badge " + (ext === "hwpx" ? "badge--hwpx" : "badge--hwp");
     els.fileSize.textContent = formatSize(file.size);
     const wasHidden = els.fileChip.hidden;
@@ -170,6 +189,7 @@
     renderCounts(body.counts || {});
     els.preview.innerHTML = window.marked.parse(body.preview_markdown || "");
     renderRaw(body.markdown || "");
+    renderSkipped(body.skipped);
     els.download.disabled = false;
     els.copy.disabled = false;
     els.preview.parentElement.scrollTop = 0;
@@ -362,6 +382,10 @@
       if (act === "error") {
         window.Hwp2mdDemo.forceError("not_hwp");
         handleFile(new File([new Uint8Array(512)], "회의자료.pdf"));
+      }
+      if (act === "drm") {
+        window.Hwp2mdDemo.forceError("drm");
+        handleFile(new File([new Uint8Array(512)], "보안문서.hwp"));
       }
       if (act === "reset") resetAll();
     });
