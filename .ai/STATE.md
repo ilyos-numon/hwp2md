@@ -7,14 +7,14 @@
 - 현재 태스크: T-20261023-extract-dropped
 - 마지막 완료: T-20261023-docs-finalize (main 병합 완료)
 - 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: APPROVED)
-- 현재 단계: R3 (S15~S17 병렬, 수동 worktree .claude/worktrees/s15·s16·s17) — HWP5·HWPX 목록, 배포용 문서 읽기
+- 현재 단계: S19 / 27 — CLI 오류 문구·건너뜀 요약 (cli.py 단독)
 - 상태: RUNNING
 - 브랜치: `ai/T-20261023-extract-dropped`
-- 마지막 체크포인트: 2026-10-23 18:32 (S17 DONE)
+- 마지막 체크포인트: 2026-10-23 18:40 (S18 DONE)
 - 마지막 커밋: 81169a0 [s14] HWPML 요소
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. R3: worktree 3개 변경을 S15→S16→S17 순서로 패치 적용·검증(CELL_DESELECT 4개)·단계별 커밋(경로 지정). worktree 정리. 다음 S18 교차 포맷(혼합 단락 fixture 추가)
+1. S19 → P3(S20~S23, 쓰기 범위 비중첩이라 메인 트리 동시 실행 가능) → S24~S27
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (Q1~Q10 승인 완료)

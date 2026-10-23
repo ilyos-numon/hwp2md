@@ -394,3 +394,47 @@
 - 커밋: edc21b6 [T-20261023-extract-dropped][s16] HWPX 번호·글머리표 목록
 - 다음: S18 교차 포맷
 - 메모: 비차단: inflate 실패·패딩 제거 직접 단위 테스트 없음(간접 커버)
+
+## [2026-10-23 18:32] S18 | orchestrator | START
+- 한 일: 교차 포맷 정합
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+
+## [2026-10-23 18:33] R3 | hook | AUTO
+- 한 일: 도구 호출 540회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+
+## [2026-10-23 18:34] R3 | hook | AUTO
+- 한 일: 도구 호출 555회 경과
+- 변경 파일(미커밋, .ai 제외): tests/synth_hwp5.py tests/unit/test_cross_format.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+
+## [2026-10-23 18:37] R3 | hook | AUTO
+- 한 일: 도구 호출 570회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwpml/body.py tests/synth_hwp5.py tests/unit/test_cross_format.py tests/unit/test_cross_format_extract.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+
+## [2026-10-23 18:39] S18 | implementer(opus) | BLOCKED
+- 한 일: 칸 그림 기대값·칸 목록 머리 글자·교차 테스트 34개 통과, HWPML 개체 블록을 앵커 단락 뒤로 맞춤
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwpml/body.py src/hwp2md/hwpx/body.py tests/synth_hwp5.py tests/unit/test_cross_format.py tests/unit/test_cross_format_extract.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+- 다음: test_hwpml_elements::test_container_children_in_order 기대값을 [앞뒤,상자,타원]으로 바꾸는 §1-D 추가 승인 필요
+
+## [2026-10-23 18:39] R3 | hook | AUTO
+- 한 일: 도구 호출 585회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwpml/body.py src/hwp2md/hwpx/body.py tests/synth_hwp5.py tests/unit/test_cross_format.py tests/unit/test_cross_format_extract.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+
+## [2026-10-23 18:39] S18 | implementer(opus) | RETRY
+- 한 일: 칸 그림 기대값·칸 목록 머리 글자·HWPML 개체 배치 통일·image_missing 완료, S14 신규 테스트 1개가 옛 HWPML 분할 동작 고정
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwpml/body.py src/hwp2md/hwpx/body.py tests/synth_hwp5.py tests/unit/test_cross_format.py tests/unit/test_cross_format_extract.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+- 다음: §1-D 추가 후 같은 에이전트 재호출(테스트 1개 기대값 갱신)
+
+## [2026-10-23 18:40] S18 | implementer(opus) | DONE
+- 한 일: 칸 그림 기대값 갱신(번호 소비), 칸 안 목록 머리 글자(세 리더), HWPML 개체 배치를 앵커 단락 뒤로 통일 + image_missing, test_cross_format_extract 34. unit 800P(제외 없음). 실제 칸 목록 머리 19/22(3개는 빈 단락)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/hwp5/body.py src/hwp2md/hwpml/body.py src/hwp2md/hwpx/body.py tests/synth_hwp5.py tests/unit/test_cross_format.py tests/unit/test_hwpml_elements.py tests/unit/test_cross_format_extract.py 
+- 커밋: e0a7da1 [T-20261023-extract-dropped][s17] 배포용 문서 변환 (ViewText 복호)
+- 다음: S19 CLI
+- 메모: §1-D 추가 2건(test_container_children_in_order, _IMAGE_BYTES 키) orchestrator 승인

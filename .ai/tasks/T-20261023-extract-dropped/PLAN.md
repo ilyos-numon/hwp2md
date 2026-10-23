@@ -110,6 +110,8 @@
 | `tests/unit/test_hwpx_body.py::test_ctrl_header_and_footnote_ignored` | 각주를 이제 추출 → 이름 `test_ctrl_header_skipped_footnote_extracted`, 기대값 각주 참조·정의 | S10 |
 | `tests/synth_hwp5.py` 의 `EXPECTED_BLOCKS/MARKDOWN/COUNTS/IMAGE_FILES_IMAGE_IN_CELL` (→ `test_hwp5_bindata[in_cell]`, `test_hwpx_bindata[in_cell]`, `test_cross_format::test_image_fixtures_same_result_both_formats[in_cell]`, `test_synth_*` 중 이 상수를 쓰는 것) | 셀 그림 추출·번호 소비 | S18 |
 | `tests/unit/test_cross_format.py::test_image_fixture_no_jpg_file_when_only_in_cell` (S13 실행 중 발견, orchestrator 추가 2026-10-23) | 칸 그림 추출로 칸 JPG 도 파일이 됨 → 새 규칙 기대값으로 갱신 | S18 |
+| `tests/unit/test_hwpml_elements.py::test_container_children_in_order` (S14 신규 테스트, S18 실행 중 orchestrator 추가) | S18 에서 HWPML 묶음·도형 블록을 HWP5·HWPX 처럼 앵커 단락 글자 뒤로 맞춤 → 기대값 [앞뒤, 상자, 타원] | S18 |
+| `tests/unit/test_cross_format.py` 의 모듈 상수 `_IMAGE_BYTES` (S18 실행 중 orchestrator 추가) | §1-D in_cell 테스트가 새 파일 이름(img_001.jpg·img_002.png)을 찾도록 키 2개 추가 | S18 |
 | `tests/e2e/test_cli_image.py::test_image_in_table_cell_not_extracted_both_formats` | 셀 그림 추출 → 이름 `test_image_in_table_cell_extracted_both_formats`, 파일 2개 | S24 |
 | `tests/e2e/test_cli_image.py::test_real_fixture_images` 의 `len(lines) == 3` | 건너뜀 줄이 있으면 4 | S24 |
 | `tests/e2e/test_cli_heading.py::REAL_EXPECTED`, `test_cli_hwpx.py::REAL_HWPX_EXPECTED`, `test_cli_image.py::REAL_IMAGE_EXPECTED`, `test_web_ui.py` 의 `#preview table` 개수 | 기존 5개 샘플의 수가 캡션·글상자·차트로 바뀐 경우에만. 바뀐 값마다 S1 기준선 값과 구조 탐색 개수를 주석으로 남긴다 | S24·S25 |

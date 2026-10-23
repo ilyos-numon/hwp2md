@@ -97,7 +97,12 @@ def test_read_paragraphs_includes_heading_text(tmp_path: Path) -> None:
     ]
 
 
-_IMAGE_BYTES = {"img_001.png": PNG_1X1, "img_002.jpg": JPEG_STUB}
+_IMAGE_BYTES = {
+    "img_001.png": PNG_1X1,
+    "img_002.jpg": JPEG_STUB,
+    "img_001.jpg": JPEG_STUB,
+    "img_002.png": PNG_1X1,
+}
 
 
 @pytest.mark.parametrize(
@@ -139,4 +144,5 @@ def test_image_fixture_no_jpg_file_when_only_in_cell(tmp_path: Path) -> None:
     convert(write_hwp5(tmp_path / "doc.hwp", FIXTURE_ITEMS_IMAGE_IN_CELL), out5)
     convert(write_hwpx(tmp_path / "doc.hwpx", FIXTURE_ITEMS_IMAGE_IN_CELL), outx)
     for out in (out5, outx):
-        assert sorted(p.name for p in (out / "doc_images").iterdir()) == ["img_001.png"]
+        names = sorted(p.name for p in (out / "doc_images").iterdir())
+        assert names == ["img_001.jpg", "img_002.png"]

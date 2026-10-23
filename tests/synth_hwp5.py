@@ -1106,11 +1106,21 @@ FIXTURE_ITEMS_IMAGE_IN_CELL: list[Item] = [
         ),
     ),
     FIXTURE_IMAGE_PNG,
-]  # 바이너리 항목: 1 = JPG(셀), 2 = PNG. 셀 이미지는 해석되지 않으므로 PNG 가 img_001
-EXPECTED_BLOCKS_IMAGE_IN_CELL = [Table([["값", "나"]]), Image("img_001.png", PNG_1X1)]
-EXPECTED_MARKDOWN_IMAGE_IN_CELL = "| 값 | 나 |\n|---|---|\n\n![그림 1](doc_images/img_001.png)\n"
-EXPECTED_COUNTS_IMAGE_IN_CELL = (0, 1, 0, 1)
-EXPECTED_IMAGE_FILES_IMAGE_IN_CELL = ("img_001.png",)
+]  # 바이너리 항목: 1 = JPG(셀), 2 = PNG. 셀 그림도 번호를 소비하므로 JPG 가 img_001, PNG 가 img_002
+# 칸 인라인: 그림 뒤 단락 경계 "\n" + "값" (element-extraction "셀 그림과 본문 그림" 시나리오)
+EXPECTED_BLOCKS_IMAGE_IN_CELL = [
+    Table(
+        [["값", "나"]],
+        (((Image("img_001.jpg", JPEG_STUB), "\n값"), ("나",)),),
+    ),
+    Image("img_002.png", PNG_1X1),
+]
+EXPECTED_MARKDOWN_IMAGE_IN_CELL = (
+    "| ![그림 1](doc_images/img_001.jpg)<br>값 | 나 |\n|---|---|\n\n"
+    "![그림 2](doc_images/img_002.png)\n"
+)
+EXPECTED_COUNTS_IMAGE_IN_CELL = (0, 1, 0, 2)
+EXPECTED_IMAGE_FILES_IMAGE_IN_CELL = ("img_001.jpg", "img_002.png")
 
 FIXTURE_ITEMS_IMAGE_MISSING: list[Item] = [
     "앞",
