@@ -195,6 +195,18 @@ body {
 
 #error[hidden] { display: none; }
 
+#skipped {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+#skipped[hidden] { display: none; }
+
 .result-bar {
   display: flex;
   align-items: center;
@@ -293,6 +305,20 @@ body[data-state="converting"] .busy { display: inline; }
 }
 
 .placeholder { color: var(--muted); }
+
+.footer {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px 28px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footer p { margin: 0; }
+
+@media (max-width: 899px) {
+  .footer { padding-left: 16px; padding-right: 16px; }
+}
 
 .markdown-body > :first-child { margin-top: 0; }
 .markdown-body h1, .markdown-body h2, .markdown-body h3,
