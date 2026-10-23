@@ -538,3 +538,10 @@
 - 커밋: 1001bdd [T-20261023-extract-dropped][s21] design/v3 추출 한계 명시·건너뜀 경고
 - 다음: S23 커밋
 - 메모: PLAN C10 정정(HWPML 표는 머리말 안), C19 기준 커밋 e18cd70 정정
+
+## [2026-10-23 18:55] S23 | implementer(opus) | DONE
+- 한 일: README 지원 범위·건너뜀·배포용 고지·라이선스, decisions +15, system-overview 새 모듈, LICENSE MIT, NOTICE 한컴 문구. orchestrator: pyproject license=MIT. P3 reviewer FAIL(문구 3) → S21 수정 → 통과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md docs/decisions.md docs/system-overview.md pyproject.toml LICENSE 
+- 커밋: 1c34840 [T-20261023-extract-dropped][s22] 추출 한계 문서·기능 명세 갱신
+- 다음: S24 E2E 작성
+- 메모: README 품질 표 테스트 수는 S26 뒤 갱신 필요
