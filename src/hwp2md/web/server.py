@@ -22,6 +22,8 @@ def _port_available(host: str, port: int) -> bool:
         return False
     family, socktype, proto, _canon, addr = infos[0]
     with socket.socket(family, socktype, proto) as sock:
+        # TIME_WAIT 잔여 연결은 통과, 실제 LISTEN 중인 포트만 실패 (uvicorn 과 같은 옵션).
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             sock.bind(addr)
         except OSError:
