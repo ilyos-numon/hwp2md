@@ -111,3 +111,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 06dc6df [T-20261027-public-launch][s3] 정적 빌드 스크립트
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 18:15] S4 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_pages_site.py 
+- 커밋: 2a671b0 [T-20261027-public-launch][S4][wip] auto checkpoint (stop)
+
+## [2026-10-27 18:16] S4 | test-writer(sonnet) | DONE
+- 한 일: test_pages_site.py 3 passed (landing→convert 성공, not_hwp, cdn_blocked), 스크린샷 3장, skip 0
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_pages_site.py 
+- 커밋: 2a671b0 [T-20261027-public-launch][S4][wip] auto checkpoint (stop)
+- 다음: S5
+- 메모: HWP2MD_PAGES_URL 로 실제 Pages 대상 실행 가능(S13)
+
+## [2026-10-27 18:16] S4 | orchestrator | DONE
+- 한 일: 정적 사이트 E2E 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_pages_site.py 
+- 커밋: 2a671b0 [T-20261027-public-launch][S4][wip] auto checkpoint (stop)
+- 다음: S5 시작
