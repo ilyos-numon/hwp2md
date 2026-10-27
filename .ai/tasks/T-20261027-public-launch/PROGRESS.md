@@ -445,3 +445,15 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_i18n.py 
 - 커밋: 91f6d98 [T-20261027-public-launch][S15][wip] auto checkpoint (stop)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 19:28] S15 | test-writer(sonnet) | DONE
+- 한 일: test_i18n.py 8 passed, 영어 스크린샷 4장(about 은 제목 최종 글자 대기 후 뷰포트)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_i18n.py 
+- 커밋: a77dbe0 [T-20261027-public-launch][S15][wip] auto checkpoint (stop)
+- 다음: S16
+
+## [2026-10-27 19:28] S15 | orchestrator | DONE
+- 한 일: i18n E2E 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_i18n.py 
+- 커밋: a77dbe0 [T-20261027-public-launch][S15][wip] auto checkpoint (stop)
+- 다음: S16 시작

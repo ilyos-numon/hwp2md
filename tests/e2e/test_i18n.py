@@ -199,8 +199,16 @@ def test_about_en_and_toggle(browser: Browser, web_server: WebServer) -> None:
         link = page.locator('a:has-text("Open converter")').first
         assert link.get_attribute("href") == "/"
         assert page.evaluate("window.Hwp2mdI18n.missing()") == []
-        page.wait_for_timeout(1500)  # 히어로 애니메이션 정착 (스크린샷용)
-        _screenshot(page, "i18n-en-about.png")
+        page.evaluate("document.fonts.ready.then(() => true)")
+        page.wait_for_function(
+            "() => window.__h2mReady === true"
+            " && document.querySelector('#hero-title .hero__md').textContent === 'Markdown'",
+            timeout=TIMEOUT_MS,
+        )
+        page.evaluate("window.scrollTo(0, 0)")
+        path = Path(os.environ.get("ILLY_SHOT_DIR", "tests/e2e/screenshots"))
+        path.mkdir(parents=True, exist_ok=True)
+        page.screenshot(path=str(path / "i18n-en-about.png"), full_page=False)
 
         with page.expect_navigation():
             page.click(".lang-toggle")
