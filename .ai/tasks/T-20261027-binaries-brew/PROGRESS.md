@@ -76,3 +76,14 @@
 - 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.en.md README.md docs/releasing.md src/hwp2md/__init__.py 
 - 커밋: be379f7 [T-20261027-binaries-brew][S4][wip] auto checkpoint (stop)
 - 다음: S5
+
+## [2026-10-27 20:59] S5 | orchestrator | START
+- 한 일: release.yml 실행 파일 job
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4980088 [T-20261027-binaries-brew][s4] 설치 문서와 0.1.4
+
+## [2026-10-27 20:59] S5 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4980088 [T-20261027-binaries-brew][s4] 설치 문서와 0.1.4
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
