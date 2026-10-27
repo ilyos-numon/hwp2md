@@ -293,3 +293,14 @@
 - 한 일: v0.1.1 릴리스
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: e2b118a [T-20261027-public-launch][s11] Pages 배포 기록
+
+## [2026-10-27 19:00] S12 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 9b707d6 [T-20261027-public-launch][s12] 시작 기록
+
+## [2026-10-27 19:01] S12 | orchestrator | BLOCKED
+- 한 일: main CI 40485010179 6 job success, check_dist --tag v0.1.1 OK·twine PASSED 2. 태그 push 가 세션 자동 권한 판정(공개 노출)에 막힘. 실제 Pages E2E(HWP2MD_PAGES_URL) 3 passed 선행 실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 9b707d6 [T-20261027-public-launch][s12] 시작 기록
+- 다음: 사용자가 v0.1.1 태그 push → Release·PyPI 확인 → S13 로컬 전체 E2E → S14

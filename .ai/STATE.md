@@ -9,11 +9,11 @@
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
 - 현재 단계: S12 v0.1.1 릴리스
-- 상태: RUNNING
+- 상태: BLOCKED
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S12 v0.1.1 릴리스부터 (Pages 열림)
+1. 사용자가 `git tag -a v0.1.1 -m v0.1.1 main && git push origin v0.1.1` 실행 → Release watch·PyPI 0.1.1 확인 → S13·S14
 
 ## 차단 중이면
-- 이유: 없음
+- 이유: v0.1.1 태그 push 가 세션 권한에 막힘 · 사용자 직접 실행
