@@ -142,3 +142,21 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py tests/e2e/test_extract_real.py tests/e2e/test_web_api.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py tests/unit/test_memory.py tests/unit/test_source_bytes.py tests/unit/test_web_app.py tests/conftest.py 
 - 커밋: 55ffd3e [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:15] S5 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 76fe4e4 [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 16:15] S5 | implementer(opus) | DONE
+- 한 일: test_source_bytes 마커 추가. 클린(3.13) unit 780 passed 19 deselected, e2e 77 passed 35 deselected, 로컬 unit 815·e2e 127
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 76fe4e4 [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+- 다음: S6
+- 메모: Python 3.14: test_detect::test_corrupt_zip_raises 메시지 차이 — 후속 과제
+
+## [2026-10-27 16:15] S5 | orchestrator | DONE
+- 한 일: real_samples 마커 검증 통과 (약화 없음)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 76fe4e4 [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+- 다음: S6 시작

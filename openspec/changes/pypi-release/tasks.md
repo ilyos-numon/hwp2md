@@ -15,7 +15,7 @@
 
 ## 4. CI 용 테스트 표시
 
-- [ ] 4.1 `real_samples` 마커 등록·표시, 모듈 수준 `next()` 수집 오류 제거, web extra 안내 단언 갱신
+- [x] 4.1 `real_samples` 마커 등록·표시, 모듈 수준 `next()` 수집 오류 제거, web extra 안내 단언 갱신
 
 ## 5. 워크플로우
 
