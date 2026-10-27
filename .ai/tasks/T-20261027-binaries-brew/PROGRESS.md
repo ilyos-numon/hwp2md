@@ -143,3 +143,20 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 90c7318 [T-20261027-binaries-brew][s7] v0.1.4 Release 확인
 - 다음: 사용자 U1(웹에서 homebrew-tap 공개 저장소 생성, README 체크 해제) → git -C build/homebrew-tap push -u origin main → S9
+
+## [2026-10-27 21:19] S8 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 9ea74c8 [T-20261027-binaries-brew][s8] 탭 준비 완료, 저장소 생성 대기
+
+## [2026-10-27 21:19] S8 | orchestrator | DONE
+- 한 일: 사용자가 탭 저장소 생성(이름 오타 hombrew-tap → orchestrator 가 homebrew-tap 으로 rename), push 권한 허용 후 formula push (탭 377949f)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 9ea74c8 [T-20261027-binaries-brew][s8] 탭 준비 완료, 저장소 생성 대기
+- 다음: S9
+
+## [2026-10-27 21:19] S9 | orchestrator | DONE
+- 한 일: Release 자산 5·latest 다운로드 체크섬 OK·실행 0.1.4, brew tap·install·hwp2md --version 0.1.4·brew test OK, 확인 후 uninstall·untap (Q5)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 9ea74c8 [T-20261027-binaries-brew][s8] 탭 준비 완료, 저장소 생성 대기
+- 다음: S10 리뷰
