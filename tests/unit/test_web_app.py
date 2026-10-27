@@ -299,6 +299,9 @@ def test_server_defaults() -> None:
 def test_port_available_after_time_wait() -> None:
     """방금 끈 서버 포트(TIME_WAIT 잔여 연결)는 사용 가능으로 판정한다."""
     with _localhost_socket() as listener:
+        # uvicorn 처럼 SO_REUSEADDR 를 켠다.
+        # Linux 는 TIME_WAIT 쪽 소켓에도 이 옵션이 있어야 재바인드를 허용한다.
+        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         listener.bind(("localhost", 0))
         listener.listen(1)
         host, port = listener.getsockname()[:2]
