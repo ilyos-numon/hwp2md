@@ -518,3 +518,15 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 6bcc4f0 [T-20261027-public-launch][s18] 버전 0.1.2 (영어 지원판, 0.1.1 은 이미 게시됨)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 20:00] S18 | orchestrator | DONE
+- 한 일: v0.1.2 태그(사용자 지시로 실행), Release 40492693803 build·publish success, PyPI 0.1.2 [bdist_wheel, sdist], 새 venv 설치 hwp2md 0.1.2·i18n 파일 포함
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0d96e12 [T-20261027-public-launch][S18][wip] auto checkpoint (stop)
+- 다음: S19 최종 E2E
+
+## [2026-10-27 20:01] S19 | orchestrator | DONE
+- 한 일: 로컬 e2e 142 passed exit=0, 실제 Pages pages+i18n 11 passed, gate 5/6 (E2E 변경 항목은 main 선병합으로 인한 오탐: 이번 태스크에서 test_pages_site·test_i18n 추가, 5파일 locale)
+- 변경 파일(미커밋, .ai 제외): openspec/changes/public-launch/tasks.md 
+- 커밋: 0d96e12 [T-20261027-public-launch][S18][wip] auto checkpoint (stop)
+- 다음: S20 리뷰

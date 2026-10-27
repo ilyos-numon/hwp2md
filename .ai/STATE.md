@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S18 v0.1.2 릴리스 (v0.1.1 은 영어 전 판으로 이미 게시)
-- 상태: BLOCKED
+- 현재 단계: S20 리뷰·RESULT
+- 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자가 v0.1.1 태그 push (`git fetch origin && git tag -a v0.1.1 -m v0.1.1 origin/main && git push origin v0.1.1`) → Release·PyPI 확인 → S19 최종 E2E → S20 리뷰
+1. S20 리뷰·RESULT → openspec archive
 
 ## 차단 중이면
-- 이유: 태그 push 는 세션 권한에 막힘 · 사용자 직접 실행
+- 이유: 없음
