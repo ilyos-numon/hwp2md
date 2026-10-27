@@ -265,3 +265,15 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_dist_package.py 
 - 커밋: 3b1ef9e [T-20261027-pypi-release][S9][wip] auto checkpoint (stop)
 - 다음: S10 시작
+
+## [2026-10-27 16:23] S10 | orchestrator | START
+- 한 일: GitHub 실제 CI 확인
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6e3ff64 [T-20261027-pypi-release][s9] 배포물 E2E
+
+## [2026-10-27 16:23] S9 | orchestrator | RETRY
+- 한 일: S9 커밋 후 sanitize 실패 발견(localhost 2곳) → localhost 로 교체, 4 passed·lint·sanitize OK
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_dist_package.py 
+- 커밋: 6e3ff64 [T-20261027-pypi-release][s9] 배포물 E2E
+- 다음: S10
+- 메모: 원인: 검증 명령 파이프가 sanitize 종료 코드를 가림
