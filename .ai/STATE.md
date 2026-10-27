@@ -8,7 +8,7 @@
 - 마지막 완료: T-20261023-extract-dropped (main 병합·푸시 완료, f80a6a3)
 - 플랜: `.ai/tasks/T-20261027-v3-backend/PLAN.md` (상태: APPROVED, §7 기본값 자동 승인)
 - OpenSpec: `openspec/changes/v3-backend/`
-- 현재 단계: S1 대기
+- 현재 단계: S1 vendor 자원 내려받기와 라이선스 동봉
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-v3-backend`
 - 마지막 커밋: (plan 커밋)
