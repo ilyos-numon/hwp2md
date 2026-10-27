@@ -9,7 +9,7 @@
 - 마지막 완료: T-20261027-public-launch (공개 저장소·체험 사이트·PyPI 0.1.2)
 - 결과: `.ai/tasks/T-20261027-public-launch/RESULT.md`
 - OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-public-launch/`
-- 브랜치: ai/T-20261027-public-launch (HEAD 09e4216, main 6bcc4f0 보다 3커밋 앞 — main 반영 확인 필요)
+- 브랜치: `main` (공개 저장소, 태그 v0.1.0·v0.1.1·v0.1.2)
 - 기록 시각: 2026-10-27 20:04
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
