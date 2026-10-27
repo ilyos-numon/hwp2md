@@ -163,3 +163,20 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 6413aa5 [T-20261027-public-launch][s5] 패키지 메타데이터
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 18:17] S6 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): README.md src/hwp2md/__init__.py 
+- 커밋: 2790166 [T-20261027-public-launch][S6][wip] auto checkpoint (stop)
+
+## [2026-10-27 18:18] S6 | implementer(opus) | DONE
+- 한 일: README 배지5·체험 링크·30초 데모·English·절대 URL, CHANGELOG 0.1.0/0.1.1, __version__ 0.1.1, releasing Pages 절, decisions 2항목. unit 820, C8~C12 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md docs/releasing.md src/hwp2md/__init__.py CHANGELOG.md 
+- 커밋: 2790166 [T-20261027-public-launch][S6][wip] auto checkpoint (stop)
+- 다음: S7
+
+## [2026-10-27 18:18] S6 | orchestrator | DONE
+- 한 일: README·CHANGELOG·0.1.1 검증 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md docs/releasing.md src/hwp2md/__init__.py CHANGELOG.md 
+- 커밋: 2790166 [T-20261027-public-launch][S6][wip] auto checkpoint (stop)
+- 다음: S7 시작
