@@ -31,7 +31,7 @@
 
 - [x] 7.1 `tests/e2e/test_dist_package.py` (깨끗한 venv 설치 스모크 성공, 금지 파일·태그 불일치·패턴 적중 실패) 작성·실행
 - [x] 7.2 브랜치 push 후 CI 실행 다섯 job success 확인
-- [ ] 7.3 diff 리뷰와 RESULT 기록
+- [x] 7.3 diff 리뷰와 RESULT 기록
 
 ## 8. 릴리스
 

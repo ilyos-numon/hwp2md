@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-v3-backend (main 병합·푸시 6b75180)
 - 플랜: `.ai/tasks/T-20261027-pypi-release/PLAN.md` (상태: APPROVED, §7 기본값)
 - OpenSpec: `openspec/changes/pypi-release/`
-- 현재 단계: S11 리뷰·결과 기록
-- 상태: RUNNING
+- 현재 단계: S12 릴리스 게이트 (사용자 대기)
+- 상태: BLOCKED
 - 브랜치: `ai/T-20261027-pypi-release`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S11부터. 사용자 수동 U1·U2 는 S12 전까지
+1. 사용자 U1(PyPI pending publisher)·U2(GitHub environment pypi 또는 Q2 대체안)·"v0.1.0 게시 승인" 확인 → S12: main 병합·push → CI green → `git tag -a v0.1.0` push → Release 확인 → PyPI 설치 확인
 
 ## 차단 중이면
-- 이유: 없음 · 사용자 결정 필요: 없음
+- 이유: 릴리스 게이트 · 사용자 결정 필요: U1·U2·게시 승인
