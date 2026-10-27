@@ -473,3 +473,20 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 40a9a3c [T-20261027-public-launch][s15] i18n E2E
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 19:31] S16 | hook | AUTO
+- 한 일: 도구 호출 255회 경과
+- 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.md docs/decisions.md docs/feature-reference.md README.en.md 
+- 커밋: b8d2856 [T-20261027-public-launch][S16][wip] auto checkpoint (stop)
+
+## [2026-10-27 19:32] S16 | implementer(opus) | DONE
+- 한 일: README.en.md(## 16), README English 링크, CHANGELOG 1줄, feature-reference §9.9, decisions 1항목. C8 7, C9 OK(68/68), C10·C28 relative=0
+- 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.md docs/decisions.md docs/feature-reference.md README.en.md 
+- 커밋: b8d2856 [T-20261027-public-launch][S16][wip] auto checkpoint (stop)
+- 다음: S17
+
+## [2026-10-27 19:32] S16 | orchestrator | DONE
+- 한 일: 영어 문서 검증 통과
+- 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.md docs/decisions.md docs/feature-reference.md README.en.md 
+- 커밋: b8d2856 [T-20261027-public-launch][S16][wip] auto checkpoint (stop)
+- 다음: S17 시작

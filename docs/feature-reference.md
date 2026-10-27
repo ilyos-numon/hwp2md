@@ -915,6 +915,18 @@ URL 안전 판정 `isSafeUrl(url, allowDataImage)`:
 - 미리보기 표: `display:block; overflow-x:auto` 로 가로 스크롤, 헤더 행 배경 `--code-bg`, 이미지 `max-width:100%`.
 - 접근성: 드롭 영역 키보드 조작, `#error` `role=alert`, 장식 아이콘·"변환 중…" `aria-hidden`, 스위치 `:focus-visible` 외곽선.
 
+### 9.9 언어 (i18n)
+
+변환 화면(`/`, Pages `convert.html`)과 소개 화면(`/about`, Pages `index.html`)은 한국어(`ko`)·영어(`en`) 두 언어를 지원한다. 새 의존성 없이 [js/i18n.js](../src/hwp2md/web/static/js/i18n.js)(결정·적용·전환·JS 문구 사전)와 [js/i18n-about.js](../src/hwp2md/web/static/js/i18n-about.js)(소개 페이지 영어값만, `window.HWP2MD_I18N_EXTRA`)가 담당한다. CLI 출력·Python 엔진·HTTP API 응답은 바꾸지 않았다.
+
+- **결정 순서** (스크립트 로드 즉시, 동기): ① `?lang=ko|en`(소문자 정확히 일치, `localStorage` 에 저장, source `query`) → ② `localStorage["hwp2md-lang"]`(source `storage`) → ③ `navigator.languages[0]`(없으면 `navigator.language`)이 `ko` 로 시작하면 `ko`, 아니면 `en`(source `navigator`). 그 밖의 `?lang=` 값(`fr`, `EN`, 빈 값)은 무시하고 저장하지 않는다. 결정 직후 `<html lang>` 을 바꾼다.
+- **API** `window.Hwp2mdI18n`: `lang`, `source`, `t(key, vars)`(`{name}` 치환, en 은 EN → KO → key 순), `set(lang)`(저장 → URL 의 `lang` 쿼리 제거 → `body[data-i18n-reload]` 면 새로고침, 아니면 즉시 적용), `apply(root)`, `missing()`(영어값이 없는 키 목록, E2E 가 `[]` 를 단언). 언어가 바뀌면 `document` 에 `hwp2md:langchange` 이벤트(detail = 언어).
+- **DOM 표기**: HTML 원문 한국어가 곧 ko 값이다. `data-i18n`(textContent), `data-i18n-html`(innerHTML, 저장소의 정적 문자열만), `data-i18n-attr="aria-label:key;title:key"`(속성). 원문은 `WeakMap` 에 보관했다가 ko 로 돌아갈 때 쓴다. 영어값이 없으면 원문을 두고 `data-i18n-missing` 표시 + `console.warn`. `app.js` 가 글자를 쓰는 요소(`#mode-status`, `#error-text`, `#skipped`, `#result-meta`, `#raw-meta`, `#toast`, 복사 버튼)는 `data-i18n` 없이 `t()` 로 쓰고 `hwp2md:langchange` 때 다시 그린다(토스트 제외).
+- **전환 버튼**: 두 화면 헤더의 `.lang-toggle`(ko 화면은 `EN`, en 화면은 `KO`). 변환 화면은 새로고침 없이 바꿔 변환 결과를 유지하고, 소개 화면은 SplitText·ScrambleText 가 이미 나눈 글자 때문에 저장 후 새로고침한다.
+- **고정 문구**: 모드 상태·오류·건너뜀·개수·복사·테마 문구의 ko/en 값은 태스크 플랜의 고정 문구 표와 `i18n.js` 의 `KO`·`EN` 사전이 기준이다. ko 값은 9.7 의 문구와 바이트 단위로 같다. 예: `error.not_hwp` = `Not an HWP 5.0 or HWPX file`, `mode.browser` = `Browser mode: files are not sent to a server`.
+- **번역하지 않는 것**: 서버·엔진이 주는 건너뜀 라벨(`skipped[].label`)은 한국어 그대로 두고 접두·개수 서식만 번역한다(예 `Not converted: 머리말·꼬리말 (1)`). 소개 페이지의 한국어 예시 문서 내용과 CLI 출력 줄도 원문 그대로다. 한컴 공개 문서 참고 고지는 영어 번역 뒤에 한국어 원문을 괄호로 붙인다.
+- **테스트**: `tests/e2e/test_i18n.py`(8 케이스: 브라우저 언어 결정, 오류 문구, 전환·저장, 쿼리 우선, 잘못된 쿼리 폴백, 건너뜀 접두, 소개 페이지, 정적 사이트). 기존 브라우저 E2E 는 컨텍스트에 `locale="ko-KR"` 를 고정해 한국어 단언을 그대로 지킨다.
+
 ---
 
 ## 10. 프론트엔드 설계 철학과 불변식

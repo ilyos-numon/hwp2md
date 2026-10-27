@@ -8,6 +8,7 @@
 - 브라우저 체험 사이트 (https://ilyos-numon.github.io/hwp2md/): 설치 없이 브라우저 안의 Pyodide 로 변환하며 파일을 서버로 보내지 않는다. `scripts/build_pages.py` 가 같은 화면을 정적 사이트로 빌드하고 GitHub Pages 로 배포한다.
 - 패키지 메타데이터: 프로젝트 URL 4개(Homepage·Repository·Issues·Changelog), 분류자, 키워드.
 - README 배지(PyPI·Python·CI·Downloads·License), 체험 링크, 30초 데모, 영문 요약(English).
+- 웹 화면(변환·소개) 영어 지원: 브라우저 언어로 자동 선택, 헤더 KO/EN 전환, `?lang=ko|en`. README 영어판(README.en.md).
 
 ### Changed
 - README 의 그림과 저장소 파일 링크를 절대 URL 로 바꿔 PyPI 페이지에서도 열리게 했다.

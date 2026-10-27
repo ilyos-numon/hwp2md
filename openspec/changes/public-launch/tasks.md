@@ -29,7 +29,7 @@
 - [x] 5.2 `static/js/i18n.js`(언어 결정·API·사전)와 변환 화면(`index.html`·`app.js`·`theme.js`) 영어, 헤더 KO/EN 버튼
 - [x] 5.3 소개 페이지(`about.html`·`i18n-about.js`) 영어
 - [x] 5.4 `tests/e2e/test_i18n.py` 를 쓰고 돌린다 (serve 영어·오류·전환 유지·쿼리·폴백·건너뜀 접두·소개·정적 사이트)
-- [ ] 5.5 `README.en.md`, README 링크, CHANGELOG, feature-reference §9.9, decisions
+- [x] 5.5 `README.en.md`, README 링크, CHANGELOG, feature-reference §9.9, decisions
 
 ## 6. 릴리스와 마감
 
