@@ -7,7 +7,7 @@
 
 ## 2. Homebrew formula 생성기
 
-- [ ] 2.1 `scripts/update_formula.py` 와 단위 테스트 `tests/unit/test_update_formula.py`, 탭 README 원본 `packaging/homebrew/README.md` 를 쓴다
+- [x] 2.1 `scripts/update_formula.py` 와 단위 테스트 `tests/unit/test_update_formula.py`, 탭 README 원본 `packaging/homebrew/README.md` 를 쓴다
 
 ## 3. 문서와 버전
 

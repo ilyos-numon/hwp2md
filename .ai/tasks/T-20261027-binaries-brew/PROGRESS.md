@@ -48,3 +48,9 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: ac76054 [T-20261027-binaries-brew][s2] PyInstaller 빌드 스크립트
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 20:57] S3 | implementer(opus) | DONE
+- 한 일: update_formula.py·단위 8·탭 README, ruby -c OK, unit 828
+- 변경 파일(미커밋, .ai 제외): packaging/homebrew/ scripts/update_formula.py tests/unit/test_update_formula.py 
+- 커밋: d26bcec [T-20261027-binaries-brew][S3][wip] auto checkpoint (stop)
+- 다음: S4
