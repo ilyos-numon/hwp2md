@@ -153,12 +153,12 @@ uv run python scripts/check_dist.py DIST_DIR [--tag vX.Y.Z] [--patterns FILE]
 ### 4.4 ci.yml 골격 (값 고정, 세부 문법은 S6)
 - `on: push: branches: ["**"]` + `pull_request:` (태그 push 로는 돌지 않음). `permissions: contents: read`. `concurrency: { group: ci-${{ github.ref }}, cancel-in-progress: true }`.
 - 공통 준비: `actions/checkout` → `astral-sh/setup-uv`(`enable-cache: true`, `python-version` 입력) → `uv sync --locked`.
-- `lint`: `uv run ruff check src tests && uv run ruff format --check src tests` · `typecheck`: `uv run mypy src` · `unit`: matrix `python: ["3.11", "3.13"]`, `uv run pytest tests/unit -q` · `e2e`(python 3.12, timeout-minutes 30): `uv run playwright install --with-deps chromium` → `uv run pytest tests/e2e -q -m "not real_samples"`, 실패 시 `tests/e2e/screenshots/` 를 artifact `e2e-screenshots` 로 업로드 · `dist`: `uv build --out-dir dist` → `uvx --from 'twine>=6.1' twine check --strict dist/*` → `uv run python scripts/check_dist.py dist`.
+- `lint`: `uv run ruff check src tests && uv run ruff format --check src tests` · `typecheck`: `uv run mypy src` · `unit`: matrix `python: ["3.11", "3.13"]`, `uv run pytest tests/unit -q -m "not real_samples"` · `e2e`(python 3.12, timeout-minutes 30): `uv run playwright install --with-deps chromium` → `uv run pytest tests/e2e -q -m "not real_samples"`, 실패 시 `tests/e2e/screenshots/` 를 artifact `e2e-screenshots` 로 업로드 · `dist`: `uv build --out-dir dist` → `uvx --from 'twine>=6.1' twine check --strict dist/*` → `uv run python scripts/check_dist.py dist`.
 - 액션 버전: 각 저장소의 최신 major 태그(`git ls-remote --tags https://github.com/<owner>/<repo>` 로 확인, PROGRESS 에 기록). `pypa/gh-action-pypi-publish` 는 `release/v1`.
 
 ### 4.5 release.yml 골격
 - `on: push: tags: ["v*.*.*"]` 만. 최상위 `permissions: contents: read`.
-- `build`: checkout → setup-uv → `uv sync --locked` → `uv run pytest tests/unit -q` → `uv build --out-dir dist` → twine check --strict → `uv run python scripts/check_dist.py dist --tag "${GITHUB_REF_NAME}"` → `actions/upload-artifact` name `dist`, path `dist/`.
+- `build`: checkout → setup-uv → `uv sync --locked` → `uv run pytest tests/unit -q -m "not real_samples"` → `uv build --out-dir dist` → twine check --strict → `uv run python scripts/check_dist.py dist --tag "${GITHUB_REF_NAME}"` → `actions/upload-artifact` name `dist`, path `dist/`.
 - `publish`: `needs: build`, `environment: { name: pypi, url: https://pypi.org/project/hwp2markdown/ }`, `permissions: { id-token: write }`, `actions/download-artifact` name `dist` → `dist/`, `pypa/gh-action-pypi-publish@release/v1` (password·token 입력 없음).
 
 ### 4.6 사용자 수동 절차 (docs/releasing.md 에 그대로, 에이전트는 실행하지 않는다)
@@ -235,7 +235,8 @@ export GH_TOKEN=$(gh auth token --user "$OWNER") GH_REPO="$OWNER/hwp2md"
 - 담당: implementer(opus) · 병렬 가능: 아니오 · 선행: S1, S3
 - 입력: S1 로그의 `E2E_FAILING_FILES`, §4.1 마커, `tests/e2e/conftest.py`
 - 쓰기 범위 (S1 목록에 있는 것만 실제 수정; 목록 밖 파일이 필요하면 NEEDS 후 BLOCKED): `tests/e2e/conftest.py`, `tests/e2e/test_web_api.py`, `tests/e2e/test_web_ui.py`, `tests/e2e/test_web_v3.py`, `tests/e2e/test_extract_real.py`, `tests/e2e/test_cli_convert.py`, `tests/e2e/test_cli_hwpx.py`, `tests/e2e/test_cli_heading.py`, `tests/e2e/test_cli_image.py`. 파일 수가 5개를 넘는 이유: 각 파일 변경이 마커 줄·`next(..., None)` 같은 기계적 수정이라 한 번에 해야 C8 하나로 검증된다.
-- 규칙: 마커 등록은 `tests/e2e/conftest.py` 의 `pytest_configure` 에서 `config.addinivalue_line("markers", "real_samples: needs uncommitted real samples in tests/fixtures")` (pyproject 수정 금지). 실제 샘플을 쓰는 테스트에만 마커(모듈 전체가 쓰면 `pytestmark`). `skipif`·`pytest.skip` 추가 금지. 기존 단언 약화 금지. `test_web_api.py` 179행은 `"hwp2markdown[web]" in result.stderr` 로 바꾼다.
+- [S1 결과로 보완 2026-10-27, orchestrator] 클린 복사본에서 단위 테스트도 수집 오류(StopIteration): `tests/unit/test_memory.py`, `tests/unit/test_web_app.py`. 이 두 파일과 새 `tests/conftest.py`(마커 등록 위치)를 쓰기 범위에 추가한다. 마커 등록은 e2e conftest 대신 `tests/conftest.py` 한 곳에서 한다. 검증에 C8 단위판 추가: 클린 복사본에서 `uv run pytest tests/unit -q -m "not real_samples"` 실패 0·오류 0, 로컬 `uv run pytest tests/unit -q` 실패 0. §4.4·§4.5 의 unit 명령에 `-m "not real_samples"` 추가.
+- 규칙: 마커 등록은 (위 보완대로 `tests/conftest.py`) `pytest_configure` 에서 `config.addinivalue_line("markers", "real_samples: needs uncommitted real samples in tests/fixtures")` (pyproject 수정 금지). 실제 샘플을 쓰는 테스트에만 마커(모듈 전체가 쓰면 `pytestmark`). `skipif`·`pytest.skip` 추가 금지. 기존 단언 약화 금지. `test_web_api.py` 179행은 `"hwp2markdown[web]" in result.stderr` 로 바꾼다.
 - 검증: C7 (로컬, 샘플 있음) 실패 0 · C8 (클린 복사본) 실패 0·오류 0 · `uv run pytest tests/e2e -q -m real_samples --collect-only -q | tail -1` 의 수가 S1 `E2E_FAILING_IDS` 이상 · LINT_CMD exit 0 (로그 `logs/s5-markers.log`)
 - 완료 조건: 검증 통과 + 커밋 `[..][s5] real_samples 마커와 CI 수집 오류 제거`
 - 실패 시: `git restore` 로 범위 파일 되돌림 후 재시도, 같은 오류 2회 BLOCKED
