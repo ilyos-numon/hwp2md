@@ -132,3 +132,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 1b73d27 [T-20261027-binaries-brew][s7] 시작 기록
 - 다음: S8 탭
+
+## [2026-10-27 21:09] S8 | orchestrator | START
+- 한 일: homebrew-tap 저장소·formula
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 90c7318 [T-20261027-binaries-brew][s7] v0.1.4 Release 확인
+
+## [2026-10-27 21:09] S8 | orchestrator | BLOCKED
+- 한 일: 공개 저장소 생성(gh repo create --public)이 세션 자동 권한 판정에 막힘. 로컬 build/homebrew-tap 준비 완료: formula 0.1.4 생성, ruby -c OK, brew style 0 offenses, 커밋 377949f, origin 설정
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 90c7318 [T-20261027-binaries-brew][s7] v0.1.4 Release 확인
+- 다음: 사용자 U1(웹에서 homebrew-tap 공개 저장소 생성, README 체크 해제) → git -C build/homebrew-tap push -u origin main → S9

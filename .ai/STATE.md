@@ -9,11 +9,11 @@
 - 플랜: `.ai/tasks/T-20261027-binaries-brew/PLAN.md` (APPROVED, §7 기본값 + Q1 PyInstaller 사용자 확인)
 - OpenSpec: `openspec/changes/binaries-brew/`
 - 현재 단계: S8 homebrew-tap
-- 상태: RUNNING
+- 상태: BLOCKED
 - 브랜치: `ai/T-20261027-binaries-brew`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S8부터 (탭 저장소 생성이 막히면 사용자 U1). S8 탭 저장소 생성이 막히면 사용자 U1(웹에서 생성)
+1. 사용자 U1: github.com → + → New repository → Owner ilyos-numon, Name homebrew-tap, Public, README·.gitignore·license 없음 → Create. 그 뒤 `git -C build/homebrew-tap push -u origin main` → S9
 
 ## 차단 중이면
-- 이유: 없음
+- 이유: 공개 저장소 생성이 세션 권한에 막힘 · 사용자 U1
