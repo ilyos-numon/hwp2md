@@ -87,3 +87,15 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 4980088 [T-20261027-binaries-brew][s4] 설치 문서와 0.1.4
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 21:00] S5 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): .github/workflows/release.yml 
+- 커밋: 4a1fa29 [T-20261027-binaries-brew][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 21:00] S5 | implementer(opus) | DONE
+- 한 일: release.yml binaries(matrix 4)·github-release 추가, 기존 job 무변경, actionlint 0
+- 변경 파일(미커밋, .ai 제외): .github/workflows/release.yml 
+- 커밋: 4a1fa29 [T-20261027-binaries-brew][S5][wip] auto checkpoint (stop)
+- 다음: S6
+- 메모: setup-python@v6 사용

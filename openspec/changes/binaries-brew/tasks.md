@@ -15,7 +15,7 @@
 
 ## 4. 릴리스 워크플로우
 
-- [ ] 4.1 `.github/workflows/release.yml` 에 `binaries` matrix job 과 `github-release` job 을 더한다
+- [x] 4.1 `.github/workflows/release.yml` 에 `binaries` matrix job 과 `github-release` job 을 더한다
 
 ## 5. 실행 파일 E2E
 
