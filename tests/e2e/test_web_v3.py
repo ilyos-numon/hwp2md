@@ -198,6 +198,27 @@ def test_v3_about_offline(
         assert "-apple-system" in page.evaluate("getComputedStyle(document.body).fontFamily")
 
     _screenshot(page, "v3-about.png")
+
+    page.evaluate("window.scrollTo(0, 0)")
+    page.evaluate("document.fonts.ready.then(() => true)")
+    page.wait_for_function(
+        "() => window.__h2mReady === true"
+        " && document.querySelector('#hero-title .hero__md').textContent === 'Markdown'",
+        timeout=TIMEOUT_MS,
+    )
+    _screenshot(page, "v3-about-hero.png", full_page=False)
+
+    page.locator("#limits").scroll_into_view_if_needed()
+    page.wait_for_function(
+        "() => [...document.querySelectorAll('#limits li')]"
+        ".every(e => getComputedStyle(e).opacity === '1')",
+        timeout=TIMEOUT_MS,
+    )
+    page.screenshot(
+        path=str(
+            Path(os.environ.get("ILLY_SHOT_DIR", "tests/e2e/screenshots")) / "v3-about-limits.png"
+        )
+    )
     assert blocked == []
 
 
