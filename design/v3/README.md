@@ -1,6 +1,6 @@
-# hwp2md 프론트엔드 V3 (백엔드 미연결 시안)
+# hwp2md 프론트엔드 V3 시안 (서버 연결본: `src/hwp2md/web/static/`)
 
-Stitch V2 시안(`design/stitch/`)의 색·레이아웃·문구를 잇고 GSAP 모션을 더한 정적 프론트엔드. 아직 `hwp2md serve` 에 연결하지 않았다.
+Stitch V2 시안(`design/stitch/`)의 색·레이아웃·문구를 잇고 GSAP 모션을 더한 정적 프론트엔드. `hwp2md serve` 에 연결한 판은 `src/hwp2md/web/static/` 에 있고, 이 폴더는 데모 엔진으로 도는 시안 그대로 둔다.
 
 | 파일 | 내용 |
 |---|---|
@@ -22,6 +22,8 @@ Stitch V2 시안(`design/stitch/`)의 색·레이아웃·문구를 잇고 GSAP �
 3. `handleModeToggle` 의 `window.Hwp2mdDemo.loadBrowser()` 를 `window.Hwp2mdBrowser.load()` 로 바꾸고, 데모 도크와 "예시 문서로 해 보기" 버튼을 지운다.
 4. 서버 모드는 CDN 없이 동작해야 하므로 GSAP·marked·글꼴을 `static/vendor/` 에 동봉한다.
 5. 기존 E2E(`tests/e2e/test_web_ui.py`)가 쓰는 선택자는 모두 유지돼 있다. 바뀐 점: `#error` 안에 `#error-text`·닫기 버튼이 생겼고, `#raw` 는 줄마다 `span.l` 로 그리지만 `textContent` 는 Markdown 원문과 같다.
+
+2026-10-27 연결 완료: `/` 변환 화면(`static/index.html`), `/about` 소개 페이지(`static/about.html`), 자원은 `static/vendor/` 에 동봉.
 
 ## 바뀐 문구 (V2 대비)
 
