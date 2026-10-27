@@ -121,3 +121,8 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_binary_smoke.py 
 - 커밋: e602450 [T-20261027-binaries-brew][S6][wip] auto checkpoint (stop)
 - 다음: S7
+
+## [2026-10-27 21:04] S7 | orchestrator | START
+- 한 일: main 반영·CI·v0.1.4
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 41cecb0 [T-20261027-binaries-brew][s6] 실행 파일 스모크 E2E
