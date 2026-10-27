@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S11 Pages 활성화
+- 현재 단계: S12 v0.1.1 릴리스
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S11 Pages 활성화부터 (저장소 공개 완료)
+1. S12 v0.1.1 릴리스부터 (Pages 열림)
 
 ## 차단 중이면
 - 이유: 없음

@@ -282,3 +282,9 @@
 - 한 일: Pages 활성화
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 04cdef6 [T-20261027-public-launch][s10] 이력 정리·공개 전환 기록
+
+## [2026-10-27 18:59] S11 | orchestrator | DONE
+- 한 일: Pages build_type=workflow 활성화, pages run 40484851333 build·deploy success, /, convert.html, pkg/hwp2md.zip 200 (C16)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: da0311d [T-20261027-public-launch][s11] Pages 활성화 시작
+- 다음: S12 v0.1.1
