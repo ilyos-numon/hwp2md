@@ -120,7 +120,7 @@ def make_context(
 
     def _make(*, block_cdn: bool = False) -> tuple[BrowserContext, Guard]:
         guard = Guard()
-        ctx = browser.new_context(viewport=VIEWPORT, accept_downloads=True)
+        ctx = browser.new_context(viewport=VIEWPORT, accept_downloads=True, locale="ko-KR")
 
         def _on_request(req: Request) -> None:
             if req.method == "POST":

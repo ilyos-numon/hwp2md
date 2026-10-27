@@ -337,3 +337,15 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 96bfa0c [T-20261027-public-launch][plan] 영어 지원 단계 추가 (S12~S16), 릴리스 S18
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 19:13] S12 | test-writer(sonnet) | DONE
+- 한 일: 8개 new_context 에 locale ko-KR, C26 0, 5파일 36 passed
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_design_v3.py tests/e2e/test_pages_site.py tests/e2e/test_web_extract.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py 
+- 커밋: 9178dd6 [T-20261027-public-launch][S12][wip] auto checkpoint (stop)
+- 다음: S13
+
+## [2026-10-27 19:13] S12 | orchestrator | DONE
+- 한 일: 기존 E2E locale 고정 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_design_v3.py tests/e2e/test_pages_site.py tests/e2e/test_web_extract.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py 
+- 커밋: 9178dd6 [T-20261027-public-launch][S12][wip] auto checkpoint (stop)
+- 다음: S13 시작

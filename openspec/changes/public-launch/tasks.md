@@ -25,7 +25,7 @@
 
 ## 5. 영어 지원
 
-- [ ] 5.1 기존 브라우저 E2E 의 컨텍스트 locale 을 `ko-KR` 로 고정한다 (단언 불변)
+- [x] 5.1 기존 브라우저 E2E 의 컨텍스트 locale 을 `ko-KR` 로 고정한다 (단언 불변)
 - [ ] 5.2 `static/js/i18n.js`(언어 결정·API·사전)와 변환 화면(`index.html`·`app.js`·`theme.js`) 영어, 헤더 KO/EN 버튼
 - [ ] 5.3 소개 페이지(`about.html`·`i18n-about.js`) 영어
 - [ ] 5.4 `tests/e2e/test_i18n.py` 를 쓰고 돌린다 (serve 영어·오류·전환 유지·쿼리·폴백·건너뜀 접두·소개·정적 사이트)

@@ -48,7 +48,7 @@ def browser() -> Iterator[Browser]:
 
 @pytest.fixture
 def page(browser: Browser) -> Iterator[Page]:
-    ctx = browser.new_context(viewport=VIEWPORT)
+    ctx = browser.new_context(viewport=VIEWPORT, locale="ko-KR")
     ctx.route("**/*", _route_external)
     pg = ctx.new_page()
     try:

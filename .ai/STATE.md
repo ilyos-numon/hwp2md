@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S12 기존 E2E locale 고정
+- 현재 단계: S13 i18n 코어·변환 화면 영어
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S12(기존 E2E locale ko-KR 고정)부터 → S13~S16 영어 지원 → S17 main push → S18 사용자 v0.1.1 태그
+1. S13(i18n 코어·변환 화면 영어)부터 → S13~S16 영어 지원 → S17 main push → S18 사용자 v0.1.1 태그
 
 ## 차단 중이면
 - 이유: 없음 (영어 지원 추가 중, 태그는 그 뒤)
