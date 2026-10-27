@@ -62,3 +62,20 @@
 - 변경 파일(미커밋, .ai 제외): pyproject.toml uv.lock 
 - 커밋: 31ba43b [T-20261027-pypi-release][S2][wip] auto checkpoint (stop)
 - 다음: S3 시작
+
+## [2026-10-27 16:07] S3 | orchestrator | START
+- 한 일: web extra 안내 hwp2markdown[web]
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1ea524c [T-20261027-pypi-release][s2] 배포 이름 hwp2markdown·동적 버전·sdist 허용 목록
+
+## [2026-10-27 16:07] S3 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 1ea524c [T-20261027-pypi-release][s2] 배포 이름 hwp2markdown·동적 버전·sdist 허용 목록
+
+## [2026-10-27 16:07] S3 | orchestrator | DONE
+- 한 일: cli.py 49행 hwp2markdown[web], 검증 exit=1·lint·mypy·unit 815 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/cli.py 
+- 커밋: 1ea524c [T-20261027-pypi-release][s2] 배포 이름 hwp2markdown·동적 버전·sdist 허용 목록
+- 다음: S4 시작
+- 메모: test_web_api.py 의 web extra 단언은 S5 에서 갱신, 그 사이 1건 실패 예상

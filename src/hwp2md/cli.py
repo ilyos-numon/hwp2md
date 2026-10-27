@@ -46,7 +46,7 @@ def _serve_main(argv: Sequence[str]) -> int:
     try:
         from .web.server import serve
     except ImportError:
-        return _error("web extra not installed — pip install 'hwp2md[web]'", 1)
+        return _error("web extra not installed — pip install 'hwp2markdown[web]'", 1)
     host: str = ns.host
     port: int = ns.port
     no_browser: bool = ns.no_browser

@@ -7,7 +7,7 @@
 ## 2. 패키지 메타데이터
 
 - [x] 2.1 `pyproject.toml` 배포 이름 `hwp2markdown`·동적 버전·license-files·sdist 허용 목록, `uv.lock` 갱신
-- [ ] 2.2 `src/hwp2md/cli.py` web extra 안내를 `pip install 'hwp2markdown[web]'` 로 바꾼다
+- [x] 2.2 `src/hwp2md/cli.py` web extra 안내를 `pip install 'hwp2markdown[web]'` 로 바꾼다
 
 ## 3. 배포물 검사
 
