@@ -23,6 +23,8 @@ Non-Goals: 서버 모드 공개 호스팅, 텔레메트리, Docker, 실제 커�
 6. **이력 재작성 = git filter-repo, 제자리 실행 + bundle 백업**: 25커밋 규모. `--invert-paths` 로 경로를 지우고 `--replace-text` 로 내부 메모 절·금지 패턴 문자열을 바꾼다. annotated 태그는 filter-repo 가 새 커밋으로 다시 쓴다. 배포물에 들어가는 경로(src, README, LICENSE, NOTICE, pyproject)는 규칙 대상이 아니므로 v0.1.0 의 해당 객체 해시는 그대로다.
 7. **원격 정리**: main 과 태그만 force-push 하고 원격의 다른 브랜치는 지운다. PR 이 있으면 GitHub 의 `refs/pull/*` 가 옛 커밋을 붙잡으므로 PR 0건일 때만 진행한다.
 8. **0.1.1 은 게이트 뒤 태그 push**: README 의 절대 그림 주소가 공개 뒤에야 열리고, 재작성 전 태그를 만들면 SHA 가 바뀐다.
+9. **[보완] 영어 지원 = 의존성 없는 사전 + `data-i18n` 표기**: HTML 원문(한국어)이 곧 ko 값이고, 영어 값만 사전(`i18n.js`, 소개 페이지는 `i18n-about.js`)에 둔다. JS 문구는 ko·en 둘 다 사전에 둔다. 언어는 `?lang=` → 저장값 → 브라우저 언어 순. 변환 화면은 즉시 다시 그리고(결과 유지), 소개 페이지는 GSAP 글자 분할 때문에 새로고침한다. i18n 라이브러리(i18next 등)는 두 언어·정적 문구 규모에 비해 과해 기각.
+10. **[보완] 기존 E2E 는 브라우저 언어를 `ko-KR` 로 고정**: 기본 언어가 브라우저 언어를 따르므로 CI(en-US)에서 한국어 단언이 깨진다. 단언을 바꾸지 않고 `new_context(locale="ko-KR")` 만 더해 테스트 환경을 고정한다. 영어는 새 `test_i18n.py` 가 따로 검증한다.
 
 ## Risks / Trade-offs
 

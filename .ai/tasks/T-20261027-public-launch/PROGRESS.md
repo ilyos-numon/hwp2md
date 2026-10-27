@@ -310,3 +310,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 0a1388c [T-20261027-public-launch][s12] 태그 push 대기 (실제 Pages E2E 통과)
 - 다음: planner 보완 → 새 단계 구현 → v0.1.1
+
+## [2026-10-27 19:05] 플랜 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 151349e [T-20261027-public-launch][plan] 영어 지원 추가 요청 기록
+
+## [2026-10-27 19:12] S12 | planner(opus) | DONE
+- 한 일: PLAN 보완: 영어 지원 S12~S16 삽입, 릴리스 S18(사용자 태그), §4.8·C24~C30·Q9~Q12 (기본값 자동)
+- 변경 파일(미커밋, .ai 제외): openspec/changes/public-launch/design.md openspec/changes/public-launch/proposal.md openspec/changes/public-launch/specs/web-preview/spec.md openspec/changes/public-launch/tasks.md 
+- 커밋: 151349e [T-20261027-public-launch][plan] 영어 지원 추가 요청 기록
+- 다음: S12 기존 E2E locale 고정

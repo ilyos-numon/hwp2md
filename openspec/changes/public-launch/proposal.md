@@ -13,6 +13,7 @@ hwp2md 는 PyPI(`hwp2markdown` 0.1.0)에 게시됐지만 저장소가 비공개�
 - 사용자 승인 게이트 뒤에서 `git filter-repo` 로 이력을 정리하고(백업 bundle 선행), force-push 후 저장소를 공개로 바꾼다.
 - 버전 0.1.1 을 PyPI 에 게시한다.
 - `docs/launch/` 에 한국어 홍보 초안 2개를 둔다(게시는 하지 않음).
+- [보완] 웹 화면(변환·소개)에 영어를 더한다. 브라우저 언어로 기본 언어를 고르고 헤더 KO/EN 버튼과 `?lang=` 으로 바꾼다. 의존성 없는 JS 사전(`static/js/i18n.js`)과 `data-i18n` 표기를 쓴다. `README.en.md` 를 더한다.
 
 ## Non-Goals
 
@@ -21,6 +22,7 @@ hwp2md 는 PyPI(`hwp2markdown` 0.1.0)에 게시됐지만 저장소가 비공개�
 ## Impact
 
 - 코드: `src/hwp2md/web/static/js/app.js`, `src/hwp2md/web/static/pyodide-runner.js`, `src/hwp2md/__init__.py`(버전), 새 `scripts/build_pages.py`
-- 테스트: 새 `tests/unit/test_build_pages.py`, `tests/e2e/test_pages_site.py`
+- 테스트: 새 `tests/unit/test_build_pages.py`, `tests/e2e/test_pages_site.py`, [보완] 새 `tests/e2e/test_i18n.py`, 기존 브라우저 E2E 5개 파일의 컨텍스트 locale 고정
+- [보완] 영어 지원 코드: `static/index.html`·`about.html`·`js/app.js`·`js/theme.js`·`css/base.css`, 새 `js/i18n.js`·`js/i18n-about.js`
 - 설정·문서: `pyproject.toml`, `.gitignore`, `CLAUDE.md`, `.github/**`, `README.md`, `CHANGELOG.md`, `docs/releasing.md`, `docs/decisions.md`, `docs/launch/*`
 - 저장소: 이력 재작성(모든 커밋 SHA 변경, 태그 v0.1.0 재지정), 공개 전환, Pages 활성화

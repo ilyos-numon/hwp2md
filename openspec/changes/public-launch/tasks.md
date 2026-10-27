@@ -23,8 +23,17 @@
 - [x] 4.2 [사용자 승인] bundle 백업 → main 병합 → filter-repo → 이력 검사 → force-push → 공개 전환
 - [x] 4.3 Pages 활성화와 배포 확인
 
-## 5. 릴리스와 마감
+## 5. 영어 지원
 
-- [ ] 5.1 v0.1.1 태그 push 와 PyPI 게시 확인
-- [ ] 5.2 최종 E2E(로컬 전체 + 실제 Pages)
-- [ ] 5.3 리뷰와 RESULT 기록
+- [ ] 5.1 기존 브라우저 E2E 의 컨텍스트 locale 을 `ko-KR` 로 고정한다 (단언 불변)
+- [ ] 5.2 `static/js/i18n.js`(언어 결정·API·사전)와 변환 화면(`index.html`·`app.js`·`theme.js`) 영어, 헤더 KO/EN 버튼
+- [ ] 5.3 소개 페이지(`about.html`·`i18n-about.js`) 영어
+- [ ] 5.4 `tests/e2e/test_i18n.py` 를 쓰고 돌린다 (serve 영어·오류·전환 유지·쿼리·폴백·건너뜀 접두·소개·정적 사이트)
+- [ ] 5.5 `README.en.md`, README 링크, CHANGELOG, feature-reference §9.9, decisions
+
+## 6. 릴리스와 마감
+
+- [ ] 6.1 재검증, main push, Pages 재배포 확인
+- [ ] 6.2 v0.1.1 태그 push(사용자 실행)와 PyPI 게시 확인
+- [ ] 6.3 최종 E2E(로컬 전체 + 실제 Pages)
+- [ ] 6.4 리뷰와 RESULT 기록
