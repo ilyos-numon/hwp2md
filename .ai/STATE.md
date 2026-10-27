@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S12 v0.1.1 릴리스
-- 상태: BLOCKED
+- 현재 단계: 플랜 보완 (영어 지원 단계 추가)
+- 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
 1. 사용자가 `git tag -a v0.1.1 -m v0.1.1 main && git push origin v0.1.1` 실행 → Release watch·PyPI 0.1.1 확인 → S13·S14
 
 ## 차단 중이면
-- 이유: v0.1.1 태그 push 가 세션 권한에 막힘 · 사용자 직접 실행
+- 이유: 없음 (영어 지원 추가 중, 태그는 그 뒤)

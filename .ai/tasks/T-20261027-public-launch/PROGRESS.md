@@ -304,3 +304,9 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 9b707d6 [T-20261027-public-launch][s12] 시작 기록
 - 다음: 사용자가 v0.1.1 태그 push → Release·PyPI 확인 → S13 로컬 전체 E2E → S14
+
+## [2026-10-27 19:03] S12 | orchestrator | RETRY
+- 한 일: 사용자 요청: 영어 추가 후 배포. v0.1.1 태그 전 i18n 단계 삽입 위해 planner 재호출
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0a1388c [T-20261027-public-launch][s12] 태그 push 대기 (실제 Pages E2E 통과)
+- 다음: planner 보완 → 새 단계 구현 → v0.1.1
