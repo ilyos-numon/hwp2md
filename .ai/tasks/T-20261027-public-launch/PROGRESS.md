@@ -360,3 +360,26 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 2e043c5 [T-20261027-public-launch][s12] 기존 E2E 브라우저 locale ko-KR 고정
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 19:14] S13 | hook | AUTO
+- 한 일: 도구 호출 165회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 3988651 [T-20261027-public-launch][S13][wip] auto checkpoint (stop)
+
+## [2026-10-27 19:18] S13 | hook | AUTO
+- 한 일: 도구 호출 180회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/css/base.css src/hwp2md/web/static/index.html src/hwp2md/web/static/js/app.js src/hwp2md/web/static/js/theme.js src/hwp2md/web/static/js/i18n.js 
+- 커밋: 3988651 [T-20261027-public-launch][S13][wip] auto checkpoint (stop)
+
+## [2026-10-27 19:18] S13 | implementer(opus) | DONE
+- 한 일: i18n.js·index.html·app.js·theme.js·base.css(+3). serve 회귀 49·unit 820, 영어 스모크 en/Server mode/missing [], 토글 ko 복귀
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/css/base.css src/hwp2md/web/static/index.html src/hwp2md/web/static/js/app.js src/hwp2md/web/static/js/theme.js src/hwp2md/web/static/js/i18n.js 
+- 커밋: 3988651 [T-20261027-public-launch][S13][wip] auto checkpoint (stop)
+- 다음: S14
+- 메모: 키 mode.no_runner·count.*_one 추가, 고지 문구 Q11
+
+## [2026-10-27 19:18] S13 | orchestrator | DONE
+- 한 일: 변환 화면 영어 검증 통과 (스크린샷 확인)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/css/base.css src/hwp2md/web/static/index.html src/hwp2md/web/static/js/app.js src/hwp2md/web/static/js/theme.js src/hwp2md/web/static/js/i18n.js 
+- 커밋: 3988651 [T-20261027-public-launch][S13][wip] auto checkpoint (stop)
+- 다음: S14 시작

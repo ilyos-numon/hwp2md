@@ -4,24 +4,16 @@
 (function () {
   "use strict";
 
-  const ERROR_TEXT = {
-    empty: "빈 파일입니다",
-    too_large: "파일이 너무 큽니다 (최대 50MB)",
-    not_hwp: "HWP 5.0 또는 HWPX 파일이 아닙니다",
-    unsupported: "지원하지 않는 HWP 문서라 변환할 수 없습니다",
-    drm: "문서보안(DRM)이 적용된 파일이라 변환할 수 없습니다. 보안 프로그램에서 해제한 뒤 다시 시도하세요",
-    encrypted: "암호가 설정된 문서라 변환할 수 없습니다. 한글에서 암호를 해제한 뒤 다시 시도하세요",
-  };
+  // 화면 문구는 i18n.js 의 t() 로 (ko 결과는 예전 문자열과 같다).
+  const I18N = window.Hwp2mdI18n;
+  const t = (key, vars) => (I18N ? I18N.t(key, vars) : key);
+  const lang = () => (I18N ? I18N.lang : "ko");
+  const numLocale = () => (lang() === "en" ? "en-US" : "ko-KR");
+  const ERROR_CODES = ["empty", "too_large", "not_hwp", "unsupported", "drm", "encrypted"];
   // 정적 사이트(<meta name="hwp2md-site" content="static">)는 브라우저 모드 고정, 링크는 상대 경로.
   const STATIC_SITE = (document.querySelector('meta[name="hwp2md-site"]') || {}).content === "static";
   const ABOUT_URL = STATIC_SITE ? "index.html" : "/about";
   const LIMITS_DOC = ABOUT_URL + "#limits";
-  const MODE_STATUS_TEXT = {
-    server: "서버 모드",
-    loading: "브라우저 모드 준비 중…",
-    browser: "브라우저 모드: 파일이 서버로 전송되지 않습니다",
-    error: "브라우저 모드를 불러오지 못했습니다: ",
-  };
 
   const $ = (s) => document.querySelector(s);
   const els = {
@@ -101,22 +93,31 @@
     els.raw.innerHTML = lines
       .map((l, i) => '<span class="l">' + highlightLine(l) + (i < lines.length - 1 || endsWithNewline ? "\n" : "") + "</span>")
       .join("");
-    els.rawMeta.textContent = lines.length + "줄 · " + markdown.length.toLocaleString("ko-KR") + "자";
+    renderRawMeta();
+  }
+  function renderRawMeta() {
+    if (!state.result) { els.rawMeta.textContent = ""; return; }
+    const markdown = state.result.markdown || "";
+    const lines = markdown.split("\n");
+    if (lines.length && lines[lines.length - 1] === "") lines.pop();
+    els.rawMeta.textContent = t("raw.meta", { lines: lines.length, chars: markdown.length.toLocaleString(numLocale()) });
   }
 
   /* ---------- 상태 ---------- */
-  const state = { mode: "server", file: null, result: null, seq: 0 };
+  // modeStatus / error 는 언어가 바뀌면 다시 그리려고 보관한다.
+  const state = { mode: "server", file: null, result: null, seq: 0, modeStatus: null, error: null };
   const currentMode = () => MODES[state.mode];
   const setState = (v) => { els.body.dataset.state = v; };
 
   function setModeStatus(name, detail) {
     els.modeStatus.dataset.state = name;
-    els.modeStatus.textContent = MODE_STATUS_TEXT[name] + (detail || "");
+    state.modeStatus = { name: name, detail: detail };
+    els.modeStatus.textContent = t("mode." + name) + (detail || "");
   }
 
   function errorMessage(code, message) {
-    if (Object.prototype.hasOwnProperty.call(ERROR_TEXT, code)) return ERROR_TEXT[code];
-    return "변환 중 오류가 발생했습니다: " + (message || "");
+    if (ERROR_CODES.includes(code)) return t("error." + code);
+    return t("error.generic") + (message || "");
   }
 
   class ConvertError extends Error {
@@ -174,8 +175,12 @@
     },
   };
 
-  function showError(text) { els.errorText.textContent = text; els.error.hidden = false; }
-  function clearError() { els.errorText.textContent = ""; els.error.hidden = true; }
+  function showError(code, message) {
+    state.error = { code: code, message: message };
+    els.errorText.textContent = errorMessage(code, message);
+    els.error.hidden = false;
+  }
+  function clearError() { state.error = null; els.errorText.textContent = ""; els.error.hidden = true; }
 
   // 건너뛴 요소 경고. 라벨은 응답의 skipped[].label 그대로, 글자는 textContent 로만 넣는다.
   function renderSkipped(list) {
@@ -183,10 +188,10 @@
     els.skipped.textContent = "";
     if (!items.length) { els.skipped.hidden = true; return; }
     const text = document.createElement("span");
-    text.textContent = "변환하지 못한 요소: " + items.map((s) => String(s.label) + " " + Number(s.count) + "개").join(" · ");
+    text.textContent = t("skipped.prefix") + items.map((s) => t("skipped.item", { label: String(s.label), n: Number(s.count) })).join(" · ");
     const link = document.createElement("a");
     link.href = LIMITS_DOC;
-    link.textContent = "왜 빠졌나요?";
+    link.textContent = t("skipped.why");
     els.skipped.append(text, " ", link);
     els.skipped.hidden = false;
   }
@@ -211,6 +216,7 @@
   // 배지는 확장자 표시일 뿐이다. 실제 포맷 판별은 엔진이 파일 내용으로 한다.
   function showFile(file) {
     const ext = (file.name.split(".").pop() || "").toLowerCase();
+    els.fileName.removeAttribute("data-i18n"); // 파일 이름은 번역하지 않는다
     els.fileName.textContent = file.name;
     els.fileName.title = file.name;
     els.fileBadge.textContent = ext === "hwpx" ? "HWPX" : ext === "hwp" ? "HWP" : ext === "hml" ? "HWPML" : "";
@@ -223,10 +229,14 @@
     }
   }
 
-  const COUNT_LABELS = [["paragraphs", "단락"], ["tables", "표"], ["headings", "제목"], ["images", "이미지"]];
-  // 숫자는 처음부터 최종값을 넣는다 (증가 모션 없음. E2E 가 글자를 바로 읽는다).
+  const COUNT_KEYS = ["paragraphs", "tables", "headings", "images"];
+  // 숫자는 처음부터 최종값을 넣는다 (증가 모션 없음. E2E 가 글자를 바로 읽는다). 사전 값은 정적 문자열, n 은 숫자.
   function renderCounts(c) {
-    els.resultMeta.innerHTML = COUNT_LABELS.map(([k, label]) => label + ' <b data-k="' + k + '">' + Number(c[k] || 0) + "</b>개").join(" · ");
+    els.resultMeta.innerHTML = COUNT_KEYS.map((k) => {
+      const n = Number(c[k] || 0);
+      const key = "count." + k + (lang() === "en" && n === 1 ? "_one" : "");
+      return t(key, { n: '<b data-k="' + k + '">' + n + "</b>" });
+    }).join(" · ");
   }
 
   function animateIn() {
@@ -268,7 +278,7 @@
     if (seq !== state.seq) return; // 더 나중에 넣은 파일의 결과가 우선
     const body = (res && res.body) || {};
     if (body.error) {
-      showError(errorMessage(body.error.code, body.error.message));
+      showError(body.error.code, body.error.message);
       setState("error");
       return;
     }
@@ -291,9 +301,9 @@
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      toast(name + ".zip 을 내려받았습니다");
+      toast(t("toast.zip", { name: name }));
     } catch (err) {
-      showError(errorMessage(err && err.code, err && err.message));
+      showError(err && err.code, err && err.message);
     } finally {
       els.download.disabled = !state.result;
     }
@@ -322,9 +332,9 @@
       sel.removeAllRanges();
     }
     els.copy.classList.add("is-done");
-    els.copy.querySelector("span").textContent = "복사됨";
-    setTimeout(() => { els.copy.classList.remove("is-done"); els.copy.querySelector("span").textContent = "복사"; }, 1500);
-    toast("Markdown 원문을 복사했습니다");
+    els.copy.querySelector("span").textContent = t("copy.done");
+    setTimeout(() => { els.copy.classList.remove("is-done"); els.copy.querySelector("span").textContent = t("copy.idle"); }, 1500);
+    toast(t("toast.copied"));
   }
 
   /* ---------- 파일 입력: 클릭·키보드·드롭 (페이지 어디에 놓아도 받는다) ---------- */
@@ -382,7 +392,7 @@
     if (!window.Hwp2mdBrowser) {
       els.modeToggle.checked = false;
       state.mode = "server";
-      setModeStatus("error", "pyodide-runner.js 없음");
+      setModeStatus("error", t("mode.no_runner"));
       return;
     }
     state.mode = "browser";
@@ -411,7 +421,7 @@
     state.mode = "browser";
     setModeStatus("loading");
     try {
-      if (!window.Hwp2mdBrowser) throw new Error("pyodide-runner.js 없음");
+      if (!window.Hwp2mdBrowser) throw new Error(t("mode.no_runner"));
       await window.Hwp2mdBrowser.load();
       setModeStatus("browser");
     } catch (err) {
@@ -445,6 +455,21 @@
   });
   narrow.addEventListener("change", applyTabs);
   applyTabs();
+
+  /* ---------- 언어 ---------- */
+  function renderLang() {
+    if (state.modeStatus) setModeStatus(state.modeStatus.name, state.modeStatus.detail);
+    if (state.error) els.errorText.textContent = errorMessage(state.error.code, state.error.message);
+    if (state.result) {
+      renderCounts(state.result.counts || {});
+      renderRawMeta();
+      renderSkipped(state.result.skipped);
+    }
+    els.copy.querySelector("span").textContent = t(els.copy.classList.contains("is-done") ? "copy.done" : "copy.idle");
+  }
+  document.addEventListener("hwp2md:langchange", renderLang);
+  if (!STATIC_SITE) setModeStatus("server");
+  els.copy.querySelector("span").textContent = t("copy.idle");
 
   window.Hwp2mdApp = {
     MODES: MODES,
