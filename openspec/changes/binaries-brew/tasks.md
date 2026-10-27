@@ -23,7 +23,7 @@
 
 ## 6. 릴리스
 
-- [ ] 6.1 main 반영, CI 성공 확인, 태그 `v0.1.4` push, Release 자산 5개와 PyPI 0.1.4 확인
+- [x] 6.1 main 반영, CI 성공 확인, 태그 `v0.1.4` push, Release 자산 5개와 PyPI 0.1.4 확인
 - [ ] 6.2 `ilyos-numon/homebrew-tap` 공개 저장소를 만들고 `Formula/hwp2md.rb`·`README.md` 를 push 한다
 
 ## 7. 배포물 검증과 기록
