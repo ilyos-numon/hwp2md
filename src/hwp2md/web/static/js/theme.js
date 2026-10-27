@@ -11,6 +11,13 @@
     try { return localStorage.getItem(KEY); } catch (_) { return null; }
   }
 
+  // 버튼 aria-label. i18n.js 가 없으면 한국어.
+  function label(theme) {
+    const i18n = window.Hwp2mdI18n;
+    if (theme === "dark") return i18n ? i18n.t("theme.to_light") : "라이트 모드로 전환";
+    return i18n ? i18n.t("theme.to_dark") : "다크 모드로 전환";
+  }
+
   function current() {
     return root.dataset.theme || (media.matches ? "dark" : "light");
   }
@@ -19,7 +26,7 @@
     root.dataset.theme = theme;
     try { localStorage.setItem(KEY, theme); } catch (_) { /* 저장 불가여도 화면은 바뀐다 */ }
     document.querySelectorAll(".theme-toggle").forEach((b) => {
-      b.setAttribute("aria-label", theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환");
+      b.setAttribute("aria-label", label(theme));
     });
     document.dispatchEvent(new CustomEvent("themechange", { detail: theme }));
   }
@@ -49,7 +56,10 @@
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".theme-toggle").forEach((b) => {
       b.addEventListener("click", toggle);
-      b.setAttribute("aria-label", current() === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환");
+      b.setAttribute("aria-label", label(current()));
     });
+  });
+  document.addEventListener("hwp2md:langchange", () => {
+    document.querySelectorAll(".theme-toggle").forEach((b) => b.setAttribute("aria-label", label(current())));
   });
 })();

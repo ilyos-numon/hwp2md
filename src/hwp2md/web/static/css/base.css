@@ -275,3 +275,6 @@ input { caret-color: var(--accent-primary); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+/* ---------- language toggle (KO/EN) ---------- */
+.lang-toggle { font-family: var(--font-mono); font-size: 12px; font-weight: 650; letter-spacing: 0.04em; }

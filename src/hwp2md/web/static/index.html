@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>hwp2md 변환 도구</title>
+  <title data-i18n="convert.title">hwp2md 변환 도구</title>
   <script>
     (function () {
       document.documentElement.classList.add("js");
@@ -37,23 +37,24 @@
 
   <header class="site-header">
     <div class="site-header__inner">
-      <a class="brand" href="/about" aria-label="hwp2md 서비스 소개로 이동">
+      <a class="brand" href="/about" data-i18n-attr="aria-label:common.brand_label" aria-label="hwp2md 서비스 소개로 이동">
         <svg class="brand__mark"><use href="#i-logo"/></svg>
         <span>hwp2md</span>
         <span class="brand__ver">v3.0</span>
       </a>
-      <nav class="site-nav" aria-label="사이트">
-        <a href="/about">서비스 소개</a>
+      <nav class="site-nav" data-i18n-attr="aria-label:common.nav_label" aria-label="사이트">
+        <a href="/about" data-i18n="common.nav_about">서비스 소개</a>
       </nav>
       <div class="header-actions">
         <div class="mode">
           <label class="switch" for="mode-toggle">
             <input type="checkbox" id="mode-toggle" role="switch">
             <span class="switch__track" aria-hidden="true"></span>
-            <span class="switch__label">브라우저 안에서만 처리</span>
+            <span class="switch__label" data-i18n="convert.switch_label">브라우저 안에서만 처리</span>
           </label>
           <span id="mode-status" data-state="server" aria-live="polite">서버 모드</span>
         </div>
+        <button type="button" class="icon-btn lang-toggle" data-i18n-attr="aria-label:lang.toggle_label" aria-label="Switch to English"><span data-i18n="lang.toggle_text">EN</span></button>
         <button type="button" class="icon-btn theme-toggle" aria-label="다크 모드로 전환">
           <svg class="i-moon"><use href="#i-moon"/></svg>
           <svg class="i-sun"><use href="#i-sun"/></svg>
@@ -64,59 +65,59 @@
 
   <main class="app" id="main">
     <div class="app-head">
-      <h1>한글 문서를 Markdown으로</h1>
-      <p>HWP·HWPX·HWPML 파일을 선택하고 변환 결과를 확인하세요.</p>
+      <h1 data-i18n="convert.heading">한글 문서를 Markdown으로</h1>
+      <p data-i18n="convert.lead">HWP·HWPX·HWPML 파일을 선택하고 변환 결과를 확인하세요.</p>
     </div>
 
     <div class="error-wrap">
       <div id="error" role="alert" hidden>
         <svg class="error__icon"><use href="#i-alert"/></svg>
         <span id="error-text"></span>
-        <button type="button" class="error__close" id="error-close" aria-label="오류 닫기"><svg><use href="#i-x"/></svg></button>
+        <button type="button" class="error__close" id="error-close" data-i18n-attr="aria-label:convert.error_close" aria-label="오류 닫기"><svg><use href="#i-x"/></svg></button>
       </div>
     </div>
 
     <div id="skipped" role="status" hidden></div>
 
-    <section id="drop-zone" tabindex="0" role="button" aria-label="HWP·HWPX·HWPML 파일 선택" aria-describedby="drop-hint">
+    <section id="drop-zone" tabindex="0" role="button" data-i18n-attr="aria-label:convert.drop_label" aria-label="HWP·HWPX·HWPML 파일 선택" aria-describedby="drop-hint">
       <svg class="drop-zone__frame" aria-hidden="true" preserveAspectRatio="none"><rect x="1" y="1" rx="13" ry="13"/></svg>
       <input type="file" id="file-input" accept=".hwp,.hwpx,.hml" hidden>
       <span class="drop-zone__icon" aria-hidden="true"><svg><use href="#i-upload"/></svg></span>
-      <p class="drop-zone__title"><span class="t-idle">파일을 놓거나 선택하세요</span><span class="t-drag">여기에 놓으면 바로 변환합니다</span></p>
-      <p class="drop-zone__hint" id="drop-hint">HWP · HWPX · HWPML · 최대 50MB</p>
+      <p class="drop-zone__title"><span class="t-idle" data-i18n="convert.drop_idle">파일을 놓거나 선택하세요</span><span class="t-drag" data-i18n="convert.drop_drag">여기에 놓으면 바로 변환합니다</span></p>
+      <p class="drop-zone__hint" id="drop-hint" data-i18n="convert.drop_hint">HWP · HWPX · HWPML · 최대 50MB</p>
     </section>
 
-    <section class="status-bar" aria-label="변환 상태">
+    <section class="status-bar" data-i18n-attr="aria-label:convert.status_label" aria-label="변환 상태">
       <div class="file-chip" id="file-chip" hidden>
         <svg class="file-chip__icon"><use href="#i-logo"/></svg>
-        <span id="file-name">선택한 파일 없음</span>
+        <span id="file-name" data-i18n="convert.no_file">선택한 파일 없음</span>
         <span class="badge" id="file-badge"></span>
         <span class="file-chip__size" id="file-size"></span>
       </div>
-      <span class="status-text" id="status-text">변환 대기 중</span>
+      <span class="status-text" id="status-text" data-i18n="convert.status_idle">변환 대기 중</span>
       <span id="result-meta" aria-live="polite"></span>
-      <span class="busy" aria-hidden="true">변환 중…</span>
+      <span class="busy" aria-hidden="true" data-i18n="convert.busy">변환 중…</span>
       <button type="button" class="btn btn--primary btn--sm" id="download" disabled>
-        <svg><use href="#i-download"/></svg>ZIP 다운로드
+        <svg><use href="#i-download"/></svg><span data-i18n="convert.download">ZIP 다운로드</span>
       </button>
       <span class="progress" aria-hidden="true"><span class="progress__bar"></span></span>
     </section>
 
-    <div class="pane-tabs" role="tablist" aria-label="결과 보기">
-      <button type="button" role="tab" id="tab-preview" aria-controls="pane-preview" aria-selected="true">미리보기</button>
+    <div class="pane-tabs" role="tablist" data-i18n-attr="aria-label:convert.tabs_label" aria-label="결과 보기">
+      <button type="button" role="tab" id="tab-preview" aria-controls="pane-preview" aria-selected="true" data-i18n="convert.preview">미리보기</button>
       <button type="button" role="tab" id="tab-raw" aria-controls="pane-raw" aria-selected="false" tabindex="-1">Markdown</button>
     </div>
 
     <section class="panes">
       <article class="pane" id="pane-preview" role="tabpanel" aria-labelledby="tab-preview">
         <header class="pane__head">
-          <span class="pane__title"><svg><use href="#i-eye"/></svg>미리보기</span>
+          <span class="pane__title"><svg><use href="#i-eye"/></svg><span data-i18n="convert.preview">미리보기</span></span>
         </header>
         <div class="pane__body">
           <div id="preview" class="markdown-body">
             <div class="empty">
               <svg><use href="#i-eye"/></svg>
-              <p>변환된 문서의 미리보기가 여기에 표시됩니다</p>
+              <p data-i18n="convert.preview_empty">변환된 문서의 미리보기가 여기에 표시됩니다</p>
             </div>
           </div>
         </div>
@@ -132,7 +133,7 @@
         <div class="pane__body">
           <div class="empty empty--raw">
             <svg><use href="#i-code"/></svg>
-            <p>변환된 Markdown 원문이 여기에 표시됩니다</p>
+            <p data-i18n="convert.raw_empty">변환된 Markdown 원문이 여기에 표시됩니다</p>
           </div>
           <pre id="raw"></pre>
         </div>
@@ -140,13 +141,14 @@
     </section>
 
     <footer class="app-foot">
-      <p>본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</p>
-      <p>변환하지 못하는 요소와 이유는 <a href="/about#limits">추출 한계 문서</a>에 있습니다.</p>
+      <p data-i18n="convert.foot_notice">본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</p>
+      <p><span data-i18n="convert.foot_limits_pre">변환하지 못하는 요소와 이유는 </span><a href="/about#limits" data-i18n="convert.foot_limits_link">추출 한계 문서</a><span data-i18n="convert.foot_limits_post">에 있습니다.</span></p>
     </footer>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/vendor/marked.min.js"></script>
   <script src="/static/vendor/gsap/gsap.min.js"></script>
   <script src="/static/pyodide-runner.js"></script>
