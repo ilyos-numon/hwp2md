@@ -100,3 +100,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 82325b7 [T-20261027-v3-backend][s2] V3 변환 화면을 /api·브라우저 모드에 연결
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:18] S3 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: b89d39c [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:20] S3 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/app.py src/hwp2md/web/static/about.html src/hwp2md/web/static/css/landing.css src/hwp2md/web/static/js/effects.js src/hwp2md/web/static/js/landing.js tests/unit/test_web_app.py 
+- 커밋: b89d39c [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
