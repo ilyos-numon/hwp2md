@@ -12,7 +12,7 @@
 
 ## 3. 발견성
 
-- [ ] 3.1 `pyproject.toml` 에 urls·keywords·classifiers·description 을 더한다
+- [x] 3.1 `pyproject.toml` 에 urls·keywords·classifiers·description 을 더한다
 - [ ] 3.2 README 배지·체험 링크·30초 데모·영문 요약·절대 URL, `CHANGELOG.md`, 버전 0.1.1, releasing·decisions 문서
 - [ ] 3.3 `.github/workflows/pages.yml` 과 이슈 템플릿
 - [ ] 3.4 `docs/launch/` 홍보 초안 2개

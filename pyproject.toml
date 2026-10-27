@@ -1,7 +1,7 @@
 [project]
 name = "hwp2markdown"
 dynamic = ["version"]
-description = "Convert HWP 5.0 documents to Markdown without Hancom Office"
+description = "Convert Korean HWP, HWPX and HWPML documents to Markdown without Hancom Office"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE", "NOTICE"]
@@ -10,6 +10,31 @@ dependencies = [
     "lxml>=5",
     "olefile>=0.46",
 ]
+keywords = ["hwp", "hwpx", "hwpml", "markdown", "converter", "korean", "hangul", "hancom", "document-conversion", "pyodide"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Natural Language :: Korean",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Office Suites",
+  "Topic :: Text Processing :: Markup :: Markdown",
+  "Topic :: Utilities",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://ilyos-numon.github.io/hwp2md/"
+Repository = "https://github.com/ilyos-numon/hwp2md"
+Issues = "https://github.com/ilyos-numon/hwp2md/issues"
+Changelog = "https://github.com/ilyos-numon/hwp2md/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 web = ["starlette>=0.37", "uvicorn>=0.30"]
