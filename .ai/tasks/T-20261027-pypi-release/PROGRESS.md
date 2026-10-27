@@ -345,3 +345,32 @@
 - 한 일: 릴리스 게이트: 사용자 U1·U2 완료, v0.1.0 게시 승인
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 2c70768 [T-20261027-pypi-release][s11] 리뷰·RESULT
+
+## [2026-10-27 16:59] S12 | hook | AUTO
+- 한 일: 도구 호출 180회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
+
+## [2026-10-27 16:59] S12 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 17:02] S12 | orchestrator | DONE
+- 한 일: R1 Release build·publish success, R2 hwp2md 0.1.0 설치 확인, R3 0.1.0 [bdist_wheel, sdist]
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
+- 다음: 마무리
+
+## [2026-10-27 17:03] S12 | orchestrator | DONE
+- 한 일: 태스크 완료: gate 5/6 + E2E 변경 항목은 게시 전 main 병합 순서로 인한 오탐(병합 전 dd3f4ed 기준 tests/e2e 10파일 변경, test_dist_package.py 추가), e2e 131 passed exit=0, validate valid
+- 변경 파일(미커밋, .ai 제외): openspec/changes/pypi-release/tasks.md 
+- 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
+- 다음: 사용자 결과 보고
+
+## [2026-10-27 17:03] S12 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): openspec/changes/pypi-release/.openspec.yaml openspec/changes/pypi-release/design.md openspec/changes/pypi-release/proposal.md openspec/changes/pypi-release/specs/distribution/spec.md openspec/changes/pypi-release/specs/web-preview/spec.md openspec/changes/pypi-release/tasks.md openspec/specs/web-preview/spec.md openspec/changes/archive/2026-10-27-pypi-release/ openspec/specs/distribution/ 
+- 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서

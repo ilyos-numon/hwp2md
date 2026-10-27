@@ -6,7 +6,7 @@
 ## Requirements
 
 ### Requirement: serve 하위 명령이 로컬 서버를 띄운다
-CLI 는 `hwp2md serve [--host HOST] [--port PORT] [--no-browser]` 를 제공해야 한다(SHALL). 기본값은 host `localhost`, port `8770` 이고, `--no-browser` 가 없으면 기본 브라우저로 화면을 연다. 준비되면 `GET /api/health` 가 `{"ok": true, "version": "<버전>"}` 를 200 으로 준다. 포트가 사용 중이면 표준 오류에 `hwp2md: error: port <PORT> already in use` 를 쓰고 종료 코드 1 로 끝난다. web extra 가 설치되지 않았으면 표준 오류에 `hwp2md[web]` 설치 안내를 쓰고 종료 코드 1 로 끝난다. 첫 인자가 `serve` 가 아니면 기존 변환 CLI 로 동작한다.
+CLI 는 `hwp2md serve [--host HOST] [--port PORT] [--no-browser]` 를 제공해야 한다(SHALL). 기본값은 host `localhost`, port `8770` 이고, `--no-browser` 가 없으면 기본 브라우저로 화면을 연다. 준비되면 `GET /api/health` 가 `{"ok": true, "version": "<버전>"}` 를 200 으로 준다. 포트가 사용 중이면 표준 오류에 `hwp2md: error: port <PORT> already in use` 를 쓰고 종료 코드 1 로 끝난다. web extra 가 설치되지 않았으면 표준 오류에 배포 이름 기준 설치 안내 `pip install 'hwp2markdown[web]'` 를 쓰고 종료 코드 1 로 끝난다. 첫 인자가 `serve` 가 아니면 기존 변환 CLI 로 동작한다.
 
 #### Scenario: 서버 기동
 - **WHEN** `hwp2md serve --no-browser --port <빈 포트>` 를 실행한다
@@ -14,7 +14,7 @@ CLI 는 `hwp2md serve [--host HOST] [--port PORT] [--no-browser]` 를 제공해�
 
 #### Scenario: web extra 없음
 - **WHEN** starlette·uvicorn import 를 막은 프로세스에서 `main(["serve", "--no-browser"])` 를 호출한다
-- **THEN** 반환값 1, 표준 오류에 `hwp2md[web]` 이 포함된다
+- **THEN** 반환값 1, 표준 오류에 `hwp2markdown[web]` 이 포함되고 `'hwp2md[web]'` 은 포함되지 않는다
 
 ### Requirement: HTTP API 는 업로드를 메모리에서만 처리한다
 서버는 `POST /api/convert?name=<파일명>` 과 `POST /api/zip?name=<파일명>` 을 제공해야 한다(SHALL). 요청 본문은 파일 원본 바이트(`application/octet-stream`)이며 multipart 를 쓰지 않는다. `/api/convert` 는 `convert_to_response` 의 status·body 를 그대로 JSON 으로 주고, `/api/zip` 은 성공 시 `application/zip` 과 `Content-Disposition: attachment; filename*=UTF-8''<percent-encoded stem>.zip` 으로 `build_zip` 바이트를, 실패 시 `/api/convert` 와 같은 오류 JSON 을 준다. `Content-Length` 가 52428800 을 넘으면 본문을 읽지 않고 413 을 준다. 서버는 업로드 바이트를 파일·임시 파일로 쓰지 않는다.
