@@ -1,7 +1,7 @@
 # PLAN — T-20261027-binaries-brew OS별 단일 실행 파일 + GitHub Release 자산 + Homebrew 탭
 
 > 작성: opus (planner) · 2026-10-27 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 환경 사실(planner 확인): 로컬 `uname -m` = arm64, Homebrew 7.0.9 있음, ruby 2.6 있음, actionlint 없음, `uv run python` = 3.12.13 (Py_ENABLE_SHARED=1). `ilyos-numon/homebrew-tap` 저장소는 아직 없음(404). PyInstaller 최신 릴리스 v6.22.3.
 
