@@ -21,9 +21,9 @@
 ## 명령 (에이전트가 그대로 실행한다 — 스택 확정 후 채운다. (none)은 그 검증 생략)
 ```
 INSTALL_CMD: uv sync && uv run playwright install chromium
-DEV_CMD: uv run hwp2md serve --no-browser --port 8765
-DEV_URL: http://localhost:8765
-DEV_READY: curl -sf http://localhost:8765/api/health >/dev/null
+DEV_CMD: uv run hwp2md serve --no-browser --port 8770
+DEV_URL: http://localhost:8770
+DEV_READY: curl -sf http://localhost:8770/api/health >/dev/null
 BUILD_CMD: (none)
 LINT_CMD: uv run ruff check src tests && uv run ruff format --check src tests
 TYPECHECK_CMD: uv run mypy src

@@ -531,7 +531,7 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 | 인자 | 기본값 |
 |---|---|
 | `--host` | `localhost` |
-| `--port` | `8765` |
+| `--port` | `8770` |
 | `--no-browser` | 끔 (= 브라우저 자동 열기) |
 
 동작 순서:
@@ -608,7 +608,7 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 
 ## 8. E. 웹 HTTP API
 
-[web/app.py](../src/hwp2md/web/app.py). Starlette 앱, `hwp2md serve` 로 띄운다. 기본 `http://localhost:8765`.
+[web/app.py](../src/hwp2md/web/app.py). Starlette 앱, `hwp2md serve` 로 띄운다. 기본 `http://localhost:8770`.
 
 ### 8.1 라우트
 
