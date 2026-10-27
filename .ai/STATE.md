@@ -4,7 +4,7 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: T-20261027-v3-backend (V3 프론트엔드를 실제 백엔드에 연결)
+- 현재 태스크: T-20261027-v3-backend
 - 마지막 완료: T-20261023-extract-dropped (main 병합·푸시 완료, f80a6a3)
 - 플랜: `.ai/tasks/T-20261027-v3-backend/PLAN.md` (상태: APPROVED, §7 기본값 자동 승인)
 - OpenSpec: `openspec/changes/v3-backend/`
