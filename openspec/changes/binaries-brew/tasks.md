@@ -11,7 +11,7 @@
 
 ## 3. 문서와 버전
 
-- [ ] 3.1 README·README.en 설치 절(brew·실행 파일·Gatekeeper/SmartScreen), `docs/releasing.md`, `CHANGELOG.md` 0.1.4, `__version__` 0.1.4
+- [x] 3.1 README·README.en 설치 절(brew·실행 파일·Gatekeeper/SmartScreen), `docs/releasing.md`, `CHANGELOG.md` 0.1.4, `__version__` 0.1.4
 
 ## 4. 릴리스 워크플로우
 

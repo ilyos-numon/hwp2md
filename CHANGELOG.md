@@ -2,6 +2,13 @@
 
 이 프로젝트의 주요 변경을 기록한다. 형식은 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 를 따르고, 버전은 [Semantic Versioning](https://semver.org/) 을 따른다.
 
+## [0.1.4] - 2026-10-27
+
+### Added
+- Python 없이 쓰는 OS별 단일 실행 파일(Windows x64·macOS arm64·macOS x64·Linux x64)을 GitHub Release 자산으로 배포한다. 같은 릴리스에 `SHA256SUMS` 를 함께 올린다. 실행 파일은 PyInstaller 로 만들고 각 OS 러너에서 스모크 테스트를 통과한 것만 올린다.
+- Homebrew 탭: `brew install ilyos-numon/tap/hwp2md`. formula 는 `scripts/update_formula.py` 가 Release 의 `SHA256SUMS` 로 생성한다.
+- README 에 실행 파일 내려받기·macOS 격리 해제·Windows SmartScreen·체크섬 확인 안내.
+
 ## [0.1.3] - 2026-10-27
 
 ### Added
@@ -35,6 +42,7 @@
 - 로컬 웹 미리보기 `hwp2md serve` (extra `web`): 서버 모드와 브라우저 안에서만 처리하는 Pyodide 모드.
 - 배포용 문서 변환, DRM·비밀번호 문서 거부, 변환하지 못한 요소의 건너뜀 보고.
 
+[0.1.4]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.0...v0.1.1

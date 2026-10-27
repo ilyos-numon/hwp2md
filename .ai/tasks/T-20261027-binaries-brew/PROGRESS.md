@@ -70,3 +70,9 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 4c7bcdf [T-20261027-binaries-brew][s3] Homebrew formula 생성기
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 20:59] S4 | implementer(opus) | DONE
+- 한 일: README·README.en Python 없이 소절, releasing binaries·탭 갱신, CHANGELOG 0.1.4, __version__ 0.1.4. unit 828, e2e 12
+- 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.en.md README.md docs/releasing.md src/hwp2md/__init__.py 
+- 커밋: be379f7 [T-20261027-binaries-brew][S4][wip] auto checkpoint (stop)
+- 다음: S5
