@@ -49,3 +49,19 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 6b1e797 [T-20261027-v3-backend][s1] vendor GSAP·글꼴·라이선스 동봉
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:12] S2 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 81a9365 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:14] S2 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/index.html src/hwp2md/web/static/style.css src/hwp2md/web/static/css/ src/hwp2md/web/static/js/ 
+- 커밋: 81a9365 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:17] S2 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/css/app.css src/hwp2md/web/static/css/base.css src/hwp2md/web/static/index.html src/hwp2md/web/static/js/app.js src/hwp2md/web/static/js/theme.js src/hwp2md/web/static/style.css 
+- 커밋: 81a9365 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
