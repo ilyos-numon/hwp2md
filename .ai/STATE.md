@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S9 게이트 전 전체 검증
-- 상태: RUNNING
+- 현재 단계: S10 게이트 (사용자 승인 대기)
+- 상태: BLOCKED
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S9(게이트 전 전체 검증·브랜치 CI)부터. S10 은 사용자 승인 게이트
+1. 사용자 "force-push 와 공개 전환 승인" 받으면 PLAN §5 Stage 10 절차 3번(main 병합)부터. 백업 /Users/illi/hwp2md-backups/
 
 ## 차단 중이면
-- 이유: 없음 · 사용자 결정 필요: 없음 (S10 에서 게이트)
+- 이유: 승인 게이트 · 사용자 결정 필요: 이력 재작성 force-push + 저장소 공개
