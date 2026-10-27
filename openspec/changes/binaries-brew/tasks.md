@@ -2,7 +2,7 @@
 
 ## 1. 빌더와 빌드 스크립트
 
-- [ ] 1.1 `docs/decisions.md` 에 빌더 비교(PyInstaller·Nuitka·PyApp)와 결정, 출처 URL 을 남긴다
+- [x] 1.1 `docs/decisions.md` 에 빌더 비교(PyInstaller·Nuitka·PyApp)와 결정, 출처 URL 을 남긴다
 - [ ] 1.2 `scripts/build_binary.py` 와 `packaging/pyinstaller/hwp2md_entry.py` 를 쓰고 로컬 macOS arm64 실행 파일을 빌드한다
 
 ## 2. Homebrew formula 생성기

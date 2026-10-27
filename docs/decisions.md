@@ -159,3 +159,24 @@
 ## 2026-10-27 웹 화면 영어 지원: 의존성 없는 사전 + data-i18n
 - 결정: 변환·소개 화면에 영어를 더한다. 언어는 `?lang=` → 저장값 → 브라우저 언어 순으로 정하고 헤더 KO/EN 버튼으로 바꾼다. 라이브러리 없이 `js/i18n.js` 의 사전과 HTML 의 `data-i18n*` 표기로 처리하고, HTML 원문 한국어를 ko 값으로 쓴다. 서버·엔진이 주는 건너뜀 라벨, CLI 출력, HTTP API 는 번역하지 않는다. 기존 브라우저 E2E 는 `browser.new_context(locale="ko-KR")` 로 언어를 고정한다. README 영어판은 `README.en.md` 로 따로 두고 PyPI 설명은 README.md 그대로 둔다.
 - 이유: 공개 저장소·체험 사이트는 한국어를 읽지 못하는 방문자도 쓸 수 있어야 한다. 번역할 문구가 두 화면뿐이라 i18n 라이브러리를 들이면 정적 사이트 번들과 동봉 자원만 늘어난다. 원문을 HTML 에 그대로 두면 한국어 화면이 바이트 단위로 바뀌지 않아 기존 E2E 단언을 고치지 않아도 된다. Playwright Chromium 의 기본 언어는 호스트를 따르므로(CI ubuntu 는 `en-US`) locale 을 고정하지 않으면 한국어 단언이 환경에 따라 깨진다. 이는 테스트 환경을 고정하는 것이고 단언은 한 글자도 바꾸지 않았다.
+
+## 2026-10-27 단일 실행 파일 빌더: PyInstaller onefile
+- 결정: Python 없이 쓰는 OS별 단일 실행 파일은 PyInstaller 6.22.3 의 `--onefile` 로 만든다(`scripts/build_binary.py`, 진입점 `packaging/pyinstaller/hwp2md_entry.py`). PyInstaller 는 프로젝트 의존성에 넣지 않고 `uv run --with pyinstaller==6.22.3` 로만 쓴다. 웹 화면 정적 파일과 `/pkg/hwp2md.zip` 이 읽는 `hwp2md`·`olefile` 의 `.py` 원본은 빌드 때 stage 디렉터리로 복사해 `--add-data` 로 동봉하고, 앱 코드는 고치지 않는다. 대상은 windows-x64·macos-arm64·macos-x64·linux-x64 네 가지이고 코드 서명·공증은 하지 않는다.
+- 비교 (2026-10-27 GitHub API 기준):
+
+| 후보 | stars | 최근 push | 라이선스 | 의존성·툴체인 | 통합 난이도 |
+|------|-------|-----------|----------|---------------|-------------|
+| PyInstaller 6.22.3 | 13,136 | 2026-10-25 | GPL-2.0-or-later + 부트로더 예외 (산출물 라이선스 제약 없음) | pip 패키지 + pyinstaller-hooks-contrib, C 컴파일러 불필요 | 낮음: lxml·uvicorn hook 기본 제공, `--add-data` 로 static·`.py` 동봉, 빌드 1~3분 |
+| Nuitka | 15,207 | 2026-10-26 | GitHub 표기 AGPL-3.0 (이전 Apache-2.0, 재확인 필요) | C 컴파일러(MSVC/clang/gcc) 필수, onefile 은 zstandard | 중~높음: OS마다 빌드 10~30분, data 파일·`.py` 원본 별도 지정, 시작 속도는 유리 |
+| PyApp | 2,039 | 2026-10-12 | MIT / Apache-2.0 (GitHub 미검출) | Rust 툴체인, 런타임에 Python 배포본·의존성 설치 | 중: 기본은 첫 실행 때 네트워크로 Python·패키지를 설치해 "오프라인 단일 파일" 목표와 어긋남, 완전 임베드는 설정이 복잡 |
+
+- 이유: C 컴파일러·Rust 툴체인 없이 네 OS 러너에서 같은 명령으로 빌드되고, 사용하는 lxml·uvicorn 의 hook 이 이미 있어 통합 비용이 가장 낮다. 부트로더 예외 덕분에 MIT 인 이 프로젝트의 실행 파일 배포에 라이선스 제약이 없다. Nuitka 는 빌드 시간과 컴파일러 의존이 크고 라이선스 표기를 다시 확인해야 하며, PyApp 은 첫 실행에 네트워크가 필요해 목표와 맞지 않는다.
+- 출처:
+  - https://github.com/pyinstaller/pyinstaller
+  - https://pyinstaller.org/en/stable/license.html
+  - https://github.com/Nuitka/Nuitka
+  - https://github.com/ofek/pyapp
+
+## 2026-10-27 Homebrew: 바이너리 formula + 수동 탭 갱신
+- 결정: Homebrew 는 공개 탭 저장소 `ilyos-numon/homebrew-tap` 에 Release 실행 파일(macos-arm64·macos-x64·linux-x64)을 그대로 내려받는 바이너리 formula 를 둔다. formula 는 `scripts/update_formula.py` 가 Release 의 `SHA256SUMS` 로 생성하고, 탭 갱신은 릴리스 뒤 수동으로 push 한다(크로스 저장소 토큰을 두지 않는다). Homebrew core·cask 등록은 하지 않는다.
+- 이유: Python 리소스 방식은 `lxml` 이 소스 빌드되면 libxml2·libxslt 의존과 빌드 시간이 생기고, 의존성마다 `resource` 블록(url·sha256)을 릴리스마다 갱신해야 한다. 바이너리 formula 는 이미 러너 스모크를 통과한 같은 실행 파일을 쓰므로 검증 대상이 하나로 줄어든다. 탭 자동 갱신은 다른 저장소에 쓰는 PAT 를 secret 으로 둬야 해서 이번 범위에서 뺐다.
