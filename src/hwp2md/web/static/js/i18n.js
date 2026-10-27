@@ -96,6 +96,10 @@
     "convert.foot_limits_pre": "Elements that cannot be converted, and why, are listed in the ",
     "convert.foot_limits_link": "extraction limits document",
     "convert.foot_limits_post": ".",
+    "convert.link_github": "GitHub",
+    "convert.link_github_label": "GitHub repository (opens in a new tab)",
+    "convert.link_pypi": "PyPI",
+    "convert.link_pypi_label": "PyPI package (opens in a new tab)",
   };
 
   const extra = window.HWP2MD_I18N_EXTRA;

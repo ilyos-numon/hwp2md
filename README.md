@@ -3,6 +3,8 @@
 [![Python](https://badgen.net/pypi/python/hwp2markdown)](https://pypi.org/project/hwp2markdown/)
 [![CI](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml)
 [![Downloads](https://static.pepy.tech/badge/hwp2markdown/month)](https://pepy.tech/projects/hwp2markdown)
+[![Total downloads](https://static.pepy.tech/badge/hwp2markdown)](https://pepy.tech/projects/hwp2markdown)
+[![GitHub stars](https://badgen.net/github/stars/ilyos-numon/hwp2md)](https://github.com/ilyos-numon/hwp2md/stargazers)
 [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://github.com/ilyos-numon/hwp2md/blob/main/LICENSE)
 **English:** [README.en.md](https://github.com/ilyos-numon/hwp2md/blob/main/README.en.md)
 
@@ -18,6 +20,7 @@
 
 ## 30초 데모
 
+- 설치 없이 한 줄로 실행: `uvx --from hwp2markdown hwp2md 문서.hwp -o out/` ([uv](https://docs.astral.sh/uv/) 필요)
 - 설치 없이: https://ilyos-numon.github.io/hwp2md/ 에서 "변환 도구 열기" 를 누르고 HWP·HWPX 파일을 끌어다 놓는다.
 - 설치해서:
 
@@ -44,6 +47,8 @@ hwp2md 는 이 문제를 이렇게 푼다.
 ## 빠른 시작
 
 ### 설치
+
+설치 없이 한 줄로 실행하려면 `uvx --from hwp2markdown hwp2md 문서.hwp -o out/` 를 쓴다. [uv](https://docs.astral.sh/uv/) 가 필요하다.
 
 PyPI 배포 이름은 `hwp2markdown` 이다. 설치 후 명령과 import 이름은 `hwp2md` 다. Python 3.11 이상이 필요하다.
 

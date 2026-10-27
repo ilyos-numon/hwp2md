@@ -149,5 +149,9 @@ window.HWP2MD_I18N_EXTRA = {
 
     "about.footer": "<b>hwp2md</b> · HWP, HWPX and HWPML to Markdown without Hancom Office<br>This product was developed with reference to the HWP (.hwp) document file format specification published by Hancom Inc. (본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.)",
     "about.footer_nav_label": "Footer",
+    "about.link_github": "GitHub",
+    "about.link_github_label": "GitHub repository (opens in a new tab)",
+    "about.link_pypi": "PyPI",
+    "about.link_pypi_label": "PyPI package (opens in a new tab)",
   },
 };
