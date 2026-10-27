@@ -4,15 +4,16 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: 없음
-- 마지막 완료: T-20261027-adoption-links (배지·uvx 안내·링크, PyPI 0.1.3) — RESULT: `.ai/tasks/T-20261027-adoption-links/RESULT.md`
-- 플랜: DONE
-- 현재 단계: 없음
-- 상태: IDLE
-- 브랜치: `main` (공개 저장소, 태그 v0.1.0~v0.1.3)
+- 현재 태스크: T-20261027-binaries-brew
+- 마지막 완료: T-20261027-adoption-links (PyPI 0.1.3)
+- 플랜: `.ai/tasks/T-20261027-binaries-brew/PLAN.md` (APPROVED, §7 기본값 + Q1 PyInstaller 사용자 확인)
+- OpenSpec: `openspec/changes/binaries-brew/`
+- 현재 단계: S1 빌더 결정 기록
+- 상태: RUNNING
+- 브랜치: `ai/T-20261027-binaries-brew`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 새 작업은 `/plan`. 후보: Homebrew 탭, OS별 단일 실행 파일, docs/launch 초안 게시(사용자), Python 3.14 손상 zip 문구, 실제 차트 HWP 샘플
+1. `/implement` S1부터. S8 탭 저장소 생성이 막히면 사용자 U1(웹에서 생성)
 
 ## 차단 중이면
 - 이유: 없음
