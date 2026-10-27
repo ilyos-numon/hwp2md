@@ -9,11 +9,11 @@
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
 - 현재 단계: S3 정적 빌드 스크립트
-- 상태: RUNNING
+- 상태: PAUSED (사용자 지시로 중단 2026-10-27)
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S3부터. S10(이력 재작성 force-push + 공개 전환)은 사용자 승인 게이트
+1. `/resume` → S3(정적 빌드 scripts/build_pages.py + tests/unit/test_build_pages.py)부터. S1·S2 완료(8fd9d53). S10 은 사용자 승인 게이트(이력 재작성 force-push + 공개 전환)
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (S10 에서 게이트)
