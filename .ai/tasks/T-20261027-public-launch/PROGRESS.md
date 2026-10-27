@@ -501,3 +501,9 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 1968d54 [T-20261027-public-launch][s17] 로컬 재검증 기록
 - 다음: S18 v0.1.1 태그(사용자 실행)
+
+## [2026-10-27 19:47] S18 | orchestrator | RETRY
+- 한 일: v0.1.1 은 영어 지원 전(0a1388c)에 이미 태그·PyPI 게시됨 확인 → 영어판은 0.1.2: __version__ 0.1.2, CHANGELOG [0.1.2] 신설(영어 지원·제목 중복 수정). unit 820, check_dist --tag v0.1.2 OK, twine PASSED
+- 변경 파일(미커밋, .ai 제외): CHANGELOG.md src/hwp2md/__init__.py 
+- 커밋: 420b9a6 [T-20261027-public-launch][s17] 재검증·main push·Pages 재배포 기록
+- 다음: main push → CI → v0.1.2 태그

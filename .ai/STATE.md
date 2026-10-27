@@ -8,7 +8,7 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S18 v0.1.1 태그 (사용자 실행 대기)
+- 현재 단계: S18 v0.1.2 릴리스 (v0.1.1 은 영어 전 판으로 이미 게시)
 - 상태: BLOCKED
 - 브랜치: `ai/T-20261027-public-launch`
 
