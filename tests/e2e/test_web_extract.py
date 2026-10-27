@@ -8,9 +8,9 @@ from pathlib import Path
 
 import httpx
 import pytest
-from conftest import WebServer
 from playwright.sync_api import Browser, BrowserContext, Page, sync_playwright
 
+from conftest import WebServer
 from synth_hwp5 import write_hwp5
 from synth_hwpml import write_hwpml
 from synth_hwpx import write_hwpx

@@ -272,7 +272,7 @@
 - 커밋: 6e3ff64 [T-20261027-pypi-release][s9] 배포물 E2E
 
 ## [2026-10-27 16:23] S9 | orchestrator | RETRY
-- 한 일: S9 커밋 후 sanitize 실패 발견(localhost 2곳) → localhost 로 교체, 4 passed·lint·sanitize OK
+- 한 일: S9 커밋 후 sanitize 실패 발견(루프백 IP 리터럴 2곳) → localhost 로 교체, 4 passed·lint·sanitize OK
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_dist_package.py 
 - 커밋: 6e3ff64 [T-20261027-pypi-release][s9] 배포물 E2E
 - 다음: S10
@@ -288,3 +288,10 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: d5cf64b [T-20261027-pypi-release][s9] 배포물 E2E 루프백 주소를 localhost 로 (sanitize)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:27] S10 | orchestrator | RETRY
+- 한 일: CI run 40466891237: lint(import 정렬, 로컬 ruff 캐시가 가림)·unit 3.11/3.13(test_port_available_after_time_wait, Linux 는 TIME_WAIT 소켓에도 SO_REUSEADDR 필요) 실패 → test_web_extract import 정렬, 테스트 리스너에 SO_REUSEADDR(uvicorn 동일). 로컬 --no-cache lint·unit 815 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_extract.py tests/unit/test_web_app.py 
+- 커밋: 7005fed [T-20261027-pypi-release][S10][wip] auto checkpoint (stop)
+- 다음: push 후 CI 재확인
+- 메모: environments total_count=0 (U2 미완)
