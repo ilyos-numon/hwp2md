@@ -16,4 +16,4 @@
 1. 사용자 "force-push 와 공개 전환 승인" 받으면 PLAN §5 Stage 10 절차 3번(main 병합)부터. 백업 /Users/illi/hwp2md-backups/
 
 ## 차단 중이면
-- 이유: force-push 가 세션 권한 설정에 막힘 · 사용자: 허용 또는 직접 push
+- 이유: 공개 전환이 세션 권한에 막힘 · 사용자: Settings → Change visibility → Public 후 "공개했어"
