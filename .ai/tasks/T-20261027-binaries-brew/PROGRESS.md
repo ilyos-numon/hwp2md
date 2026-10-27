@@ -37,3 +37,14 @@
 - 변경 파일(미커밋, .ai 제외): packaging/ scripts/build_binary.py 
 - 커밋: 3f97129 [T-20261027-binaries-brew][s1] 빌더 결정 기록
 - 다음: S3
+
+## [2026-10-27 20:56] S3 | orchestrator | START
+- 한 일: formula 생성기
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: ac76054 [T-20261027-binaries-brew][s2] PyInstaller 빌드 스크립트
+
+## [2026-10-27 20:56] S3 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: ac76054 [T-20261027-binaries-brew][s2] PyInstaller 빌드 스크립트
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
