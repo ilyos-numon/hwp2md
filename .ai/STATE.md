@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S10 게이트 (사용자 승인 대기)
-- 상태: BLOCKED
+- 현재 단계: S11 Pages 활성화
+- 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자 "force-push 와 공개 전환 승인" 받으면 PLAN §5 Stage 10 절차 3번(main 병합)부터. 백업 /Users/illi/hwp2md-backups/
+1. S11 Pages 활성화부터 (저장소 공개 완료)
 
 ## 차단 중이면
-- 이유: 공개 전환이 세션 권한에 막힘 · 사용자: Settings → Change visibility → Public 후 "공개했어"
+- 이유: 없음

@@ -20,7 +20,7 @@
 ## 4. 공개
 
 - [x] 4.1 게이트 전 전체 검증과 브랜치 CI
-- [ ] 4.2 [사용자 승인] bundle 백업 → main 병합 → filter-repo → 이력 검사 → force-push → 공개 전환
+- [x] 4.2 [사용자 승인] bundle 백업 → main 병합 → filter-repo → 이력 검사 → force-push → 공개 전환
 - [ ] 4.3 Pages 활성화와 배포 확인
 
 ## 5. 릴리스와 마감
