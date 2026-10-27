@@ -31,3 +31,9 @@
 - 변경 파일(미커밋, .ai 제외): docs/decisions.md packaging/ scripts/build_binary.py 
 - 커밋: 2398153 [T-20261027-binaries-brew][S1][wip] auto checkpoint (stop)
 - 다음: S2
+
+## [2026-10-27 20:56] S2 | implementer(opus) | DONE
+- 한 일: build_binary.py·hwp2md_entry.py, macos-arm64 17.6MiB 7초, --version·not-HWP rc=3·serve health·pkg zip 2·LANG=C 변환 OK
+- 변경 파일(미커밋, .ai 제외): packaging/ scripts/build_binary.py 
+- 커밋: 3f97129 [T-20261027-binaries-brew][s1] 빌더 결정 기록
+- 다음: S3
