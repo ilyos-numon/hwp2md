@@ -29,4 +29,4 @@
 ## 7. 배포물 검증과 기록
 
 - [x] 7.1 Release 자산 체크섬·실행 파일 스모크, `brew install`·`brew test`, 다른 OS 러너 스모크 로그를 확인한다
-- [ ] 7.2 리뷰와 RESULT 기록
+- [x] 7.2 리뷰와 RESULT 기록

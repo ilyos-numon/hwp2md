@@ -171,3 +171,26 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: b2431a9 [T-20261027-binaries-brew][s9] 탭 push·brew install/test 확인
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 21:20] S10 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8b582be [T-20261027-binaries-brew][S10][wip] auto checkpoint (stop)
+
+## [2026-10-27 21:21] S10 | reviewer(sonnet) | DONE
+- 한 일: VERDICT PASS, FINDINGS none, formula sha256 = 실제 SHA256SUMS
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8b582be [T-20261027-binaries-brew][S10][wip] auto checkpoint (stop)
+- 다음: RESULT
+
+## [2026-10-27 21:21] S10 | orchestrator | DONE
+- 한 일: 태스크 완료: 리뷰 PASS, validate valid
+- 변경 파일(미커밋, .ai 제외): openspec/changes/binaries-brew/tasks.md 
+- 커밋: 8b582be [T-20261027-binaries-brew][S10][wip] auto checkpoint (stop)
+- 다음: 사용자 보고
+
+## [2026-10-27 21:21] S10 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): openspec/changes/binaries-brew/.openspec.yaml openspec/changes/binaries-brew/design.md openspec/changes/binaries-brew/proposal.md openspec/changes/binaries-brew/specs/binary-distribution/spec.md openspec/changes/binaries-brew/tasks.md openspec/changes/archive/2026-10-27-binaries-brew/ openspec/specs/binary-distribution/ 
+- 커밋: 8b582be [T-20261027-binaries-brew][S10][wip] auto checkpoint (stop)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
