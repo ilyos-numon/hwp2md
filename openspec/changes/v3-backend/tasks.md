@@ -2,9 +2,9 @@
 
 ## 1. 외부 자원 동봉
 
-- [ ] 1.1 GSAP 3.13.0 스크립트 4개와 라이선스 안내를 `static/vendor/gsap/` 에 둔다
-- [ ] 1.2 Pretendard Variable·JetBrains Mono woff2 와 OFL 전문, `fonts.css` 를 `static/vendor/fonts/` 에 두거나 실패 경로(시스템 글꼴)로 기록한다
-- [ ] 1.3 marked MIT 라이선스 파일과 `vendor/README.md`(원본 URL·버전·SHA-256)를 쓴다
+- [x] 1.1 GSAP 3.13.0 스크립트 4개와 라이선스 안내를 `static/vendor/gsap/` 에 둔다
+- [x] 1.2 Pretendard Variable·JetBrains Mono woff2 와 OFL 전문, `fonts.css` 를 `static/vendor/fonts/` 에 두거나 실패 경로(시스템 글꼴)로 기록한다
+- [x] 1.3 marked MIT 라이선스 파일과 `vendor/README.md`(원본 URL·버전·SHA-256)를 쓴다
 
 ## 2. 변환 화면
 

@@ -20,3 +20,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 8ecbc3f [T-20261027-v3-backend][record] PROGRESS 위치 정정
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:10] S1 | hook | AUTO
+- 한 일: 도구 호출 15회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1cc5cd5 [T-20261027-v3-backend][S1][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:12] S1 | implementer(opus) | DONE
+- 한 일: GSAP 4·글꼴 4·라이선스·README 동봉 (2.4M). Pretendard LICENSE 실제 위치 dist/LICENSE.txt
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/vendor/README.md src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Medium.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Regular.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-SemiBold.woff2 src/hwp2md/web/static/vendor/fonts/OFL-JetBrainsMono.txt src/hwp2md/web/static/vendor/fonts/OFL-Pretendard.txt src/hwp2md/web/static/vendor/fonts/PretendardVariable.woff2 src/hwp2md/web/static/vendor/fonts/fonts.css src/hwp2md/web/static/vendor/gsap/LICENSE.md src/hwp2md/web/static/vendor/gsap/ScrambleTextPlugin.min.js src/hwp2md/web/static/vendor/gsap/ScrollTrigger.min.js src/hwp2md/web/static/vendor/gsap/SplitText.min.js src/hwp2md/web/static/vendor/gsap/gsap.min.js src/hwp2md/web/static/vendor/marked.LICENSE.md 
+- 커밋: 1cc5cd5 [T-20261027-v3-backend][S1][wip] auto checkpoint (stop)
+- 다음: S2
+- 메모: FONT_FALLBACK 아님, GSAP 재다운로드 바이트 일치
+
+## [2026-10-27 14:12] S1 | orchestrator | DONE
+- 한 일: vendor 자원 내려받기와 라이선스 동봉 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/vendor/README.md src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Medium.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Regular.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-SemiBold.woff2 src/hwp2md/web/static/vendor/fonts/OFL-JetBrainsMono.txt src/hwp2md/web/static/vendor/fonts/OFL-Pretendard.txt src/hwp2md/web/static/vendor/fonts/PretendardVariable.woff2 src/hwp2md/web/static/vendor/fonts/fonts.css src/hwp2md/web/static/vendor/gsap/LICENSE.md src/hwp2md/web/static/vendor/gsap/ScrambleTextPlugin.min.js src/hwp2md/web/static/vendor/gsap/ScrollTrigger.min.js src/hwp2md/web/static/vendor/gsap/SplitText.min.js src/hwp2md/web/static/vendor/gsap/gsap.min.js src/hwp2md/web/static/vendor/marked.LICENSE.md 
+- 커밋: 1cc5cd5 [T-20261027-v3-backend][S1][wip] auto checkpoint (stop)
+- 다음: S2 시작
