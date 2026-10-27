@@ -2,7 +2,7 @@
 
 ## 1. 공개 전 설정
 
-- [ ] 1.1 `.gitignore` 에 `dist-pages/` 추가, `CLAUDE.md` 내부 메모 절 삭제, GitHub 저장소 description·homepage·topics 설정
+- [x] 1.1 `.gitignore` 에 `dist-pages/` 추가, `CLAUDE.md` 내부 메모 절 삭제, GitHub 저장소 description·homepage·topics 설정
 
 ## 2. 정적 사이트
 
