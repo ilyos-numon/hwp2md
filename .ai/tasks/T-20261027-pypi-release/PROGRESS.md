@@ -224,3 +224,16 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 59c2faf [T-20261027-pypi-release][s7] 릴리스 워크플로우 (Trusted Publishing)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:19] S8 | implementer(opus) | DONE
+- 한 일: README 설치·한계·로드맵, docs/releasing.md, decisions 2항목, feature-reference 539, web/__init__ docstring. C2·C12·unit 815 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md docs/feature-reference.md src/hwp2md/web/__init__.py docs/releasing.md 
+- 커밋: 0d746d2 [T-20261027-pypi-release][S8][wip] auto checkpoint (stop)
+- 다음: S9
+- 메모: decisions.md 60행 옛 extra 표기 정정
+
+## [2026-10-27 16:19] S8 | orchestrator | DONE
+- 한 일: 설치·릴리스 문서 검증 통과
+- 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md docs/feature-reference.md src/hwp2md/web/__init__.py docs/releasing.md 
+- 커밋: 0d746d2 [T-20261027-pypi-release][S8][wip] auto checkpoint (stop)
+- 다음: S9 시작

@@ -24,8 +24,8 @@
 
 ## 6. 문서
 
-- [ ] 6.1 README 설치·한계·로드맵, `docs/feature-reference.md`·`docs/decisions.md`·`src/hwp2md/web/__init__.py` 안내 문자열 갱신
-- [ ] 6.2 `docs/releasing.md` 에 사용자 수동 절차와 릴리스 절차를 쓴다
+- [x] 6.1 README 설치·한계·로드맵, `docs/feature-reference.md`·`docs/decisions.md`·`src/hwp2md/web/__init__.py` 안내 문자열 갱신
+- [x] 6.2 `docs/releasing.md` 에 사용자 수동 절차와 릴리스 절차를 쓴다
 
 ## 7. 검증
 

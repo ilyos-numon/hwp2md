@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-v3-backend (main 병합·푸시 6b75180)
 - 플랜: `.ai/tasks/T-20261027-pypi-release/PLAN.md` (상태: APPROVED, §7 기본값)
 - OpenSpec: `openspec/changes/pypi-release/`
-- 현재 단계: S8 설치·릴리스 문서
+- 현재 단계: S9 E2E
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-pypi-release`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S8부터. 사용자 수동 U1·U2 는 S12 전까지
+1. `/implement` S9부터. 사용자 수동 U1·U2 는 S12 전까지
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음
