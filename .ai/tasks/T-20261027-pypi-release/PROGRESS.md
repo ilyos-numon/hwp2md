@@ -160,3 +160,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 76fe4e4 [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
 - 다음: S6 시작
+
+## [2026-10-27 16:15] S6 | orchestrator | START
+- 한 일: CI 워크플로우
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 7c19a95 [T-20261027-pypi-release][s5] real_samples 마커와 CI 수집 오류 제거
+
+## [2026-10-27 16:16] S6 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 7c19a95 [T-20261027-pypi-release][s5] real_samples 마커와 CI 수집 오류 제거
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
