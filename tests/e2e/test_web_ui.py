@@ -9,12 +9,15 @@ from collections.abc import Callable, Iterator
 from pathlib import Path
 
 import pytest
-from conftest import REAL_SAMPLES, WebServer
 from playwright.sync_api import Browser, BrowserContext, Page, Request, sync_playwright
+
+from conftest import REAL_SAMPLES, WebServer
 
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
-IMAGE_HWPX = next(p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더"))
+IMAGE_HWPX = next(
+    (p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더")), None
+)
 # 이미지 샘플을 마지막에 두어 스크린샷에 그림·표가 보이게 한다.
 ORDERED_SAMPLES = [p for p in REAL_SAMPLES if p != IMAGE_HWPX] + [IMAGE_HWPX]
 
@@ -135,6 +138,7 @@ def _write_not_hwp(tmp_path: Path) -> Path:
     return bad
 
 
+@pytest.mark.real_samples
 def test_server_mode_preview(server_page: Page) -> None:
     page = server_page
     status = page.locator("#mode-status")
@@ -161,6 +165,7 @@ def test_server_mode_preview(server_page: Page) -> None:
     _screenshot(page, "web_server_preview.png")
 
 
+@pytest.mark.real_samples
 def test_drop_event(server_page: Page) -> None:
     data = list(IMAGE_HWPX.read_bytes())
     server_page.evaluate(
@@ -180,6 +185,7 @@ def test_drop_event(server_page: Page) -> None:
     assert server_page.locator("#preview table").count() == 8
 
 
+@pytest.mark.real_samples
 def test_server_mode_zip_download(server_page: Page, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"
     md_path = _cli_md(IMAGE_HWPX, out_dir, run_cli)
@@ -207,6 +213,7 @@ def test_error_display(server_page: Page, tmp_path: Path) -> None:
     _screenshot(server_page, "web_error.png")
 
 
+@pytest.mark.real_samples
 def test_browser_mode_sends_no_file(
     browser: Browser, web_server: WebServer, browser_page: Page
 ) -> None:
@@ -259,6 +266,7 @@ def test_browser_mode_sends_no_file(
     assert api == []
 
 
+@pytest.mark.real_samples
 def test_modes_produce_identical_markdown(
     server_page: Page, browser_page: Page, tmp_path: Path, run_cli: RunCli
 ) -> None:
@@ -273,6 +281,7 @@ def test_modes_produce_identical_markdown(
         assert server_raw == cli_md, sample.name
 
 
+@pytest.mark.real_samples
 def test_browser_mode_zip_matches_server(server_page: Page, browser_page: Page) -> None:
     """jsDelivr CDN 접근 필요 (Pyodide 로드)."""
     _convert_ok(server_page, IMAGE_HWPX)
