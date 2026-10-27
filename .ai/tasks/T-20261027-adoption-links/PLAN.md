@@ -1,6 +1,6 @@
 # PLAN — T-20261027-adoption-links 사용 현황 배지·uvx 안내·프로젝트 링크, 0.1.3
 
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)  · 사용자 지시 "Discussion 여는거 하지마. 나머지 다해"
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)  · 사용자 지시 "Discussion 여는거 하지마. 나머지 다해"
 > 작은 문서·링크 변경이라 OpenSpec 없이 진행 (동작 변경 없음: 외부 요청 0, 기존 문구·id 불변)
 
 ## 범위

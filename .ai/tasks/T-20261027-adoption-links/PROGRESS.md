@@ -25,3 +25,9 @@
 - 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.en.md README.md src/hwp2md/__init__.py src/hwp2md/web/static/about.html src/hwp2md/web/static/index.html src/hwp2md/web/static/js/i18n-about.js src/hwp2md/web/static/js/i18n.js tests/e2e/test_project_links.py 
 - 커밋: e5547db [T-20261027-adoption-links][plan] 사용 현황 배지·uvx 안내·프로젝트 링크, 0.1.3
 - 다음: main push → CI·Pages → v0.1.3 태그
+
+## [2026-10-27 20:33] S3 | orchestrator | DONE
+- 한 일: CI 40496517738·Pages 40496485419 success, v0.1.3 Release 40496761182 build·publish success, pip 설치·uvx 모두 hwp2md 0.1.3, 실제 사이트 PyPI 링크 1
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 834f244 [T-20261027-adoption-links][s1] 배지·uvx 안내·프로젝트 링크, 버전 0.1.3
+- 다음: 완료
