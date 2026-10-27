@@ -212,6 +212,7 @@ def test_truncated_picture_record_exit_1(tmp_path: Path, run_cli: RunCli) -> Non
     assert not (out_dir / "broken_images").exists()
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("real", REAL_HWP5 + REAL_HWPX, ids=lambda p: p.name)
 def test_real_fixture_images(real: Path, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"

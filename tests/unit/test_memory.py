@@ -36,13 +36,14 @@ from synth_hwp5 import FIXTURE_PARAGRAPHS, write_hwp5
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 SAMPLES = LEGACY_SAMPLES
 SAMPLE_IDS = [p.name for p in SAMPLES]
-BROTHER = next(p for p in SAMPLES if p.name.startswith("브라더"))
+BROTHER = next((p for p in SAMPLES if p.name.startswith("브라더")), None)
 
 
 def _synth_bytes(tmp_path: Path, **kwargs: Any) -> bytes:
     return write_hwp5(tmp_path / "sample.hwp", FIXTURE_PARAGRAPHS, **kwargs).read_bytes()
 
 
+@pytest.mark.real_samples
 def test_sample_count() -> None:
     assert len(SAMPLES) == 5
 
@@ -73,6 +74,7 @@ def test_new_errors_are_hwp2md_errors() -> None:
     assert issubclass(InputTooLargeError, Hwp2mdError)
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("path", SAMPLES, ids=SAMPLE_IDS)
 def test_same_as_convert(path: Path, tmp_path: Path) -> None:
     disk = convert(path, tmp_path)
@@ -91,6 +93,7 @@ def test_same_as_convert(path: Path, tmp_path: Path) -> None:
     assert [i.data for i in mem.images] == [f.read_bytes() for f in disk.image_files]
 
 
+@pytest.mark.real_samples
 def test_brother_image() -> None:
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
     assert len(result.images) == 1
@@ -133,6 +136,7 @@ def _block_disk_writes(monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(tempfile, name, forbid)
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("path", SAMPLES, ids=SAMPLE_IDS)
 def test_no_disk_writes(path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     data = path.read_bytes()
@@ -144,6 +148,7 @@ def test_no_disk_writes(path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     assert to_payload(result)["name"] == path.stem
 
 
+@pytest.mark.real_samples
 def test_zip_matches_disk_output(tmp_path: Path) -> None:
     disk = convert(BROTHER, tmp_path)
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
@@ -157,6 +162,7 @@ def test_zip_matches_disk_output(tmp_path: Path) -> None:
         assert zf.read(names[1]) == disk.image_files[0].read_bytes()
 
 
+@pytest.mark.real_samples
 def test_zip_is_deterministic() -> None:
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
     assert build_zip(result) == build_zip(result)
@@ -173,6 +179,7 @@ def test_no_image_document(tmp_path: Path) -> None:
         assert zf.read("sample.md") == result.markdown.encode("utf-8")
 
 
+@pytest.mark.real_samples
 def test_markdown_with_data_uris() -> None:
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
     link = f"]({result.image_dir.replace(' ', '%20')}/img_001.png)"
@@ -199,6 +206,7 @@ def test_markdown_with_data_uris_handles_spaces() -> None:
     assert markdown_with_data_uris(result) == f"![그림 1](data:image/gif;base64,{b64})\n"
 
 
+@pytest.mark.real_samples
 def test_to_payload_shape() -> None:
     result = convert_bytes(BROTHER.read_bytes(), BROTHER.name)
     payload = to_payload(result)
@@ -326,12 +334,14 @@ def test_convert_to_response_errors(
     assert set(body) == {"error"}
 
 
+@pytest.mark.real_samples
 def test_convert_to_response_success() -> None:
     status, body = convert_to_response(BROTHER.read_bytes(), BROTHER.name)
     assert status == 200
     assert body == to_payload(convert_bytes(BROTHER.read_bytes(), BROTHER.name))
 
 
+@pytest.mark.real_samples
 def test_import_without_web_extras() -> None:
     code = (
         "import sys\n"

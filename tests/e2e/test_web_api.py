@@ -10,11 +10,14 @@ from pathlib import Path
 
 import httpx
 import pytest
+
 from conftest import REAL_SAMPLES, WebServer
 
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
-IMAGE_HWPX = next(p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더"))
+IMAGE_HWPX = next(
+    (p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더")), None
+)
 
 
 def _post(server: WebServer, route: str, body: bytes, name: str) -> httpx.Response:
@@ -50,6 +53,7 @@ def test_index_has_drop_zone(web_server: WebServer) -> None:
     assert 'id="drop-zone"' in resp.text
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("sample", REAL_SAMPLES, ids=lambda p: p.name)
 def test_convert_matches_cli(
     web_server: WebServer, sample: Path, tmp_path: Path, run_cli: RunCli
@@ -62,6 +66,7 @@ def test_convert_matches_cli(
     assert resp.json()["markdown"].encode("utf-8") == md_path.read_bytes()
 
 
+@pytest.mark.real_samples
 def test_zip_matches_cli_with_image(web_server: WebServer, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"
     md_path = _cli_convert(IMAGE_HWPX, out_dir, run_cli)
@@ -129,6 +134,7 @@ def test_runtime_zip_listing(web_server: WebServer) -> None:
     assert not any(n.startswith("hwp2md/web/") or "__pycache__" in n for n in names)
 
 
+@pytest.mark.real_samples
 def test_no_files_written(web_server: WebServer) -> None:
     sample = IMAGE_HWPX
     assert _post(web_server, "/api/convert", sample.read_bytes(), sample.name).status_code == 200
@@ -176,7 +182,7 @@ def test_serve_without_web_extra_exit_1(tmp_path: Path) -> None:
     )
 
     assert result.returncode == 1
-    assert "hwp2md[web]" in result.stderr
+    assert "hwp2markdown[web]" in result.stderr
 
 
 def test_existing_convert_still_works(synthetic_hwp: Path, tmp_path: Path, run_cli: RunCli) -> None:

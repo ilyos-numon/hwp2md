@@ -70,6 +70,7 @@ def test_encrypted_flag_exit_3(tmp_path: Path, run_cli: RunCli) -> None:
 REAL_FIXTURE_MIN_TABLES = {"form200005063113.hwp": 1}  # 표가 확인된 샘플만
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("real_hwp", REAL_FIXTURES, ids=lambda p: p.name)
 def test_real_fixture_converts(real_hwp: Path, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"

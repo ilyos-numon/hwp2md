@@ -24,11 +24,13 @@ def _reader_for(fmt: str) -> Any:
     return hwp5_reader if fmt == "hwp5" else hwpx_reader
 
 
+@pytest.mark.real_samples
 def test_sample_counts() -> None:
     assert len(HWP5_SAMPLES) == 2
     assert len(HWPX_SAMPLES) == 3
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize(("path", "fmt"), SAMPLES, ids=SAMPLE_IDS)
 def test_read_blocks_bytes_equals_path(path: Path, fmt: str) -> None:
     reader = _reader_for(fmt)
@@ -37,6 +39,7 @@ def test_read_blocks_bytes_equals_path(path: Path, fmt: str) -> None:
     assert reader.read_blocks(path.read_bytes()) == from_path
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize(("path", "fmt"), SAMPLES, ids=SAMPLE_IDS)
 def test_detect_format_bytes(path: Path, fmt: str) -> None:
     assert detect_format(path.read_bytes()) == fmt

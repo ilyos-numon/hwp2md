@@ -57,7 +57,7 @@
 - 이유: 레이아웃은 공개 스펙과 pyhwp 소스로 교차 확인했다. 저장소의 실제 HWP 5.0 샘플 2개에는 그림이 없어(BinData 스토리지·BIN_DATA 레코드 0) 실제 바이트 검증은 불가했고, 양성 샘플이 추가되면 E2E 가 자동으로 검증한다. 해제 실패 시 raw 로 두어 변환 전체가 실패하지 않게 한다.
 
 ## 2026-10-23 웹 프레임워크: Starlette+uvicorn (extra web)
-- 결정: `hwp2md serve` 는 Starlette 앱을 uvicorn 으로 띄운다. 두 의존성은 optional extra `hwp2md[web]` 에만 두고, 기본 설치(CLI·라이브러리)는 그대로 olefile·lxml 만 쓴다. 기본 바인드는 localhost:8765, 외부 바인드는 `--host` 로만 하고 인증은 없다.
+- 결정: `hwp2md serve` 는 Starlette 앱을 uvicorn 으로 띄운다. 두 의존성은 optional extra `web`(설치 이름 `hwp2markdown[web]`) 에만 두고, 기본 설치(CLI·라이브러리)는 그대로 olefile·lxml 만 쓴다. 기본 바인드는 localhost:8765, 외부 바인드는 `--host` 로만 하고 인증은 없다.
 - 이유: 순수 파이썬 소형 의존성이고 정적 파일 제공과 TestClient 가 내장돼 테스트가 쉽다. FastAPI 는 pydantic 이 추가로 들어오고, 표준 라이브러리 `http.server` 는 라우팅·멀티파트·테스트를 직접 짜야 한다.
 
 ## 2026-10-23 메모리 변환: Source = Path | bytes, olefile 에는 BytesIO
@@ -139,3 +139,11 @@
 ## 2026-10-27 기본 포트 8765 → 8770
 - 결정: `hwp2md serve` 기본 포트를 8770 으로 바꾼다. README 의 대체 포트 예시도 8771 로 바꾼다.
 - 이유: 같은 워크스페이스의 다른 프로젝트 서버가 8765 를 쓰고 있어 동시에 띄울 수 없었다. 예전 대체 포트 예시 8780 도 다른 프로젝트가 쓰는 포트였다.
+
+## 2026-10-27 PyPI 배포 이름: `hwp2markdown`
+- 결정: PyPI 배포 이름을 `hwp2markdown` 으로 하고, 콘솔 명령과 import 이름은 `hwp2md` 그대로 둔다. 버전은 `src/hwp2md/__init__.py` 의 `__version__` 한 곳에서만 읽고(hatch 동적 버전), 릴리스는 `vX.Y.Z` 태그 push 때 GitHub Actions 가 Trusted Publishing 으로 게시한다(`docs/releasing.md`).
+- 이유: PyPI 의 `hwp2md` 이름은 다른 프로젝트가 이미 쓰고 있다. 명령·import 를 바꾸지 않으면 기존 사용법과 문서가 그대로 유효하다. 토큰을 저장소에 두지 않기 위해 Trusted Publishing 을 쓴다.
+
+## 2026-10-27 CI 에서 실제 샘플 테스트 제외
+- 결정: 저장소에 없는 실제 샘플(`tests/fixtures/`)이 필요한 테스트에 `real_samples` 마커를 달고, CI·릴리스 워크플로우는 `-m "not real_samples"` 로 돌린다. 로컬에서는 마커 없이 전체를 돌린다. CI 단위 테스트는 Python 3.11·3.13 에서 돌린다.
+- 이유: 실제 샘플은 라이선스 확인 전이고 파일 이름에 고유명사가 있어 커밋하지 않는다. 샘플 없는 클린 체크아웃에서 실패·오류 없이 끝나야 CI 결과를 믿을 수 있다.

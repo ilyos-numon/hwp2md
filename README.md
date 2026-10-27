@@ -27,12 +27,23 @@ hwp2md 는 이 문제를 이렇게 푼다.
 
 ### 설치
 
-아직 PyPI 에 배포하지 않았다. 소스에서 설치한다. Python 3.11 이상이 필요하다.
+PyPI 배포 이름은 `hwp2markdown` 이다. 설치 후 명령과 import 이름은 `hwp2md` 다. Python 3.11 이상이 필요하다.
+
+```bash
+pip install 'hwp2markdown[web]'          # 또는: uv tool install 'hwp2markdown[web]'
+hwp2md --version
+```
+
+PyPI 의 `hwp2md` 는 이 저장소와 무관한 다른 프로젝트다. 설치할 때는 `hwp2markdown` 을 쓴다.
+
+웹 미리보기 의존성(Starlette·uvicorn)은 extra `web` 에만 있다. 기본 설치(`pip install hwp2markdown`, CLI·라이브러리)는 `olefile`·`lxml` 만 쓴다. extra 없이 `hwp2md serve` 를 실행하면 `pip install 'hwp2markdown[web]'` 안내와 함께 종료 코드 1로 끝난다.
+
+소스에서 설치(개발용):
 
 ```bash
 git clone <이 저장소> hwp2md && cd hwp2md
 
-# 방법 1: uv (개발용 — 웹 미리보기·테스트 도구까지 함께 설치)
+# 방법 1: uv (웹 미리보기·테스트 도구까지 함께 설치)
 uv sync
 uv run hwp2md --version
 
@@ -41,9 +52,7 @@ pip install '.[web]'
 hwp2md --version
 ```
 
-웹 미리보기 의존성(Starlette·uvicorn)은 extra `web` 에만 있다. 기본 설치(CLI·라이브러리)는 `olefile`·`lxml` 만 쓴다. extra 없이 `hwp2md serve` 를 실행하면 `pip install 'hwp2md[web]'` 안내와 함께 종료 코드 1로 끝난다.
-
-아래 예시는 `uv run` 을 생략했다. uv 로 설치했다면 앞에 `uv run` 을 붙인다.
+아래 예시는 `uv run` 을 생략했다. 소스에서 uv 로 설치했다면 앞에 `uv run` 을 붙인다.
 
 ### ① CLI
 
@@ -274,7 +283,7 @@ uv run mypy src                                 # strict
 
 - 브라우저 모드 첫 로딩이 약 1분 걸리고 인터넷(jsDelivr)이 필요하다. 오프라인 번들은 없다.
 - 공공기관 샘플 20개 변환 품질 비교표는 아직 작성하지 않았다.
-- PyPI 에 배포하지 않았다. CI(GitHub Actions)도 아직 없다.
+- CI 는 Python 3.11·3.13 에서 검증한다. 3.14 에서는 손상된 zip 의 오류 문구가 다르게 나오는 알려진 차이가 있다.
 - 기본 포트 8770 이 다른 프로그램과 겹치면 `--port` 로 바꾼다 (자동으로 다음 포트를 찾지 않는다).
 - 이미지가 있는 실제 HWP 5.0 샘플이 없어, HWP 5.0 이미지 경로는 합성 문서와 공개 스펙 교차 확인으로만 검증했다.
 - 이미지 포맷은 변환하지 않는다. WMF/EMF 같은 원본은 그대로 저장되어 브라우저에서 안 보일 수 있다.
@@ -291,13 +300,14 @@ uv run mypy src                                 # strict
 - [x] 배포용 문서 지원
 - [ ] 병합 셀 개선 (`--table html` 로 rowspan/colspan 보존)
 - [ ] 공공기관 샘플 20개 품질 비교표
-- [ ] PyPI 배포 + GitHub Actions CI
+- [x] PyPI 배포(hwp2markdown) + GitHub Actions CI
 
 ## 문서
 
 - [docs/vision.md](docs/vision.md) — 완성된 모습 (사용자 시나리오)
 - [docs/system-overview.md](docs/system-overview.md) — 내부 구조 (모듈·데이터 흐름·웹·보안·테스트·확장)
 - [docs/decisions.md](docs/decisions.md) — 결정 기록 (날짜와 이유)
+- [docs/releasing.md](docs/releasing.md) — 릴리스 절차 (PyPI 게시 설정·태그·실패 대응)
 - [docs/extraction-limits.md](docs/extraction-limits.md) — 추출 한계 (요소별 상태·이유·대안)
 
 ## 하지 않는 것
