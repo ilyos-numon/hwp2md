@@ -164,3 +164,14 @@
 - 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md docs/decisions.md docs/feature-reference.md 
 - 커밋: f16f42d [T-20261027-v3-backend][S4][wip] auto checkpoint (stop)
 - 다음: S5 시작
+
+## [2026-10-27 14:23] S5 | orchestrator | START
+- 한 일: V3 화면 E2E 작성·실행
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1d87663 [T-20261027-v3-backend][s4] 문서에 V3 화면 구조와 동봉 자원 반영
+
+## [2026-10-27 14:24] S5 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 1d87663 [T-20261027-v3-backend][s4] 문서에 V3 화면 구조와 동봉 자원 반영
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
