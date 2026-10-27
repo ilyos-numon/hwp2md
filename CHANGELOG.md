@@ -2,6 +2,12 @@
 
 이 프로젝트의 주요 변경을 기록한다. 형식은 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 를 따르고, 버전은 [Semantic Versioning](https://semver.org/) 을 따른다.
 
+## [0.1.3] - 2026-10-27
+
+### Added
+- README 에 설치 없이 한 줄로 실행하는 방법(`uvx --from hwp2markdown hwp2md 문서.hwp -o out/`)과 누적 다운로드·GitHub star 배지.
+- 소개·변환 화면 바닥글에 GitHub·PyPI 링크 (외부 이미지 없이 텍스트 링크만).
+
 ## [0.1.2] - 2026-10-27
 
 ### Added
@@ -29,6 +35,7 @@
 - 로컬 웹 미리보기 `hwp2md serve` (extra `web`): 서버 모드와 브라우저 안에서만 처리하는 Pyodide 모드.
 - 배포용 문서 변환, DRM·비밀번호 문서 거부, 변환하지 못한 요소의 건너뜀 보고.
 
+[0.1.3]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ilyos-numon/hwp2md/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ilyos-numon/hwp2md/releases/tag/v0.1.0

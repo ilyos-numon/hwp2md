@@ -3,6 +3,8 @@
 [![Python](https://badgen.net/pypi/python/hwp2markdown)](https://pypi.org/project/hwp2markdown/)
 [![CI](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml)
 [![Downloads](https://static.pepy.tech/badge/hwp2markdown/month)](https://pepy.tech/projects/hwp2markdown)
+[![Total downloads](https://static.pepy.tech/badge/hwp2markdown)](https://pepy.tech/projects/hwp2markdown)
+[![GitHub stars](https://badgen.net/github/stars/ilyos-numon/hwp2md)](https://github.com/ilyos-numon/hwp2md/stargazers)
 [![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://github.com/ilyos-numon/hwp2md/blob/main/LICENSE)
 
 **한국어:** [README.md](https://github.com/ilyos-numon/hwp2md/blob/main/README.md)
@@ -19,6 +21,7 @@ This product was developed with reference to the HWP (.hwp) document file format
 
 ## 30-second demo
 
+- One line, no install: `uvx --from hwp2markdown hwp2md document.hwp -o out/` (requires [uv](https://docs.astral.sh/uv/))
 - Without installing: open https://ilyos-numon.github.io/hwp2md/, click "Open converter", and drop an HWP or HWPX file.
 - With pip:
 
@@ -45,6 +48,8 @@ hwp2md solves this as follows.
 ## Quick start
 
 ### Install
+
+To run it in one line without installing, use `uvx --from hwp2markdown hwp2md document.hwp -o out/`. This requires [uv](https://docs.astral.sh/uv/).
 
 The PyPI distribution name is `hwp2markdown`. After installation, the command and the import name are `hwp2md`. Python 3.11 or later is required.
 
