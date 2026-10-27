@@ -8,9 +8,9 @@
 
 ## 2. 변환 화면
 
-- [ ] 2.1 V3 `base.css`·`app.css`·`theme.js` 를 `static/` 아래로 옮긴다
-- [ ] 2.2 `static/index.html` 을 V3 변환 화면으로 바꾼다 (vendor 자원, 데모 제거, 절대경로)
-- [ ] 2.3 `static/js/app.js` 에 실제 MODES 를 연결하고 모션 제약을 지키며, 이전 `static/app.js`·`static/style.css` 를 지운다
+- [x] 2.1 V3 `base.css`·`app.css`·`theme.js` 를 `static/` 아래로 옮긴다
+- [x] 2.2 `static/index.html` 을 V3 변환 화면으로 바꾼다 (vendor 자원, 데모 제거, 절대경로)
+- [x] 2.3 `static/js/app.js` 에 실제 MODES 를 연결하고 모션 제약을 지키며, 이전 `static/app.js`·`static/style.css` 를 지운다
 
 ## 3. 소개 페이지
 

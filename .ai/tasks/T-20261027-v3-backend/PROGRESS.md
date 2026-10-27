@@ -65,3 +65,27 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/app.js src/hwp2md/web/static/css/app.css src/hwp2md/web/static/css/base.css src/hwp2md/web/static/index.html src/hwp2md/web/static/js/app.js src/hwp2md/web/static/js/theme.js src/hwp2md/web/static/style.css 
 - 커밋: 81a9365 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:17] S2 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0286fe7 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:18] S2 | implementer(opus) | DONE
+- 한 일: V3 index.html·js/app.js·theme.js·base/app.css 이식, MODES 원본 이식, 구 app.js·style.css 삭제. 62 passed
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0286fe7 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+- 다음: reviewer
+- 메모: renderRaw 끝 개행 보정 추가. 8765 포트는 voice-agent 사용 중이라 8766 사용
+
+## [2026-10-27 14:18] S2 | reviewer(sonnet) | DONE
+- 한 일: PASS, FINDINGS none
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0286fe7 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+- 다음: S3
+
+## [2026-10-27 14:18] S2 | orchestrator | DONE
+- 한 일: 변환 화면 이식과 실제 MODES 연결 검증 통과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0286fe7 [T-20261027-v3-backend][S2][wip] auto checkpoint (stop)
+- 다음: S3 시작
