@@ -10,7 +10,7 @@
 - OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-pypi-release/`
 - 현재 단계: 없음
 - 상태: IDLE
-- 브랜치: main (병합 `abbebb1`, 태그 `v0.1.0`). 현재 체크아웃: `ai/T-20261027-pypi-release` (HEAD `5c4778a`, main 미병합 1커밋)
+- 브랜치: `main` (ai/T-20261027-pypi-release 병합·푸시 완료, 태그 v0.1.0)
 - 미커밋 변경: `.ai/tasks/T-20261027-pypi-release/PROGRESS.md`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
