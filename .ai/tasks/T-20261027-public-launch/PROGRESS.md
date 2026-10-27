@@ -349,3 +349,14 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_design_v3.py tests/e2e/test_pages_site.py tests/e2e/test_web_extract.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py 
 - 커밋: 9178dd6 [T-20261027-public-launch][S12][wip] auto checkpoint (stop)
 - 다음: S13 시작
+
+## [2026-10-27 19:13] S13 | orchestrator | START
+- 한 일: i18n 코어·변환 화면 영어
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2e043c5 [T-20261027-public-launch][s12] 기존 E2E 브라우저 locale ko-KR 고정
+
+## [2026-10-27 19:14] S13 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 2e043c5 [T-20261027-public-launch][s12] 기존 E2E 브라우저 locale ko-KR 고정
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
