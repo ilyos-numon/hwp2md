@@ -1,0 +1,30 @@
+/* 동봉 글꼴 선언. 출처·라이선스는 /static/vendor/README.md, OFL-*.txt 참고 */
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("/static/vendor/fonts/PretendardVariable.woff2") format("woff2-variations"),
+       url("/static/vendor/fonts/PretendardVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/static/vendor/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/static/vendor/fonts/JetBrainsMono-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/static/vendor/fonts/JetBrainsMono-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
