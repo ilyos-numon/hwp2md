@@ -19,7 +19,7 @@
 
 ## 4. 문서
 
-- [ ] 4.1 README·`docs/feature-reference.md` §9·`docs/decisions.md`·`NOTICE`·`design/v3/README.md` 를 새 구조에 맞춘다
+- [x] 4.1 README·`docs/feature-reference.md` §9·`docs/decisions.md`·`NOTICE`·`design/v3/README.md` 를 새 구조에 맞춘다
 
 ## 5. 검증
 

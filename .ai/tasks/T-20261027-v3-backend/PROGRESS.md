@@ -146,3 +146,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 1198aee [T-20261027-v3-backend][s3] 소개 페이지 /about 연결
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:23] S4 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md docs/decisions.md docs/feature-reference.md 
+- 커밋: f16f42d [T-20261027-v3-backend][S4][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:23] S4 | implementer(opus) | DONE
+- 한 일: README②·feature-reference(표1·§8.1·§9·§9.1·§9.8·§12)·decisions·NOTICE·design/v3/README 갱신
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md docs/decisions.md docs/feature-reference.md 
+- 커밋: f16f42d [T-20261027-v3-backend][S4][wip] auto checkpoint (stop)
+- 다음: S5
+- 메모: NOTICE 머리말 Apache 2.0 → original licenses 일반화
+
+## [2026-10-27 14:23] S4 | orchestrator | DONE
+- 한 일: 문서 갱신 검증 통과(grep·sanitize)
+- 변경 파일(미커밋, .ai 제외): NOTICE README.md design/v3/README.md docs/decisions.md docs/feature-reference.md 
+- 커밋: f16f42d [T-20261027-v3-backend][S4][wip] auto checkpoint (stop)
+- 다음: S5 시작

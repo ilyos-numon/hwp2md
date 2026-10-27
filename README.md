@@ -115,6 +115,8 @@ hwp2md serve --port 8780           # 8765 가 이미 쓰이고 있을 때
 hwp2md serve --no-browser          # 브라우저 자동 열기 끔
 ```
 
+`/` 은 변환 화면, `/about` 은 서비스 소개(기능, 사용 장면, 추출 한계 `/about#limits`)다. 두 화면에 쓰는 글꼴·GSAP·marked 는 패키지 안에 동봉돼 있어 서버 모드는 인터넷 없이 동작한다.
+
 1. HWP·HWPX 파일을 끌어다 놓거나 클릭해서 고른다 (최대 50MB).
 2. 왼쪽에 렌더링된 미리보기, 오른쪽에 Markdown 원문이 나온다.
 3. "zip 다운로드" 로 `.md` 와 이미지 폴더를 한 번에 받는다.
@@ -126,7 +128,7 @@ hwp2md serve --no-browser          # 브라우저 자동 열기 끔
 | 변환 위치 | 로컬 `hwp2md serve` 프로세스 (메모리에서 변환) | 브라우저 안의 Pyodide (WebAssembly 파이썬) |
 | 파일 바이트 전송 | 로컬 서버로 `POST /api/convert` | 보내지 않음 |
 | 첫 변환까지 | 즉시 | 첫 로딩 약 1분 (Pyodide·lxml 다운로드, 측정 약 65초) |
-| 인터넷 | 필요 없음 | 필요 (jsDelivr CDN) |
+| 인터넷 | 필요 없음 (화면 자원 동봉) | 필요 (Pyodide 를 jsDelivr CDN 에서 받음) |
 | 결과 | 같은 Markdown | 같은 Markdown (E2E 로 바이트 비교) |
 
 ![서버 모드 화면](docs/images/web-server-mode.png)
