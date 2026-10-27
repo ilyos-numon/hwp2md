@@ -213,3 +213,14 @@
 - 변경 파일(미커밋, .ai 제외): .github/workflows/release.yml 
 - 커밋: 5ddc3cd [T-20261027-pypi-release][S7][wip] auto checkpoint (stop)
 - 다음: S8 시작
+
+## [2026-10-27 16:17] S8 | orchestrator | START
+- 한 일: 설치·릴리스 문서
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 59c2faf [T-20261027-pypi-release][s7] 릴리스 워크플로우 (Trusted Publishing)
+
+## [2026-10-27 16:18] S8 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 59c2faf [T-20261027-pypi-release][s7] 릴리스 워크플로우 (Trusted Publishing)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
