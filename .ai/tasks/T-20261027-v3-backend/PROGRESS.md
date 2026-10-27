@@ -111,3 +111,22 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/app.py src/hwp2md/web/static/about.html src/hwp2md/web/static/css/landing.css src/hwp2md/web/static/js/effects.js src/hwp2md/web/static/js/landing.js tests/unit/test_web_app.py 
 - 커밋: b89d39c [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:21] S3 | implementer(opus) | DONE
+- 한 일: about.html·landing.css·effects.js·landing.js 이식, GET /about, 단위 테스트 2개. 26 passed, 외부 요청 0
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 61f2fd8 [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
+- 다음: reviewer
+
+## [2026-10-27 14:21] S3 | reviewer(sonnet) | DONE
+- 한 일: PASS, FINDINGS 없음
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 61f2fd8 [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
+- 다음: S4
+- 메모: full_page 스크린샷은 ScrollTrigger 로 빈 구간 있음(정상)
+
+## [2026-10-27 14:21] S3 | orchestrator | DONE
+- 한 일: 소개 페이지 /about 연결 검증 통과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 61f2fd8 [T-20261027-v3-backend][S3][wip] auto checkpoint (stop)
+- 다음: S4 시작

@@ -14,8 +14,8 @@
 
 ## 3. 소개 페이지
 
-- [ ] 3.1 `static/about.html`·`landing.css`·`effects.js`·`landing.js` 를 vendor 자원과 서버 경로로 옮긴다
-- [ ] 3.2 `app.py` 에 `GET /about` 을 추가하고 단위 테스트를 더한다
+- [x] 3.1 `static/about.html`·`landing.css`·`effects.js`·`landing.js` 를 vendor 자원과 서버 경로로 옮긴다
+- [x] 3.2 `app.py` 에 `GET /about` 을 추가하고 단위 테스트를 더한다
 
 ## 4. 문서
 
