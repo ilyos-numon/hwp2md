@@ -54,3 +54,19 @@
 - 변경 파일(미커밋, .ai 제외): packaging/homebrew/ scripts/update_formula.py tests/unit/test_update_formula.py 
 - 커밋: d26bcec [T-20261027-binaries-brew][S3][wip] auto checkpoint (stop)
 - 다음: S4
+
+## [2026-10-27 20:57] S4 | orchestrator | START
+- 한 일: 설치 문서·CHANGELOG·0.1.4
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4c7bcdf [T-20261027-binaries-brew][s3] Homebrew formula 생성기
+
+## [2026-10-27 20:58] S4 | hook | AUTO
+- 한 일: 도구 호출 30회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4c7bcdf [T-20261027-binaries-brew][s3] Homebrew formula 생성기
+
+## [2026-10-27 20:58] S4 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 4c7bcdf [T-20261027-binaries-brew][s3] Homebrew formula 생성기
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
