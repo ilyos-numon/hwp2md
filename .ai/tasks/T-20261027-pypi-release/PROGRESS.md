@@ -171,3 +171,16 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 7c19a95 [T-20261027-pypi-release][s5] real_samples 마커와 CI 수집 오류 제거
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:17] S6 | implementer(opus) | DONE
+- 한 일: ci.yml (lint·typecheck·unit 3.11/3.13·e2e·dist), actionlint 1.7.12 exit 0, 로컬 재현 통과
+- 변경 파일(미커밋, .ai 제외): .github/ 
+- 커밋: 0f4f0e1 [T-20261027-pypi-release][S6][wip] auto checkpoint (stop)
+- 다음: S7
+- 메모: 액션 태그: actions/checkout@v7, astral-sh/setup-uv@v7, actions/upload-artifact@v7. python-version 전 job 명시(3.14 회피)
+
+## [2026-10-27 16:17] S6 | orchestrator | DONE
+- 한 일: CI 워크플로우 검증 통과
+- 변경 파일(미커밋, .ai 제외): .github/ 
+- 커밋: 0f4f0e1 [T-20261027-pypi-release][S6][wip] auto checkpoint (stop)
+- 다음: S7 시작
