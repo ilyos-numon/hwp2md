@@ -110,3 +110,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 7f2eb2c [T-20261027-binaries-brew][s5] Release 실행 파일 job
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 21:03] S6 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_binary_smoke.py 
+- 커밋: e602450 [T-20261027-binaries-brew][S6][wip] auto checkpoint (stop)
+
+## [2026-10-27 21:04] S6 | test-writer(sonnet) | DONE
+- 한 일: test_binary_smoke.py 7 passed, 전체 e2e 157 exit=0, unit 828, lint·mypy 0
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_binary_smoke.py 
+- 커밋: e602450 [T-20261027-binaries-brew][S6][wip] auto checkpoint (stop)
+- 다음: S7

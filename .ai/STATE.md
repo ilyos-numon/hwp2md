@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-adoption-links (PyPI 0.1.3)
 - 플랜: `.ai/tasks/T-20261027-binaries-brew/PLAN.md` (APPROVED, §7 기본값 + Q1 PyInstaller 사용자 확인)
 - OpenSpec: `openspec/changes/binaries-brew/`
-- 현재 단계: S6 실행 파일 E2E
+- 현재 단계: S7 main·v0.1.4·Release
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-binaries-brew`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S6부터. S8 탭 저장소 생성이 막히면 사용자 U1(웹에서 생성)
+1. `/implement` S7부터. S8 탭 저장소 생성이 막히면 사용자 U1(웹에서 생성)
 
 ## 차단 중이면
 - 이유: 없음

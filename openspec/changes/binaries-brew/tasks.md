@@ -19,7 +19,7 @@
 
 ## 5. 실행 파일 E2E
 
-- [ ] 5.1 `tests/e2e/test_binary_smoke.py` 를 쓰고 로컬에서 E2E·단위·lint·타입 검사를 통과시킨다
+- [x] 5.1 `tests/e2e/test_binary_smoke.py` 를 쓰고 로컬에서 E2E·단위·lint·타입 검사를 통과시킨다
 
 ## 6. 릴리스
 
