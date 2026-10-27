@@ -47,3 +47,10 @@ PyPI 배포 이름은 `hwp2markdown`, 콘솔 명령·import 이름은 `hwp2md` �
 - `build` 의 다른 검사(단위 테스트·twine·check_dist) 실패: 원인을 고쳐 main 에 반영하고, 위와 같이 태그를 지운 뒤 다시 태그한다.
 - `publish` 실패 (Trusted Publishing 오류): U1 의 Owner·Repository·Workflow·Environment 값과 U2 environment 이름 `pypi` 가 정확한지 확인한 뒤, Actions 에서 실패한 job 을 다시 실행한다.
 - PyPI 는 같은 버전을 다시 올릴 수 없다 (삭제한 버전도 마찬가지). 이미 게시된 버전에 문제가 있으면 `__version__` 을 올려 새 버전으로 다시 릴리스한다.
+
+## GitHub Pages
+
+- 브라우저 체험 사이트(https://ilyos-numon.github.io/hwp2md/)는 `Pages` 워크플로우(`.github/workflows/pages.yml`)가 main push 때 빌드·배포한다. 수동 실행(workflow_dispatch)도 된다.
+- 저장소가 비공개면 `build` job 을 건너뛴다 (Pages 는 공개 저장소에서만 켠다).
+- 로컬 빌드: `uv run python scripts/build_pages.py --out dist-pages` (출력: `.nojekyll`·`index.html`(소개)·`convert.html`(변환)·`static/`·`pkg/hwp2md.zip`).
+- 로컬 미리보기: `python -m http.server 8771 --directory dist-pages` 후 http://localhost:8771/ 을 연다. 사이트 안의 경로는 모두 상대 경로라 `/hwp2md/` 같은 하위 경로에서도 같게 동작한다.

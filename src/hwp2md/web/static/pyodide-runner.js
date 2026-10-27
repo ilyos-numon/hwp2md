@@ -6,6 +6,8 @@
   const PYODIDE_VERSION = "0.27.7";
   const PYODIDE_BASE = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
   const PKG_DIR = "/hwp2md_pkg";
+  // 정적 사이트는 <meta name="hwp2md-pkg-url"> 로 상대 경로를 준다. 없으면 serve 경로.
+  const PKG_URL = (document.querySelector('meta[name="hwp2md-pkg-url"]') || {}).content || "/pkg/hwp2md.zip";
 
   const PY_SETUP = `
 import sys
@@ -50,8 +52,8 @@ def _h2m_zip(data, name):
       errorCallback: (m) => { pkgErr = (pkgErr ? pkgErr + "; " : "") + m; },
     });
     if (pkgErr) throw new Error("lxml: " + pkgErr);
-    const resp = await fetch("/pkg/hwp2md.zip", { method: "GET", cache: "no-store" });
-    if (!resp.ok) throw new Error("/pkg/hwp2md.zip HTTP " + resp.status);
+    const resp = await fetch(PKG_URL, { method: "GET", cache: "no-store" });
+    if (!resp.ok) throw new Error(PKG_URL + " HTTP " + resp.status);
     py.unpackArchive(await resp.arrayBuffer(), "zip", { extractDir: PKG_DIR });
     py.runPython(PY_SETUP);
     pyodide = py;

@@ -1,0 +1,52 @@
+name: 변환 오류 신고
+description: 문서 변환이 실패하거나 결과가 기대와 다를 때 알려 주세요.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        실제 문서를 첨부하기 전에 개인정보·내부 정보가 없는지 확인하세요. 가능하면 문제를 재현하는 짧은 문서를 새로 만들어 첨부하세요.
+  - type: input
+    id: version
+    attributes:
+      label: hwp2md 버전
+      description: "`hwp2md --version` 또는 `pip show hwp2markdown` 결과"
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: input-format
+    attributes:
+      label: 입력 형식
+      options:
+        - HWP 5.0
+        - HWPX
+        - HWPML
+    validations:
+      required: true
+  - type: dropdown
+    id: run-method
+    attributes:
+      label: 실행 방법
+      options:
+        - CLI
+        - 라이브러리
+        - 웹 serve
+        - 브라우저 체험
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: 오류 메시지
+      description: 출력된 오류나 잘못된 변환 결과를 붙여 넣어 주세요.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대 결과
+      description: 어떤 결과가 나와야 했는지 적어 주세요.
+    validations:
+      required: true
