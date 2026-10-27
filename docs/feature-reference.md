@@ -536,7 +536,7 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 
 동작 순서:
 
-1. `starlette`·`uvicorn` import 실패 → `hwp2md: error: web extra not installed — pip install 'hwp2md[web]'`, 종료 코드 1.
+1. `starlette`·`uvicorn` import 실패 → `hwp2md: error: web extra not installed — pip install 'hwp2markdown[web]'`, 종료 코드 1.
 2. 해당 host:port 에 bind 를 시도해 이미 LISTEN 중이면 `hwp2md: error: port <P> already in use`, 종료 코드 1. 다음 포트를 자동으로 찾지 않는다.
 3. `hwp2md serve: http://<H>:<P>/ (Ctrl+C 로 종료)` 출력.
 4. `--no-browser` 가 아니면 1초 뒤 기본 브라우저로 그 URL 을 연다.
