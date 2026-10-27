@@ -374,3 +374,8 @@
 - 변경 파일(미커밋, .ai 제외): openspec/changes/pypi-release/.openspec.yaml openspec/changes/pypi-release/design.md openspec/changes/pypi-release/proposal.md openspec/changes/pypi-release/specs/distribution/spec.md openspec/changes/pypi-release/specs/web-preview/spec.md openspec/changes/pypi-release/tasks.md openspec/specs/web-preview/spec.md openspec/changes/archive/2026-10-27-pypi-release/ openspec/specs/distribution/ 
 - 커밋: abbebb1 Merge ai/T-20261027-pypi-release: PyPI 배포(hwp2markdown) + GitHub Actions CI
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 17:04] S12 | hook | AUTO
+- 한 일: 도구 호출 195회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 5c4778a [T-20261027-pypi-release][S12][wip] auto checkpoint (stop)

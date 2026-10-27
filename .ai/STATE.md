@@ -4,16 +4,17 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: T-20261027-pypi-release
-- 마지막 완료: T-20261027-v3-backend (main 병합·푸시 6b75180)
-- 플랜: `.ai/tasks/T-20261027-pypi-release/PLAN.md` (상태: APPROVED, §7 기본값)
-- OpenSpec: `openspec/changes/pypi-release/`
-- 현재 단계: S12 릴리스 게이트 (사용자 대기)
-- 상태: BLOCKED
-- 브랜치: `ai/T-20261027-pypi-release`
+- 현재 태스크: 없음
+- 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시) — RESULT: `.ai/tasks/T-20261027-pypi-release/RESULT.md`
+- 플랜: `.ai/tasks/T-20261027-pypi-release/PLAN.md` (상태: DONE)
+- OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-pypi-release/`
+- 현재 단계: 없음
+- 상태: IDLE
+- 브랜치: main (병합 `abbebb1`, 태그 `v0.1.0`). 현재 체크아웃: `ai/T-20261027-pypi-release` (HEAD `5c4778a`, main 미병합 1커밋)
+- 미커밋 변경: `.ai/tasks/T-20261027-pypi-release/PROGRESS.md`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자 U1(PyPI pending publisher)·U2(GitHub environment pypi 또는 Q2 대체안)·"v0.1.0 게시 승인" 확인 → S12: main 병합·push → CI green → `git tag -a v0.1.0` push → Release 확인 → PyPI 설치 확인
+1. 새 작업은 `/plan <목표>`. 후보: Python 3.14 손상 zip 오류 문구 차이, 실제 차트 HWP 샘플 검증, Pretendard 서브셋, 과거 커밋의 샘플 산출물 이력 정리(사용자 결정)
 
 ## 차단 중이면
-- 이유: 릴리스 게이트 · 사용자 결정 필요: U1·U2·게시 승인
+- 이유: 없음
