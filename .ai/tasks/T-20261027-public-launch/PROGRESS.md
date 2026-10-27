@@ -321,3 +321,19 @@
 - 변경 파일(미커밋, .ai 제외): openspec/changes/public-launch/design.md openspec/changes/public-launch/proposal.md openspec/changes/public-launch/specs/web-preview/spec.md openspec/changes/public-launch/tasks.md 
 - 커밋: 151349e [T-20261027-public-launch][plan] 영어 지원 추가 요청 기록
 - 다음: S12 기존 E2E locale 고정
+
+## [2026-10-27 19:12] S12 | orchestrator | START
+- 한 일: 기존 E2E locale ko-KR 고정
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 96bfa0c [T-20261027-public-launch][plan] 영어 지원 단계 추가 (S12~S16), 릴리스 S18
+
+## [2026-10-27 19:12] S12 | hook | AUTO
+- 한 일: 도구 호출 150회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 96bfa0c [T-20261027-public-launch][plan] 영어 지원 단계 추가 (S12~S16), 릴리스 S18
+
+## [2026-10-27 19:12] S12 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 96bfa0c [T-20261027-public-launch][plan] 영어 지원 단계 추가 (S12~S16), 릴리스 S18
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
