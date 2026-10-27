@@ -82,3 +82,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: c4eb5cf [T-20261027-public-launch][wip] S3 전 중단 (사용자 지시)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 18:14] S3 | hook | AUTO
+- 한 일: 도구 호출 45회 경과
+- 변경 파일(미커밋, .ai 제외): scripts/build_pages.py tests/unit/test_build_pages.py 
+- 커밋: a97cb65 [T-20261027-public-launch][S3][wip] auto checkpoint (stop)
+
+## [2026-10-27 18:14] S3 | implementer(opus) | DONE
+- 한 일: build_pages.py + 단위 5 passed, C1·C2·C4·C5 통과, 하위 경로 수동 변환 done
+- 변경 파일(미커밋, .ai 제외): scripts/build_pages.py tests/unit/test_build_pages.py 
+- 커밋: a97cb65 [T-20261027-public-launch][S3][wip] auto checkpoint (stop)
+- 다음: S4
+- 메모: missing-title BuildError, out 이 파일이면 exit 2
+
+## [2026-10-27 18:14] S3 | orchestrator | DONE
+- 한 일: 정적 빌드 스크립트 검증 통과
+- 변경 파일(미커밋, .ai 제외): scripts/build_pages.py tests/unit/test_build_pages.py 
+- 커밋: a97cb65 [T-20261027-public-launch][S3][wip] auto checkpoint (stop)
+- 다음: S4 시작

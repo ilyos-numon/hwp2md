@@ -7,7 +7,7 @@
 ## 2. 정적 사이트
 
 - [x] 2.1 `app.js`·`pyodide-runner.js` 에 정적 사이트 meta 설정(브라우저 모드 고정, zip 주소, 소개 주소)을 더한다
-- [ ] 2.2 `scripts/build_pages.py` 와 단위 테스트를 쓴다
+- [x] 2.2 `scripts/build_pages.py` 와 단위 테스트를 쓴다
 - [ ] 2.3 정적 사이트 E2E(하위 경로 변환 성공, CDN 차단 실패, serve 회귀)를 쓰고 돌린다
 
 ## 3. 발견성
