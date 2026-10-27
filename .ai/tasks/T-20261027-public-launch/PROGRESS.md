@@ -31,3 +31,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 3629806 [T-20261027-public-launch][s1] 공개 전 설정 정리
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 17:41] S2 | hook | AUTO
+- 한 일: 도구 호출 15회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/js/app.js src/hwp2md/web/static/pyodide-runner.js 
+- 커밋: 6d1e272 [T-20261027-public-launch][S2][wip] auto checkpoint (stop)
+
+## [2026-10-27 17:41] S2 | implementer(opus) | DONE
+- 한 일: app.js STATIC_SITE·ABOUT_URL·staticSite getter, pyodide-runner PKG_URL meta. serve E2E 45·unit 26 통과, 정적 수동 확인(상대 fetch, 실패 시 browser 유지)
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/js/app.js src/hwp2md/web/static/pyodide-runner.js 
+- 커밋: 6d1e272 [T-20261027-public-launch][S2][wip] auto checkpoint (stop)
+- 다음: S3
+- 메모: app.css .switch display 가 hidden 을 덮어 style.display=none 병행
+
+## [2026-10-27 17:41] S2 | orchestrator | DONE
+- 한 일: 정적 사이트 meta 훅 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/js/app.js src/hwp2md/web/static/pyodide-runner.js 
+- 커밋: 6d1e272 [T-20261027-public-launch][S2][wip] auto checkpoint (stop)
+- 다음: S3 시작
