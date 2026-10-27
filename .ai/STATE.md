@@ -9,7 +9,7 @@
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
 - 현재 단계: S3 정적 빌드 스크립트
-- 상태: PAUSED (사용자 지시로 중단 2026-10-27)
+- 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
