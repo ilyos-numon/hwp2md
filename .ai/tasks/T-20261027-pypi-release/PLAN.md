@@ -1,7 +1,7 @@
 # PLAN — T-20261027-pypi-release PyPI 배포(hwp2markdown) + GitHub Actions CI
 
 > 작성: planner(opus) · 2026-10-27 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: DRAFT)
+> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 > 모든 Bash 는 `cd /Users/illi/illy-projects/hwp2md && ` 로 시작한다. macOS: `timeout` 없음, zsh PIPESTATUS 비어 있음 → 종료 코드는 `; echo exit=$?` 로 받는다.
 
