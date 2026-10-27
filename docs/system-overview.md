@@ -115,7 +115,7 @@ Source (Path | bytes)
 
 ## 5. 웹 구조
 
-`hwp2md serve` 는 `web/server.py` 가 포트를 확인한 뒤 uvicorn 으로 Starlette 앱을 띄운다. 기본 바인드 `localhost:8765`, 인증 없음.
+`hwp2md serve` 는 `web/server.py` 가 포트를 확인한 뒤 uvicorn 으로 Starlette 앱을 띄운다. 기본 바인드 `localhost:8770`, 인증 없음.
 
 | 메서드 | 경로 | 역할 |
 |---|---|---|

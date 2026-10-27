@@ -5,17 +5,16 @@
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
 - 현재 태스크: 없음
-- 마지막 완료: T-20261023-extract-dropped (main 병합 완료)
-- 플랜: `.ai/tasks/T-20261023-extract-dropped/PLAN.md` (상태: DONE)
-- 결과: `.ai/tasks/T-20261023-extract-dropped/RESULT.md`
-- 현재 단계: 없음
 - 상태: IDLE
-- 브랜치: `main` (ai/T-20261023-extract-dropped 병합·푸시 완료 2026-10-23)
-- 마지막 체크포인트: 2026-10-23 S27 DONE
-- 마지막 커밋: 73345bd [T-20261023-extract-dropped][s27] (PROGRESS 기준, git 재확인 필요)
+- 마지막 완료: T-20261027-v3-backend (V3 프론트엔드 백엔드 연결)
+- 결과 기록: `.ai/tasks/T-20261027-v3-backend/RESULT.md` (C1~C14 전부 PASS)
+- 플랜: DONE (`.ai/tasks/T-20261027-v3-backend/PLAN.md`)
+- OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-v3-backend/`
+- 브랜치: `ai/T-20261027-v3-backend` (main 병합 대기)
+- 마지막 커밋: d4c4964 (RESULT 커밋 전 기준, 갱신 2026-10-27 14:30)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자 RESULT 검토 → main 병합. 다음 후보: design/v3 를 실제 백엔드에 연결(/plan)
+1. 사용자 RESULT 검토 → 승인 시 `ai/T-20261027-v3-backend` 를 main 에 병합·푸시
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음

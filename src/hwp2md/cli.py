@@ -40,7 +40,7 @@ def _error(message: str, code: int) -> int:
 def _serve_main(argv: Sequence[str]) -> int:
     parser = argparse.ArgumentParser(prog="hwp2md serve")
     parser.add_argument("--host", default="localhost", help='바인드 호스트 (기본값 "localhost")')
-    parser.add_argument("--port", type=int, default=8765, help="포트 (기본값 8765)")
+    parser.add_argument("--port", type=int, default=8770, help="포트 (기본값 8770)")
     parser.add_argument("--no-browser", action="store_true", help="브라우저를 자동으로 열지 않음")
     ns = parser.parse_args(list(argv))
     try:

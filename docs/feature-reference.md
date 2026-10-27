@@ -58,7 +58,7 @@
 | | D2-a 라이브러리 파일 API `convert()` | `hwp2md.convert` | 구현 |
 | | D2-b 라이브러리 메모리 API `convert_bytes()` | `hwp2md.convert_bytes` | 구현 |
 | **E. 웹 HTTP API** | 헬스체크, 변환(JSON), zip, 정적 파일, Pyodide용 소스 zip | `web/app.py` | 구현 |
-| **F. 웹 UI** | F1 파일 입력 (드롭·클릭·키보드) | `static/app.js` | 구현 |
+| **F. 웹 UI** | F1 파일 입력 (드롭·클릭·키보드) | `static/js/app.js` | 구현 |
 | | F2 미리보기 / 원문 두 칸 | 〃 | 구현 |
 | | F3 zip 다운로드 | 〃 | 구현 |
 | | F4 모드 전환: 서버 모드 ↔ 브라우저 전용 모드(Pyodide) | `app.js` + `pyodide-runner.js` | 구현 |
@@ -531,7 +531,7 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 | 인자 | 기본값 |
 |---|---|
 | `--host` | `localhost` |
-| `--port` | `8765` |
+| `--port` | `8770` |
 | `--no-browser` | 끔 (= 브라우저 자동 열기) |
 
 동작 순서:
@@ -608,14 +608,15 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 
 ## 8. E. 웹 HTTP API
 
-[web/app.py](../src/hwp2md/web/app.py). Starlette 앱, `hwp2md serve` 로 띄운다. 기본 `http://localhost:8765`.
+[web/app.py](../src/hwp2md/web/app.py). Starlette 앱, `hwp2md serve` 로 띄운다. 기본 `http://localhost:8770`.
 
 ### 8.1 라우트
 
 | 메서드 | 경로 | 요청 | 성공 응답 |
 |---|---|---|---|
 | GET | `/` | — | `static/index.html` (`text/html; charset=utf-8`) |
-| GET | `/static/<path>` | — | `style.css`, `app.js`, `pyodide-runner.js`, `vendor/marked.min.js` |
+| GET | `/about` | — | `static/about.html` (`text/html; charset=utf-8`) — 서비스 소개 |
+| GET | `/static/<path>` | — | `css/*.css`, `js/*.js`, `pyodide-runner.js`, `vendor/` (marked·GSAP·글꼴) |
 | GET | `/api/health` | — | `200 {"ok": true, "version": "0.1.0"}` |
 | POST | `/api/convert?name=<원본 파일명>` | 본문 = 파일 원본 바이트 | `200` JSON (§8.3) |
 | POST | `/api/zip?name=<원본 파일명>` | 본문 = 파일 원본 바이트 | `200 application/zip`, `Content-Disposition: attachment; filename*=UTF-8''<퍼센트 인코딩된 stem>.zip` |
@@ -690,15 +691,36 @@ zip(§7.3, §8) 안의 엔트리 이름도 같은 구조다 (`<stem>.md`, `<stem
 
 ## 9. F. 웹 UI (현재 구현)
 
-정적 파일 4개, 빌드 단계 없음, 프레임워크 없음(바닐라 JS IIFE).
+두 페이지, 빌드 단계 없음, 프레임워크 없음(바닐라 JS IIFE). `GET /` 은 변환 화면, `GET /about` 은 서비스 소개 페이지다. 변환 화면 brand·"서비스 소개" → `/about`, 소개 페이지 "변환 도구 열기"·"변환 도구" → `/`. 서버 모드에 필요한 자원은 모두 `/static/vendor/` 에 동봉해 CDN 없이 동작한다 (브라우저 모드의 Pyodide 만 CDN).
 
 | 파일 | 역할 |
 |---|---|
-| [index.html](../src/hwp2md/web/static/index.html) | 화면 골격. 스크립트 순서: `marked.min.js` → `pyodide-runner.js` → `app.js` |
-| [app.js](../src/hwp2md/web/static/app.js) | 화면 상태, 이벤트, 미리보기 렌더, 모드 전환 |
+| [index.html](../src/hwp2md/web/static/index.html) | 변환 화면 골격 (`/`) |
+| [about.html](../src/hwp2md/web/static/about.html) | 서비스 소개 (`/about`). 추출 한계 절 `#limits` |
+| [js/app.js](../src/hwp2md/web/static/js/app.js) | 변환 화면 상태, 이벤트, 미리보기 렌더, 모드 전환, GSAP 등장 모션 |
+| [js/theme.js](../src/hwp2md/web/static/js/theme.js) | 라이트·다크 수동 전환 (`localStorage` `hwp2md-theme` → 시스템 설정 순) |
+| [js/effects.js](../src/hwp2md/web/static/js/effects.js) · [js/landing.js](../src/hwp2md/web/static/js/landing.js) | 소개 페이지의 GSAP 효과 등록과 스크롤 장면 |
 | [pyodide-runner.js](../src/hwp2md/web/static/pyodide-runner.js) | 브라우저 모드 엔진 (`window.Hwp2mdBrowser`) |
-| [style.css](../src/hwp2md/web/static/style.css) | 디자인 토큰, 라이트·다크, 반응형 |
-| `vendor/marked.min.js` | marked **v12.0.2** 동봉 (CDN 불필요) |
+| [css/base.css](../src/hwp2md/web/static/css/base.css) | 공통 디자인 토큰(라이트·다크), 헤더, 버튼 |
+| [css/app.css](../src/hwp2md/web/static/css/app.css) · [css/landing.css](../src/hwp2md/web/static/css/landing.css) | 변환 화면 / 소개 페이지 레이아웃 |
+| `vendor/marked.min.js` | marked **v12.0.2** |
+| `vendor/gsap/` | GSAP **3.13.0** `gsap.min.js` · `ScrollTrigger.min.js` · `SplitText.min.js` · `ScrambleTextPlugin.min.js` |
+| `vendor/fonts/` | `fonts.css` + Pretendard Variable(100–900), JetBrains Mono 400/500/600 woff2, OFL 원문 |
+
+출처·버전·SHA-256 은 [vendor/README.md](../src/hwp2md/web/static/vendor/README.md), 라이선스는 루트 `NOTICE`.
+
+불러오는 순서:
+
+```text
+변환 화면 (/)
+<link fonts.css> <link base.css> <link app.css>
+<script marked.min.js> <script gsap.min.js> <script pyodide-runner.js> <script theme.js> <script js/app.js>
+
+소개 페이지 (/about)
+<link fonts.css> <link base.css> <link landing.css>
+<script gsap.min.js> <script ScrollTrigger.min.js> <script SplitText.min.js> <script ScrambleTextPlugin.min.js>
+<script theme.js> <script effects.js> <script landing.js>
+```
 
 ### 9.1 화면 구성과 DOM 계약
 
@@ -726,14 +748,17 @@ E2E 테스트([tests/e2e/test_web_ui.py](../tests/e2e/test_web_ui.py))가 아래
 | `#mode-status[data-state]` | 모드 상태 배지 (§9.2) | `server`, "서버 모드" |
 | `#drop-zone` | `role=button tabindex=0`. 클릭·Enter·Space → 파일 선택창, 드롭 → 변환 | — |
 | `#file-input` | `type=file accept=".hwp,.hwpx" hidden` | — |
-| `#error` | 오류 문구. `hidden` 속성으로 표시·숨김 | 숨김 |
-| `#skipped` | `role=status`. 성공 응답의 `skipped` 가 비어 있지 않으면 `변환하지 못한 요소: <label> <count>개[ · …] (자세한 이유: docs/extraction-limits.md)` 를 `textContent` 로 넣고 보인다. 비었거나 변환을 새로 시작하면 비우고 숨긴다 | 숨김 |
+| `#error` | 오류 상자. `hidden` 속성으로 표시·숨김 | 숨김 |
+| `#error-text` | `#error` 안의 오류 문구 (§9.7) | 빈 문자열 |
+| `#error-close` | `#error` 를 닫는 버튼 (`aria-label="오류 닫기"`) | — |
+| `#skipped` | `role=status`. 성공 응답의 `skipped` 가 비어 있지 않으면 `변환하지 못한 요소: <label> <count>개[ · …]` 를 `textContent` 로 넣고 `/about#limits` 링크("왜 빠졌나요?")를 붙여 보인다. 비었거나 변환을 새로 시작하면 비우고 숨긴다 | 숨김 |
 | `#file-name` | 마지막으로 고른 파일 이름 | "선택한 파일 없음" |
 | `#result-meta` | `단락 N개 · 표 M개 · 제목 K개 · 이미지 L개` (0 이어도 4개 다 표시) | 빈 문자열 |
 | `.busy` | `body[data-state=converting]` 일 때만 보임 (CSS) | 숨김 |
 | `#download` | zip 다운로드 버튼 | `disabled` |
 | `#preview` | `marked.parse(preview_markdown)` 결과 HTML | 안내 문구 `.placeholder` |
-| `#raw` | `markdown` 을 `textContent` 로 | 빈 문자열 |
+| `#raw` | `markdown` 을 줄마다 `span.l` 로 그린다. `#raw` 의 `textContent` 는 `markdown` 과 같다 | 빈 문자열 |
+| `#copy` | 원문 Markdown 복사 버튼 | `disabled` |
 
 ### 9.2 상태 모델
 
@@ -883,10 +908,9 @@ URL 안전 판정 `isSafeUrl(url, allowDataImage)`:
 
 ### 9.8 시각 디자인 (현재 값)
 
-- **디자인 토큰** (`:root`, 라이트 / 다크): `--bg` `#f6f7f9`/`#14171c`, `--surface` `#fff`/`#1c2027`, `--text` `#1d2330`/`#e6e8ec`, `--muted` `#667085`/`#98a1b0`, `--border` `#dde1e7`/`#2d333d`, `--border-strong` `#c4cad3`/`#3d4552`, `--accent` `#2459d6`/`#6d9bff`, `--accent-soft` `#e8efff`/`#1f2a44`, `--code-bg` `#f3f4f6`/`#161a20`, `--danger` `#b42318`/`#ff8a80`, `--danger-soft` `#fdecea`/`#3a1f1f`, `--radius` `10px`.
-- 다크 모드는 `prefers-color-scheme: dark` 만 따른다 (수동 전환 없음). `<meta name="color-scheme" content="light dark">`.
-- 글꼴: 시스템 산세리프 (Apple SD Gothic Neo, Malgun Gothic, Noto Sans KR …) 15px / 1.6. 원문 칸은 고정폭 12.5px, `white-space: pre-wrap`.
-- 레이아웃: 최대 폭 1440px. 두 칸 그리드(1fr 1fr), **899px 이하에서 한 칸**. 각 칸 높이 `72vh`(최소 360px), 내부 스크롤.
+- **디자인 토큰**: V3 시안의 [css/base.css](../src/hwp2md/web/static/css/base.css) `:root` 가 기준이다 (예: `--bg-page` `#F6F9FF`, `--text-primary` `#172B4D`, `--accent-primary` `#276EF1`, `--status-error` `#DC2626`, `--radius-md` `10px`). 다크 값은 `:root[data-theme="dark"]` 와 `prefers-color-scheme: dark` 에 같이 있다.
+- 테마: 헤더 버튼으로 라이트·다크를 수동 전환한다 (`js/theme.js`, 선택은 `localStorage` 에 저장, 없으면 시스템 설정). 글꼴은 동봉한 Pretendard Variable, 고정폭은 JetBrains Mono. `prefers-reduced-motion: reduce` 이면 GSAP 모션을 생략한다.
+- 레이아웃: 최대 폭 1440px. 두 칸 그리드(1fr 1fr), **899px 이하에서 한 칸**. 각 칸 높이 `min(72vh, 860px)`(최소 420px), 내부 스크롤.
 - 상태 표현: 드래그 중 `#drop-zone.dragover` (실선 + accent-soft 배경), 모드 배지 앞 점 색(로드 중 깜박임), 비활성 버튼 회색.
 - 미리보기 표: `display:block; overflow-x:auto` 로 가로 스크롤, 헤더 행 배경 `--code-bg`, 이미지 `max-width:100%`.
 - 접근성: 드롭 영역 키보드 조작, `#error` `role=alert`, 장식 아이콘·"변환 중…" `aria-hidden`, 스위치 `:focus-visible` 외곽선.
@@ -1071,6 +1095,6 @@ Hwp2mdError                     (손상 레코드, 깨진 XML, 과대 엔트리 
 | HWPML | [reader.py](../src/hwp2md/hwpml/reader.py) · [body.py](../src/hwp2md/hwpml/body.py) |
 | 추출 한계 | [extraction-limits.md](extraction-limits.md) |
 | 웹 서버 | [app.py](../src/hwp2md/web/app.py) · [server.py](../src/hwp2md/web/server.py) |
-| 웹 UI | [index.html](../src/hwp2md/web/static/index.html) · [app.js](../src/hwp2md/web/static/app.js) · [pyodide-runner.js](../src/hwp2md/web/static/pyodide-runner.js) · [style.css](../src/hwp2md/web/static/style.css) |
+| 웹 UI | [index.html](../src/hwp2md/web/static/index.html) · [about.html](../src/hwp2md/web/static/about.html) · [js/app.js](../src/hwp2md/web/static/js/app.js) · [pyodide-runner.js](../src/hwp2md/web/static/pyodide-runner.js) · [css/base.css](../src/hwp2md/web/static/css/base.css) · [vendor/README.md](../src/hwp2md/web/static/vendor/README.md) |
 | 스펙 | [openspec/specs/](../openspec/specs/) (`image-extraction`, `memory-conversion`, `web-preview`), 진행 중 변경 [openspec/changes/extract-dropped/](../openspec/changes/extract-dropped/) (`element-extraction`, `document-protection`, `hwpml-input` 추가) |
 | E2E (UI 계약) | [tests/e2e/test_web_ui.py](../tests/e2e/test_web_ui.py) · [test_web_api.py](../tests/e2e/test_web_api.py) |
