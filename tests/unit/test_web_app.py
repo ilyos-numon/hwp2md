@@ -287,7 +287,7 @@ def test_serve_keyboard_interrupt(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_server_defaults() -> None:
     assert server.DEFAULT_HOST == "localhost"
-    assert server.DEFAULT_PORT == 8765
+    assert server.DEFAULT_PORT == 8770
 
 
 def test_port_available_after_time_wait() -> None:
