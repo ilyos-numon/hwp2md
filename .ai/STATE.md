@@ -11,7 +11,6 @@
 - 현재 단계: 없음
 - 상태: IDLE
 - 브랜치: `main` (ai/T-20261027-pypi-release 병합·푸시 완료, 태그 v0.1.0)
-- 미커밋 변경: `.ai/tasks/T-20261027-pypi-release/PROGRESS.md`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
 1. 새 작업은 `/plan <목표>`. 후보: Python 3.14 손상 zip 오류 문구 차이, 실제 차트 HWP 샘플 검증, Pretendard 서브셋, 과거 커밋의 샘플 산출물 이력 정리(사용자 결정)
