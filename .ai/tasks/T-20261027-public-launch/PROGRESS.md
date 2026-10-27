@@ -180,3 +180,14 @@
 - 변경 파일(미커밋, .ai 제외): README.md docs/decisions.md docs/releasing.md src/hwp2md/__init__.py CHANGELOG.md 
 - 커밋: 2790166 [T-20261027-public-launch][S6][wip] auto checkpoint (stop)
 - 다음: S7 시작
+
+## [2026-10-27 18:18] S7 | orchestrator | START
+- 한 일: Pages 워크플로우·이슈 템플릿
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8bf492e [T-20261027-public-launch][s6] README·CHANGELOG·0.1.1
+
+## [2026-10-27 18:19] S7 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8bf492e [T-20261027-public-launch][s6] README·CHANGELOG·0.1.1
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
