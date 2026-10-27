@@ -38,3 +38,14 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/vendor/README.md src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Medium.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-Regular.woff2 src/hwp2md/web/static/vendor/fonts/JetBrainsMono-SemiBold.woff2 src/hwp2md/web/static/vendor/fonts/OFL-JetBrainsMono.txt src/hwp2md/web/static/vendor/fonts/OFL-Pretendard.txt src/hwp2md/web/static/vendor/fonts/PretendardVariable.woff2 src/hwp2md/web/static/vendor/fonts/fonts.css src/hwp2md/web/static/vendor/gsap/LICENSE.md src/hwp2md/web/static/vendor/gsap/ScrambleTextPlugin.min.js src/hwp2md/web/static/vendor/gsap/ScrollTrigger.min.js src/hwp2md/web/static/vendor/gsap/SplitText.min.js src/hwp2md/web/static/vendor/gsap/gsap.min.js src/hwp2md/web/static/vendor/marked.LICENSE.md 
 - 커밋: 1cc5cd5 [T-20261027-v3-backend][S1][wip] auto checkpoint (stop)
 - 다음: S2 시작
+
+## [2026-10-27 14:12] S2 | orchestrator | START
+- 한 일: 변환 화면 이식과 실제 MODES 연결
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6b1e797 [T-20261027-v3-backend][s1] vendor GSAP·글꼴·라이선스 동봉
+
+## [2026-10-27 14:12] S2 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6b1e797 [T-20261027-v3-backend][s1] vendor GSAP·글꼴·라이선스 동봉
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
