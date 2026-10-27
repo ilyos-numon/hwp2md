@@ -195,3 +195,21 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: d74e8e8 [T-20261027-pypi-release][s6] CI 워크플로우
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:17] S7 | hook | AUTO
+- 한 일: 도구 호출 105회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 5ddc3cd [T-20261027-pypi-release][S7][wip] auto checkpoint (stop)
+
+## [2026-10-27 16:17] S7 | implementer(opus) | DONE
+- 한 일: release.yml (build·publish), actionlint 0, grep 4/0, check_dist --tag v0.1.0 OK
+- 변경 파일(미커밋, .ai 제외): .github/workflows/release.yml 
+- 커밋: 5ddc3cd [T-20261027-pypi-release][S7][wip] auto checkpoint (stop)
+- 다음: S8
+- 메모: actions/download-artifact@v8, pypa/gh-action-pypi-publish@release/v1
+
+## [2026-10-27 16:17] S7 | orchestrator | DONE
+- 한 일: 릴리스 워크플로우 검증 통과
+- 변경 파일(미커밋, .ai 제외): .github/workflows/release.yml 
+- 커밋: 5ddc3cd [T-20261027-pypi-release][S7][wip] auto checkpoint (stop)
+- 다음: S8 시작

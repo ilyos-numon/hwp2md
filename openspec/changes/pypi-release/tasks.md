@@ -20,7 +20,7 @@
 ## 5. 워크플로우
 
 - [x] 5.1 `.github/workflows/ci.yml` (lint·typecheck·unit·e2e·dist)
-- [ ] 5.2 `.github/workflows/release.yml` (build·publish, environment `pypi`, Trusted Publishing)
+- [x] 5.2 `.github/workflows/release.yml` (build·publish, environment `pypi`, Trusted Publishing)
 
 ## 6. 문서
 
