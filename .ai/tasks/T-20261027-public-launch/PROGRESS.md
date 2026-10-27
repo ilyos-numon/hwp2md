@@ -152,3 +152,14 @@
 - 변경 파일(미커밋, .ai 제외): pyproject.toml 
 - 커밋: 03dd059 [T-20261027-public-launch][S5][wip] auto checkpoint (stop)
 - 다음: S6 시작
+
+## [2026-10-27 18:16] S6 | orchestrator | START
+- 한 일: README·CHANGELOG·0.1.1
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6413aa5 [T-20261027-public-launch][s5] 패키지 메타데이터
+
+## [2026-10-27 18:17] S6 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6413aa5 [T-20261027-public-launch][s5] 패키지 메타데이터
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
