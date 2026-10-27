@@ -10,11 +10,11 @@
 - 결과 기록: `.ai/tasks/T-20261027-v3-backend/RESULT.md` (C1~C14 전부 PASS)
 - 플랜: DONE (`.ai/tasks/T-20261027-v3-backend/PLAN.md`)
 - OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-v3-backend/`
-- 브랜치: `ai/T-20261027-v3-backend` (main 병합 대기)
-- 마지막 커밋: d4c4964 (RESULT 커밋 전 기준, 갱신 2026-10-27 14:30)
+- 브랜치: `main` (ai/T-20261027-v3-backend 병합·푸시 완료 2026-10-27, 6b75180)
+- 마지막 커밋: 6b75180 Merge ai/T-20261027-v3-backend
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 사용자 RESULT 검토 → 승인 시 `ai/T-20261027-v3-backend` 를 main 에 병합·푸시
+1. PyPI 배포 + GitHub Actions CI `/plan`. PyPI 이름 `hwp2md` 는 타인 소유(1.0.1, 2026-04) → 배포 이름 사용자 결정 대기. 인증은 Trusted Publishing
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음
