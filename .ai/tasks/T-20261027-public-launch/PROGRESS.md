@@ -423,3 +423,14 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/about.html src/hwp2md/web/static/js/landing.js src/hwp2md/web/static/js/i18n-about.js 
 - 커밋: 31401d0 [T-20261027-public-launch][S14][wip] auto checkpoint (stop)
 - 다음: S15 시작
+
+## [2026-10-27 19:26] S15 | orchestrator | START
+- 한 일: i18n E2E
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6c49bc6 [T-20261027-public-launch][s14] 소개 페이지 영어
+
+## [2026-10-27 19:26] S15 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 6c49bc6 [T-20261027-public-launch][s14] 소개 페이지 영어
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
