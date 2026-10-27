@@ -215,3 +215,20 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: c85664e [T-20261027-public-launch][s7] Pages 워크플로우·이슈 템플릿
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 18:20] S8 | hook | AUTO
+- 한 일: 도구 호출 90회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 0b73f8a [T-20261027-public-launch][S8][wip] auto checkpoint (stop)
+
+## [2026-10-27 18:20] S8 | implementer(opus) | DONE
+- 한 일: docs/launch community-post(제목 3·본문 2206자)·sns-post(442자·해시태그 5), sanitize OK
+- 변경 파일(미커밋, .ai 제외): docs/launch/ 
+- 커밋: 0b73f8a [T-20261027-public-launch][S8][wip] auto checkpoint (stop)
+- 다음: S9
+
+## [2026-10-27 18:20] S8 | orchestrator | DONE
+- 한 일: 홍보 초안 검증 통과
+- 변경 파일(미커밋, .ai 제외): docs/launch/ 
+- 커밋: 0b73f8a [T-20261027-public-launch][S8][wip] auto checkpoint (stop)
+- 다음: S9 시작
