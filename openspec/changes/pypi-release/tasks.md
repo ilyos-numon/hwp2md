@@ -11,7 +11,7 @@
 
 ## 3. 배포물 검사
 
-- [ ] 3.1 `scripts/check_dist.py` (허용·금지 경로, 크기, `--tag`, `--patterns`) 를 쓴다
+- [x] 3.1 `scripts/check_dist.py` (허용·금지 경로, 크기, `--tag`, `--patterns`) 를 쓴다
 
 ## 4. CI 용 테스트 표시
 

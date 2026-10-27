@@ -90,3 +90,16 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 3d42ea9 [T-20261027-pypi-release][s3] web extra 안내 hwp2markdown[web]
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:09] S4 | implementer(opus) | DONE
+- 한 일: scripts/check_dist.py: C3 OK sdist=66 wheel=66, 실패 경로 6종 확인, mypy --strict·ruff·C4 통과
+- 변경 파일(미커밋, .ai 제외): scripts/ 
+- 커밋: e570309 [T-20261027-pypi-release][S4][wip] auto checkpoint (stop)
+- 다음: S5
+- 메모: 깨진 archive·잘못된 정규식은 exit 2
+
+## [2026-10-27 16:09] S4 | orchestrator | DONE
+- 한 일: 배포물 검사 스크립트 검증 통과
+- 변경 파일(미커밋, .ai 제외): scripts/ 
+- 커밋: e570309 [T-20261027-pypi-release][S4][wip] auto checkpoint (stop)
+- 다음: S5 시작
