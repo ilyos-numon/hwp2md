@@ -175,3 +175,14 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 1d87663 [T-20261027-v3-backend][s4] 문서에 V3 화면 구조와 동봉 자원 반영
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:25] S5 | hook | AUTO
+- 한 일: 도구 호출 120회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
+- 커밋: 5e1601b [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:25] S5 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
+- 커밋: 5e1601b [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
