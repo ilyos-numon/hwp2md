@@ -151,6 +151,7 @@ def test_truncated_docinfo_exit_1(tmp_path: Path, run_cli: RunCli) -> None:
     assert not (out_dir / "broken.md").exists()
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("real", REAL_HWP5 + REAL_HWPX, ids=lambda p: p.name)
 def test_real_fixture_headings(real: Path, tmp_path: Path, run_cli: RunCli) -> None:
     lines, md = _convert(run_cli, real, tmp_path / "out")

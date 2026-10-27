@@ -126,6 +126,7 @@ def test_hwpx_malformed_section_exit_1(tmp_path: Path, run_cli: RunCli) -> None:
     assert not (out_dir / "broken.md").exists()
 
 
+@pytest.mark.real_samples
 @pytest.mark.parametrize("real_hwpx", REAL_HWPX_FIXTURES, ids=lambda p: p.name)
 def test_real_hwpx_fixture_converts(real_hwpx: Path, tmp_path: Path, run_cli: RunCli) -> None:
     out_dir = tmp_path / "out"

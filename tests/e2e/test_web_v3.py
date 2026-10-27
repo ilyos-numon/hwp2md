@@ -9,15 +9,17 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import pytest
-from conftest import REAL_SAMPLES, WebServer
 from playwright.sync_api import Browser, BrowserContext, Page, Route, sync_playwright
 
+from conftest import REAL_SAMPLES, WebServer
 from synth_hwpx import write_hwpx
 from synth_items import SynthHeaderFooter
 
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
-IMAGE_HWPX = next(p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더"))
+IMAGE_HWPX = next(
+    (p for p in REAL_SAMPLES if p.suffix == ".hwpx" and p.stem.startswith("브라더")), None
+)
 TIMEOUT_MS = 60_000
 VIEWPORT = {"width": 1440, "height": 900}
 NARROW = {"width": 390, "height": 844}
@@ -99,6 +101,7 @@ def _convert_ok(page: Page, path: Path) -> None:
     assert state == "done", page.locator("#error").inner_text()
 
 
+@pytest.mark.real_samples
 def test_v3_server_convert_offline(
     make_context: Callable[..., BrowserContext],
     web_server: WebServer,
@@ -222,6 +225,7 @@ def test_v3_about_offline(
     assert blocked == []
 
 
+@pytest.mark.real_samples
 def test_v3_dark_theme(
     make_context: Callable[..., BrowserContext],
     web_server: WebServer,
@@ -241,6 +245,7 @@ def test_v3_dark_theme(
     assert blocked == []
 
 
+@pytest.mark.real_samples
 def test_v3_narrow_tabs(
     make_context: Callable[..., BrowserContext],
     web_server: WebServer,
@@ -259,6 +264,7 @@ def test_v3_narrow_tabs(
     assert blocked == []
 
 
+@pytest.mark.real_samples
 def test_v3_copy_button(
     make_context: Callable[..., BrowserContext],
     web_server: WebServer,

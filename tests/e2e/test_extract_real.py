@@ -29,6 +29,8 @@ from samples import (
     samples_with,
 )
 
+pytestmark = pytest.mark.real_samples
+
 RunCli = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
 _SUMMARY = re.compile(r"^  단락 (\d+)개 · 표 (\d+)개(?: · 제목 (\d+)개)?(?: · 이미지 (\d+)개)?$")
