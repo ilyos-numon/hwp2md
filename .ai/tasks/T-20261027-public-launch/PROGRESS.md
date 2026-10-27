@@ -490,3 +490,8 @@
 - 변경 파일(미커밋, .ai 제외): CHANGELOG.md README.md docs/decisions.md docs/feature-reference.md README.en.md 
 - 커밋: b8d2856 [T-20261027-public-launch][S16][wip] auto checkpoint (stop)
 - 다음: S17 시작
+
+## [2026-10-27 19:32] S17 | orchestrator | START
+- 한 일: 재검증·main push·Pages 재배포
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f5caf0b [T-20261027-public-launch][s16] README 영어판·CHANGELOG·i18n 문서
