@@ -306,7 +306,7 @@ jobs:
 - 입력: §4.4, `tests/e2e/test_web_ui.py`(Pyodide 대기 패턴), `tests/e2e/test_web_v3.py`(요청 가드 패턴), `tests/e2e/conftest.py`, `tests/synth_hwpx.py`, `scripts/build_pages.py`
 - 쓰기 범위:
   - `tests/e2e/test_pages_site.py`
-- 산출물: §4.4 케이스 4개 (live 는 환경변수 없으면 skip)
+- 산출물: §4.4 케이스 3개. [orchestrator 보완 2026-10-27] skipif 는 gate 가 약화로 판정하므로 test_pages_live 를 만들지 않고, `HWP2MD_PAGES_URL` 이 있으면 같은 3케이스가 그 base 로 돈다(S13 실제 Pages 확인은 이 환경변수로 실행). 기대값 `3 passed`, skip 0
 - 검증: `ILLY_SHOT_DIR=.ai/tasks/T-20261027-public-launch/screenshots uv run pytest tests/e2e/test_pages_site.py -q > .ai/tasks/T-20261027-public-launch/logs/s4-e2e.log 2>&1; echo exit=$?` → `3 passed, 1 skipped`, exit=0; 스크린샷 3장 존재. reviewer 는 S14 에서 C7 대조
 - 완료 조건: 검증 + 커밋 `[…][s4] 정적 사이트 E2E`
 - 실패 시: §e2e-standard 실패 분류 — 테스트 오류는 test-writer, 구현 오류(S2·S3 파일)는 implementer 에 그 파일 쓰기 범위로 재호출. 합계 재시도 3회 초과 → BLOCKED
