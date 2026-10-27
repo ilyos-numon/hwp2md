@@ -16,7 +16,7 @@ from .errors import (
 from .memory import MemoryResult, convert_bytes
 from .skips import SkipCounter
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 __all__ = [
     "Block",

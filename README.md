@@ -48,6 +48,49 @@ hwp2md 는 이 문제를 이렇게 푼다.
 
 ### 설치
 
+#### Python 없이: Homebrew 또는 실행 파일
+
+macOS·Linux 에서 Homebrew 를 쓰면 한 줄로 설치한다.
+
+```bash
+brew install ilyos-numon/tap/hwp2md
+hwp2md --version
+```
+
+또는 OS 에 맞는 실행 파일 하나를 내려받는다. 압축하지 않은 단일 파일이고 Python 이 필요 없다. 항상 최신 릴리스를 가리킨다.
+
+| OS | 실행 파일 |
+|----|-----------|
+| Windows x64 | [hwp2md-windows-x64.exe](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-windows-x64.exe) |
+| macOS Apple Silicon (arm64) | [hwp2md-macos-arm64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-macos-arm64) |
+| macOS Intel (x64) | [hwp2md-macos-x64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-macos-x64) |
+| Linux x64 | [hwp2md-linux-x64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-linux-x64) |
+
+macOS·Linux 는 실행 권한을 준다. 브라우저로 받은 macOS 파일은 서명·공증이 없어 Gatekeeper 가 막으므로 격리 속성을 지운다.
+
+```bash
+chmod +x hwp2md-macos-arm64
+xattr -d com.apple.quarantine hwp2md-macos-arm64   # macOS 만
+./hwp2md-macos-arm64 문서.hwp -o out/
+./hwp2md-macos-arm64 serve                         # 웹 미리보기
+```
+
+Windows 는 SmartScreen 경고가 뜨면 "추가 정보 → 실행" 을 누른다. `hwp2md-windows-x64.exe 문서.hwp -o out/` 처럼 명령 프롬프트·PowerShell 에서 실행한다.
+
+내려받은 파일은 같은 릴리스의 [SHA256SUMS](https://github.com/ilyos-numon/hwp2md/releases/latest/download/SHA256SUMS) 로 확인할 수 있다.
+
+```bash
+shasum -a 256 -c SHA256SUMS --ignore-missing      # macOS·Linux (Linux 는 sha256sum -c 도 된다)
+```
+
+```powershell
+Get-FileHash .\hwp2md-windows-x64.exe -Algorithm SHA256   # 출력 Hash 를 SHA256SUMS 의 값과 비교
+```
+
+실행 파일은 처음 실행할 때 임시 폴더에 압축을 풀어 몇 초 걸린다.
+
+#### Python 으로 설치
+
 설치 없이 한 줄로 실행하려면 `uvx --from hwp2markdown hwp2md 문서.hwp -o out/` 를 쓴다. [uv](https://docs.astral.sh/uv/) 가 필요하다.
 
 PyPI 배포 이름은 `hwp2markdown` 이다. 설치 후 명령과 import 이름은 `hwp2md` 다. Python 3.11 이상이 필요하다.
@@ -342,6 +385,7 @@ uv run mypy src                                 # strict
 
 hwp2md converts Korean HWP 5.0, HWPX and HWPML documents to Markdown without Hancom Office. It keeps the heading hierarchy, tables, images, footnotes and equations (as LaTeX), so the output is ready for RAG pipelines, LLM input and version control.
 
+- Install without Python: `brew install ilyos-numon/tap/hwp2md`, or download a single executable for Windows, macOS or Linux from https://github.com/ilyos-numon/hwp2md/releases/latest (see README.en.md for details).
 - Install: `pip install hwp2markdown` (Python 3.11+). The command and import name is `hwp2md`: `hwp2md input.hwp -o out/`, or `from hwp2md import convert`.
 - Try it in your browser: https://ilyos-numon.github.io/hwp2md/ — no install; the converter runs in Pyodide (WebAssembly Python), and the first load takes about a minute.
 - Privacy: in the browser demo your file never leaves the browser. The local web preview (`hwp2md serve`, extra `[web]`) converts uploads in memory and writes nothing to disk.

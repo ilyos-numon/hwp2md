@@ -17,6 +17,8 @@ PyPI 배포 이름은 `hwp2markdown`, 콘솔 명령·import 이름은 `hwp2md` �
 - `Release` (`.github/workflows/release.yml`): `v*.*.*` 태그 push 에서만 돈다.
   - `build`: 단위 테스트 → `uv build --out-dir dist` → `twine check --strict` → `scripts/check_dist.py dist --tag <태그>` (태그와 패키지 버전이 다르면 실패) → artifact `dist` 업로드.
   - `publish`: `build` 뒤에 environment `pypi` 에서 `pypa/gh-action-pypi-publish@release/v1` 로 게시한다.
+  - `binaries`: `build` 뒤에 4개 러너(`windows-2022`·`macos-15`·`macos-15-intel`·`ubuntu-22.04`)에서 `uv run --with pyinstaller==6.22.3 python scripts/build_binary.py --out build/bin` 으로 실행 파일을 만들고, `HWP2MD_BINARY` 를 지정해 `tests/e2e/test_binary_smoke.py` 를 돌린 뒤 artifact `bin-<platform>` 으로 올린다. 자산 이름은 `hwp2md-windows-x64.exe`·`hwp2md-macos-arm64`·`hwp2md-macos-x64`·`hwp2md-linux-x64` 이고 버전을 넣지 않는다.
+  - `github-release`: `binaries`·`publish` 가 모두 성공한 뒤 실행 파일 4개와 `SHA256SUMS`(`sha256sum hwp2md-* | sort -k2`)를 태그의 GitHub Release 에 올린다. Release 가 없으면 만들고(`--generate-notes`), 있으면 `--clobber` 로 덮어쓴다. 이 job 만 `contents: write` 권한을 갖는다.
 
 ## 릴리스 순서
 
@@ -33,7 +35,16 @@ PyPI 배포 이름은 `hwp2markdown`, 콘솔 명령·import 이름은 `hwp2md` �
    git tag -a vX.Y.Z -m "vX.Y.Z"
    git push origin vX.Y.Z
    ```
-5. GitHub Actions 에서 `Release` 실행의 `build`·`publish` 가 성공했는지 확인하고, https://pypi.org/project/hwp2markdown/ 에서 새 버전을 확인한다.
+5. GitHub Actions 에서 `Release` 실행의 `build`·`publish`·`binaries`(4개)·`github-release` 가 성공했는지 확인하고, https://pypi.org/project/hwp2markdown/ 에서 새 버전을, https://github.com/ilyos-numon/hwp2md/releases/latest 에서 자산 5개(실행 파일 4개 + `SHA256SUMS`)를 확인한다.
+6. Homebrew 탭을 갱신한다. 탭 저장소는 `ilyos-numon/homebrew-tap` 이고 로컬 작업 위치는 `build/homebrew-tap` 이다(`build/` 는 커밋하지 않는다). formula 는 Release 의 `SHA256SUMS` 로 생성하며 직접 고치지 않는다.
+   ```bash
+   git clone https://github.com/ilyos-numon/homebrew-tap.git build/homebrew-tap   # 처음 한 번
+   uv run python scripts/update_formula.py --version X.Y.Z --out build/homebrew-tap/Formula/hwp2md.rb
+   cd build/homebrew-tap
+   git add Formula/hwp2md.rb && git commit -m "hwp2md X.Y.Z" && git push origin main
+   brew update && brew upgrade hwp2md && brew test hwp2md   # 확인
+   ```
+   탭 README 원본은 `packaging/homebrew/README.md` 다. 바꿨으면 탭의 `README.md` 로 복사해 같이 커밋한다.
 
 ## 실패 대응
 
@@ -46,6 +57,9 @@ PyPI 배포 이름은 `hwp2markdown`, 콘솔 명령·import 이름은 `hwp2md` �
   ```
 - `build` 의 다른 검사(단위 테스트·twine·check_dist) 실패: 원인을 고쳐 main 에 반영하고, 위와 같이 태그를 지운 뒤 다시 태그한다.
 - `publish` 실패 (Trusted Publishing 오류): U1 의 Owner·Repository·Workflow·Environment 값과 U2 environment 이름 `pypi` 가 정확한지 확인한 뒤, Actions 에서 실패한 job 을 다시 실행한다.
+- `binaries` 실패: 일시적 오류(러너 대기열·네트워크)면 Actions 에서 실패한 job 만 다시 실행한다. `github-release` 도 그 뒤 다시 돈다. 코드 수정이 필요하면 고쳐 main 에 반영하고, 위와 같이 태그를 지운 뒤 다시 태그한다. 이때 `publish` 가 이미 성공했다면 같은 버전은 PyPI 에 다시 올릴 수 없으므로 `__version__` 을 올린 새 버전으로 릴리스한다.
+- `github-release` 실패: `binaries`·`publish` 가 모두 성공했는지 확인하고 job 을 다시 실행한다. 이미 올라간 자산은 `--clobber` 로 덮어쓴다.
+- `macos-15-intel` 러너가 없어지거나 계속 대기하면: `release.yml` 의 matrix 에서 `macos-x64` 행을 빼고, `scripts/update_formula.py` 의 필수 자산과 formula 의 `on_macos` → `on_intel` 블록에서 `hwp2md-macos-x64` 를 빼는 후속 변경을 한다. README 의 실행 파일 표와 `docs/decisions.md` 도 함께 고친다.
 - PyPI 는 같은 버전을 다시 올릴 수 없다 (삭제한 버전도 마찬가지). 이미 게시된 버전에 문제가 있으면 `__version__` 을 올려 새 버전으로 다시 릴리스한다.
 
 ## GitHub Pages

@@ -49,6 +49,49 @@ hwp2md solves this as follows.
 
 ### Install
 
+#### Without Python: Homebrew or a single executable
+
+On macOS and Linux with Homebrew, install in one line:
+
+```bash
+brew install ilyos-numon/tap/hwp2md
+hwp2md --version
+```
+
+Or download one executable for your OS. Each is a single uncompressed file that needs no Python. The links always point to the latest release.
+
+| OS | Executable |
+|----|------------|
+| Windows x64 | [hwp2md-windows-x64.exe](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-windows-x64.exe) |
+| macOS Apple Silicon (arm64) | [hwp2md-macos-arm64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-macos-arm64) |
+| macOS Intel (x64) | [hwp2md-macos-x64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-macos-x64) |
+| Linux x64 | [hwp2md-linux-x64](https://github.com/ilyos-numon/hwp2md/releases/latest/download/hwp2md-linux-x64) |
+
+On macOS and Linux, make the file executable. The macOS executables are not signed or notarized, so Gatekeeper blocks a file downloaded with a browser until you remove the quarantine attribute.
+
+```bash
+chmod +x hwp2md-macos-arm64
+xattr -d com.apple.quarantine hwp2md-macos-arm64   # macOS only
+./hwp2md-macos-arm64 document.hwp -o out/
+./hwp2md-macos-arm64 serve                         # web preview
+```
+
+On Windows, if SmartScreen shows a warning, click "More info → Run anyway". Run it from Command Prompt or PowerShell, e.g. `hwp2md-windows-x64.exe document.hwp -o out/`.
+
+You can verify a download against [SHA256SUMS](https://github.com/ilyos-numon/hwp2md/releases/latest/download/SHA256SUMS) from the same release.
+
+```bash
+shasum -a 256 -c SHA256SUMS --ignore-missing      # macOS and Linux (sha256sum -c also works on Linux)
+```
+
+```powershell
+Get-FileHash .\hwp2md-windows-x64.exe -Algorithm SHA256   # compare Hash with the value in SHA256SUMS
+```
+
+On first run the executable unpacks itself into a temporary folder, which takes a few seconds.
+
+#### With Python
+
 To run it in one line without installing, use `uvx --from hwp2markdown hwp2md document.hwp -o out/`. This requires [uv](https://docs.astral.sh/uv/).
 
 The PyPI distribution name is `hwp2markdown`. After installation, the command and the import name are `hwp2md`. Python 3.11 or later is required.
