@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S7 Pages 워크플로우·이슈 템플릿
+- 현재 단계: S8 홍보 초안
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` S7(Pages 워크플로우·이슈 템플릿)부터. S10 은 사용자 승인 게이트
+1. `/implement` S8(홍보 초안)부터. S10 은 사용자 승인 게이트
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음 (S10 에서 게이트)
