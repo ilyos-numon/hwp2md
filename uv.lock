@@ -226,8 +226,7 @@ wheels = [
 ]
 
 [[package]]
-name = "hwp2md"
-version = "0.1.0"
+name = "hwp2markdown"
 source = { editable = "." }
 dependencies = [
     { name = "lxml" },

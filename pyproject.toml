@@ -1,9 +1,10 @@
 [project]
-name = "hwp2md"
-version = "0.1.0"
+name = "hwp2markdown"
+dynamic = ["version"]
 description = "Convert HWP 5.0 documents to Markdown without Hancom Office"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.11"
 dependencies = [
     "lxml>=5",
@@ -29,11 +30,19 @@ dev = [
 ]
 
 [build-system]
-requires = ["hatchling>=1.25"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/hwp2md/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src/hwp2md", "README.md", "LICENSE", "NOTICE", "pyproject.toml"]
+exclude = ["__pycache__", "*.pyc"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hwp2md"]
+exclude = ["__pycache__", "*.pyc"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
