@@ -24,3 +24,9 @@
 - 변경 파일(미커밋, .ai 제외): README.en.md README.md docs/images/web-browser-mode.png docs/images/web-server-mode.png docs/images/convert-en.png docs/images/hero-convert.png docs/images/landing-en.png docs/images/landing.png docs/usage.md 
 - 커밋: 2511da8 [T-20261027-readme-polish][plan] README 재구성
 - 다음: S2 push
+
+## [2026-10-27 21:44] S2 | orchestrator | DONE
+- 한 일: main f868f7a push, README 이미지 4장·docs/usage.md 200
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: f868f7a [T-20261027-readme-polish][s1] README 재구성: 바로 써 보기·스크린샷·FAQ, docs/usage.md
+- 다음: 완료
