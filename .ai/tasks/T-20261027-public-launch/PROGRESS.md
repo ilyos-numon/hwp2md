@@ -49,3 +49,14 @@
 - 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/js/app.js src/hwp2md/web/static/pyodide-runner.js 
 - 커밋: 6d1e272 [T-20261027-public-launch][S2][wip] auto checkpoint (stop)
 - 다음: S3 시작
+
+## [2026-10-27 17:41] S3 | orchestrator | START
+- 한 일: 정적 빌드 스크립트
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8fd9d53 [T-20261027-public-launch][s2] 정적 사이트 meta 설정
+
+## [2026-10-27 17:42] S3 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 8fd9d53 [T-20261027-public-launch][s2] 정적 사이트 meta 설정
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
