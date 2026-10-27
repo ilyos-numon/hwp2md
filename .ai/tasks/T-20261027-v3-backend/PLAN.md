@@ -1,7 +1,7 @@
 # PLAN — T-20261027-v3-backend V3 프론트엔드를 실제 백엔드에 연결
 
 > 작성: opus · 2026-10-27 · 프로젝트: hwp2md
-> 상태: DRAFT → APPROVED → DONE  (현재: APPROVED)
+> 상태: DRAFT → APPROVED → DONE  (현재: DONE)
 > 이 플랜은 sonnet 등급 모델이 추가 질문 없이 그대로 실행할 수 있을 만큼 구체적이어야 한다.
 
 ## 0. 한 줄 목표
