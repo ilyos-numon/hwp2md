@@ -8,13 +8,13 @@
 - 마지막 완료: T-20261023-extract-dropped (main 병합·푸시 완료, f80a6a3)
 - 플랜: `.ai/tasks/T-20261027-v3-backend/PLAN.md` (상태: APPROVED, §7 기본값 자동 승인)
 - OpenSpec: `openspec/changes/v3-backend/`
-- 현재 단계: S5 V3 화면 E2E
+- 현재 단계: S6 전체 게이트
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-v3-backend`
 - 마지막 커밋: (plan 커밋)
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. `/implement` — PLAN §5 Stage 5(V3 화면 E2E 작성·실행)부터
+1. `/implement` — PLAN §5 Stage 6(전체 게이트 실행)부터
 
 ## 차단 중이면
 - 이유: 없음 · 사용자 결정 필요: 없음

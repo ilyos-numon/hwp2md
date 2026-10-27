@@ -186,3 +186,21 @@
 - 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
 - 커밋: 5e1601b [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 14:26] S5 | hook | AUTO
+- 한 일: 도구 호출 135회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
+- 커밋: 5286d2c [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 14:26] S5 | test-writer(sonnet) | DONE
+- 한 일: test_web_v3.py 7케이스, 7 passed, 스크린샷 7장(v3-about-hero·limits 추가)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
+- 커밋: 5286d2c [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
+- 다음: S6
+- 메모: copy 케이스 toast 대기 수정(테스트 결함). limits 샷은 헤더가 제목 일부 가림(미관)
+
+## [2026-10-27 14:26] S5 | orchestrator | DONE
+- 한 일: V3 화면 E2E 검증 통과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_v3.py 
+- 커밋: 5286d2c [T-20261027-v3-backend][S5][wip] auto checkpoint (stop)
+- 다음: S6 시작

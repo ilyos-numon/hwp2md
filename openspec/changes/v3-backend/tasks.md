@@ -23,6 +23,6 @@
 
 ## 5. 검증
 
-- [ ] 5.1 `tests/e2e/test_web_v3.py` (외부 요청 0, 성공·오류·소개·다크·좁은 화면, 스크린샷)를 쓴다
+- [x] 5.1 `tests/e2e/test_web_v3.py` (외부 요청 0, 성공·오류·소개·다크·좁은 화면, 스크린샷)를 쓴다
 - [ ] 5.2 LINT·TYPECHECK·TEST·E2E 전체·wheel 내용·sanitize 를 실행해 로그를 남긴다
 - [ ] 5.3 diff·스크린샷 리뷰와 RESULT 기록
