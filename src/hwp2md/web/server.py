@@ -12,7 +12,7 @@ import uvicorn
 from .app import create_app
 
 DEFAULT_HOST = "localhost"
-DEFAULT_PORT = 8765
+DEFAULT_PORT = 8770
 
 
 def _port_available(host: str, port: int) -> bool:

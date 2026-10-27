@@ -73,6 +73,10 @@ async def _index(request: Request) -> Response:
     return FileResponse(STATIC_DIR / "index.html", media_type="text/html; charset=utf-8")
 
 
+async def _about(request: Request) -> Response:
+    return FileResponse(STATIC_DIR / "about.html", media_type="text/html; charset=utf-8")
+
+
 async def _health(request: Request) -> Response:
     return JSONResponse({"ok": True, "version": hwp2md.__version__})
 
@@ -120,6 +124,7 @@ def create_app() -> Starlette:
 
     routes = [
         Route("/", _index, methods=["GET"]),
+        Route("/about", _about, methods=["GET"]),
         Route("/api/health", _health, methods=["GET"]),
         Route("/api/convert", _convert, methods=["POST"]),
         Route("/api/zip", _zip, methods=["POST"]),

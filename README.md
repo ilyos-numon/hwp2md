@@ -110,10 +110,12 @@ out/
 ### ② 웹 미리보기
 
 ```bash
-hwp2md serve                       # http://localhost:8765 , 브라우저가 자동으로 열린다
-hwp2md serve --port 8780           # 8765 가 이미 쓰이고 있을 때
+hwp2md serve                       # http://localhost:8770 , 브라우저가 자동으로 열린다
+hwp2md serve --port 8771           # 8770 이 이미 쓰이고 있을 때
 hwp2md serve --no-browser          # 브라우저 자동 열기 끔
 ```
+
+`/` 은 변환 화면, `/about` 은 서비스 소개(기능, 사용 장면, 추출 한계 `/about#limits`)다. 두 화면에 쓰는 글꼴·GSAP·marked 는 패키지 안에 동봉돼 있어 서버 모드는 인터넷 없이 동작한다.
 
 1. HWP·HWPX 파일을 끌어다 놓거나 클릭해서 고른다 (최대 50MB).
 2. 왼쪽에 렌더링된 미리보기, 오른쪽에 Markdown 원문이 나온다.
@@ -126,7 +128,7 @@ hwp2md serve --no-browser          # 브라우저 자동 열기 끔
 | 변환 위치 | 로컬 `hwp2md serve` 프로세스 (메모리에서 변환) | 브라우저 안의 Pyodide (WebAssembly 파이썬) |
 | 파일 바이트 전송 | 로컬 서버로 `POST /api/convert` | 보내지 않음 |
 | 첫 변환까지 | 즉시 | 첫 로딩 약 1분 (Pyodide·lxml 다운로드, 측정 약 65초) |
-| 인터넷 | 필요 없음 | 필요 (jsDelivr CDN) |
+| 인터넷 | 필요 없음 (화면 자원 동봉) | 필요 (Pyodide 를 jsDelivr CDN 에서 받음) |
 | 결과 | 같은 Markdown | 같은 Markdown (E2E 로 바이트 비교) |
 
 ![서버 모드 화면](docs/images/web-server-mode.png)
@@ -273,7 +275,7 @@ uv run mypy src                                 # strict
 - 브라우저 모드 첫 로딩이 약 1분 걸리고 인터넷(jsDelivr)이 필요하다. 오프라인 번들은 없다.
 - 공공기관 샘플 20개 변환 품질 비교표는 아직 작성하지 않았다.
 - PyPI 에 배포하지 않았다. CI(GitHub Actions)도 아직 없다.
-- 기본 포트 8765 가 다른 프로그램과 겹치면 `--port` 로 바꾼다 (자동으로 다음 포트를 찾지 않는다).
+- 기본 포트 8770 이 다른 프로그램과 겹치면 `--port` 로 바꾼다 (자동으로 다음 포트를 찾지 않는다).
 - 이미지가 있는 실제 HWP 5.0 샘플이 없어, HWP 5.0 이미지 경로는 합성 문서와 공개 스펙 교차 확인으로만 검증했다.
 - 이미지 포맷은 변환하지 않는다. WMF/EMF 같은 원본은 그대로 저장되어 브라우저에서 안 보일 수 있다.
 - 구형 차트(차트 값이 OOXML 로 저장되지 않은 것)는 데이터를 꺼내지 못하고 건너뜀으로 보고한다.
