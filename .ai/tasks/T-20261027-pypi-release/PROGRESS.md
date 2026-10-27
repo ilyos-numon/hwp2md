@@ -79,3 +79,14 @@
 - 커밋: 1ea524c [T-20261027-pypi-release][s2] 배포 이름 hwp2markdown·동적 버전·sdist 허용 목록
 - 다음: S4 시작
 - 메모: test_web_api.py 의 web extra 단언은 S5 에서 갱신, 그 사이 1건 실패 예상
+
+## [2026-10-27 16:07] S4 | orchestrator | START
+- 한 일: 배포물 검사 스크립트
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 3d42ea9 [T-20261027-pypi-release][s3] web extra 안내 hwp2markdown[web]
+
+## [2026-10-27 16:08] S4 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 3d42ea9 [T-20261027-pypi-release][s3] web extra 안내 hwp2markdown[web]
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
