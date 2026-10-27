@@ -66,6 +66,21 @@ def test_index_html(client: TestClient) -> None:
     assert res.content == (STATIC_DIR / "index.html").read_bytes()
 
 
+def test_about_html(client: TestClient) -> None:
+    res = client.get("/about")
+    assert res.status_code == 200
+    assert res.headers["content-type"].startswith("text/html")
+    assert res.content == (STATIC_DIR / "about.html").read_bytes()
+    assert 'id="limits"' in res.text
+    assert 'href="/"' in res.text
+
+
+def test_index_has_no_demo(client: TestClient) -> None:
+    res = client.get("/")
+    assert "demo-engine" not in res.text
+    assert "demo-dock" not in res.text
+
+
 def test_static_files(client: TestClient) -> None:
     res = client.get("/static/index.html")
     assert res.status_code == 200
