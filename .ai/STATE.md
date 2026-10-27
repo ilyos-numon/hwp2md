@@ -4,16 +4,16 @@
 > 갱신 시점: 태스크 시작/종료, 단계 전환, 차단, 세션 종료 직전.
 > 20줄을 넘기지 않는다. 태스크가 끝나면 "현재 태스크: 없음", 상태 IDLE.
 
-- 현재 태스크: 없음
-- 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시) — RESULT: `.ai/tasks/T-20261027-pypi-release/RESULT.md`
-- 플랜: `.ai/tasks/T-20261027-pypi-release/PLAN.md` (상태: DONE)
-- OpenSpec 아카이브: `openspec/changes/archive/2026-10-27-pypi-release/`
-- 현재 단계: 없음
-- 상태: IDLE
-- 브랜치: `main` (ai/T-20261027-pypi-release 병합·푸시 완료, 태그 v0.1.0)
+- 현재 태스크: T-20261027-public-launch
+- 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
+- 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
+- OpenSpec: `openspec/changes/public-launch/`
+- 현재 단계: S10 게이트 (사용자 승인 대기)
+- 상태: RUNNING
+- 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. 새 작업은 `/plan <목표>`. 후보: Python 3.14 손상 zip 오류 문구 차이, 실제 차트 HWP 샘플 검증, Pretendard 서브셋, 과거 커밋의 샘플 산출물 이력 정리(사용자 결정)
+1. 사용자 "force-push 와 공개 전환 승인" 받으면 PLAN §5 Stage 10 절차 3번(main 병합)부터. 백업 /Users/illi/hwp2md-backups/
 
 ## 차단 중이면
-- 이유: 없음
+- 이유: 없음 (S10 승인 받음)

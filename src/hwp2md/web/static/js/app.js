@@ -12,7 +12,10 @@
     drm: "문서보안(DRM)이 적용된 파일이라 변환할 수 없습니다. 보안 프로그램에서 해제한 뒤 다시 시도하세요",
     encrypted: "암호가 설정된 문서라 변환할 수 없습니다. 한글에서 암호를 해제한 뒤 다시 시도하세요",
   };
-  const LIMITS_DOC = "/about#limits";
+  // 정적 사이트(<meta name="hwp2md-site" content="static">)는 브라우저 모드 고정, 링크는 상대 경로.
+  const STATIC_SITE = (document.querySelector('meta[name="hwp2md-site"]') || {}).content === "static";
+  const ABOUT_URL = STATIC_SITE ? "index.html" : "/about";
+  const LIMITS_DOC = ABOUT_URL + "#limits";
   const MODE_STATUS_TEXT = {
     server: "서버 모드",
     loading: "브라우저 모드 준비 중…",
@@ -396,6 +399,27 @@
   }
   els.modeToggle.addEventListener("change", handleModeToggle);
 
+  // 정적 사이트: 서버가 없으므로 스위치를 숨기고 브라우저 모드로 시작한다. 실패해도 서버로 돌아가지 않는다.
+  async function startStaticSite() {
+    const sw = els.modeToggle.closest("label.switch");
+    if (sw) {
+      sw.hidden = true;
+      sw.style.display = "none"; // .switch { display: inline-flex } 가 hidden 속성을 덮으므로
+    }
+    els.modeToggle.checked = true;
+    els.modeToggle.disabled = true;
+    state.mode = "browser";
+    setModeStatus("loading");
+    try {
+      if (!window.Hwp2mdBrowser) throw new Error("pyodide-runner.js 없음");
+      await window.Hwp2mdBrowser.load();
+      setModeStatus("browser");
+    } catch (err) {
+      setModeStatus("error", String((err && err.message) || err));
+    }
+  }
+  if (STATIC_SITE) startStaticSite();
+
   /* ---------- 좁은 화면: 미리보기 / Markdown 탭 ---------- */
   const tabs = [$("#tab-preview"), $("#tab-raw")];
   const panes = [$("#pane-preview"), $("#pane-raw")];
@@ -428,5 +452,6 @@
     setMode(name) { if (MODES[name]) state.mode = name; },
     get mode() { return state.mode; },
     handleFile: handleFile,
+    get staticSite() { return STATIC_SITE; },
   };
 })();

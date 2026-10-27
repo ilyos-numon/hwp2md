@@ -1,12 +1,29 @@
 # hwp2md
+[![PyPI](https://badgen.net/pypi/v/hwp2markdown)](https://pypi.org/project/hwp2markdown/)
+[![Python](https://badgen.net/pypi/python/hwp2markdown)](https://pypi.org/project/hwp2markdown/)
+[![CI](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ilyos-numon/hwp2md/actions/workflows/ci.yml)
+[![Downloads](https://static.pepy.tech/badge/hwp2markdown/month)](https://pepy.tech/projects/hwp2markdown)
+[![License: MIT](https://badgen.net/badge/license/MIT/blue)](https://github.com/ilyos-numon/hwp2md/blob/main/LICENSE)
+
+**브라우저에서 바로 써 보기 → https://ilyos-numon.github.io/hwp2md/** (설치 없음, 파일은 브라우저 밖으로 나가지 않음, 첫 준비 약 1분)
 
 한컴오피스 없이 HWP·HWPX·HWPML 문서를 제목 구조·표·이미지·각주·수식이 살아 있는 Markdown 으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.
 
 본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
 
-![hwp2md 웹 미리보기 — 왼쪽은 렌더링된 미리보기, 오른쪽은 Markdown 원문](docs/images/web-server-mode.png)
+![hwp2md 웹 미리보기 — 왼쪽은 렌더링된 미리보기, 오른쪽은 Markdown 원문](https://raw.githubusercontent.com/ilyos-numon/hwp2md/main/docs/images/web-server-mode.png)
 
 > 화면의 문서는 시연용으로 코드에서 만든 가상의 공고문이다. 실제 기관·문서와 관계없다.
+
+## 30초 데모
+
+- 설치 없이: https://ilyos-numon.github.io/hwp2md/ 에서 "변환 도구 열기" 를 누르고 HWP·HWPX 파일을 끌어다 놓는다.
+- 설치해서:
+
+```bash
+pip install hwp2markdown
+hwp2md 문서.hwp -o out/
+```
 
 ## 왜 필요한가
 
@@ -41,7 +58,7 @@ PyPI 의 `hwp2md` 는 이 저장소와 무관한 다른 프로젝트다. 설치�
 소스에서 설치(개발용):
 
 ```bash
-git clone <이 저장소> hwp2md && cd hwp2md
+git clone https://github.com/ilyos-numon/hwp2md.git && cd hwp2md
 
 # 방법 1: uv (웹 미리보기·테스트 도구까지 함께 설치)
 uv sync
@@ -140,9 +157,9 @@ hwp2md serve --no-browser          # 브라우저 자동 열기 끔
 | 인터넷 | 필요 없음 (화면 자원 동봉) | 필요 (Pyodide 를 jsDelivr CDN 에서 받음) |
 | 결과 | 같은 Markdown | 같은 Markdown (E2E 로 바이트 비교) |
 
-![서버 모드 화면](docs/images/web-server-mode.png)
+![서버 모드 화면](https://raw.githubusercontent.com/ilyos-numon/hwp2md/main/docs/images/web-server-mode.png)
 
-![브라우저 안에서만 처리 모드 화면 — 상태 표시에 "파일이 서버로 전송되지 않습니다"](docs/images/web-browser-mode.png)
+![브라우저 안에서만 처리 모드 화면 — 상태 표시에 "파일이 서버로 전송되지 않습니다"](https://raw.githubusercontent.com/ilyos-numon/hwp2md/main/docs/images/web-browser-mode.png)
 
 ### ③ 라이브러리
 
@@ -182,11 +199,11 @@ for img in result.images:                  # 추출된 이미지 (고유 파일�
 | 지원 | 본문 단락 | 탭은 공백, 줄바꿈 유지 |
 | 지원 | 제목 계층 | 문단 모양의 개요 1~6수준 → `#`~`######`, 7수준은 `######` |
 | 지원 | 표 | GFM 표 (첫 행이 헤더), 셀 안 여러 단락은 `<br>`, `\|` 이스케이프, 중첩 표는 셀 텍스트로 평탄화 |
-| 지원 | 이미지 | 본문 그림을 `<이름>_images/img_001.png` … 로 추출(원본 바이트 그대로)하고 제자리에 `![그림 N](…)` 링크. 같은 그림을 다시 참조하면 파일 1개 |
-| 지원 | 표 칸 안 그림 | 칸 안에 `![그림 N](…)` 링크. 문서 순서대로 그림 번호를 쓴다 |
+| 지원 | 이미지 | 본문 그림을 `<이름>_images/img_001.png` … 로 추출(원본 바이트 그대로)하고 제자리에 그림 링크(`![그림 N]` 꼴). 같은 그림을 다시 참조하면 파일 1개 |
+| 지원 | 표 칸 안 그림 | 칸 안에 그림 링크(`![그림 N]` 꼴). 문서 순서대로 그림 번호를 쓴다 |
 | 지원 | 캡션 | 표·그림 캡션을 개체 뒤 단락으로 출력 |
 | 지원 | 글상자·도형·묶음 | 안쪽 글과 그림을 개체 자리에 출력 |
-| 지원 | 하이퍼링크 | `[글자](주소)`. http·https·mailto 만 링크로 쓰고 그 밖의 주소는 글자만 남긴다 |
+| 지원 | 하이퍼링크 | `[글자](https://…)` 꼴. http·https·mailto 만 링크로 쓰고 그 밖의 주소는 글자만 남긴다 |
 | 지원 | 각주·미주 | 본문에 `[^1]`·`[^e1]` 참조, 문서 끝에 정의 |
 | 지원 | 수식 | 한글 수식 스크립트 → LaTeX `$…$` (단락에 수식만 있으면 `$$…$$`). 변환에 실패하면 원문 스크립트를 코드 스팬으로 |
 | 지원 | 번호·글머리표 목록 | 글머리표는 `-`, `1.`·`1)` 꼴 번호는 Markdown 목록 문법, 그 밖의 번호(`가.`·`①` 등)는 단락 앞 글자로. 번호는 문단 번호 정의로 근사 계산 |
@@ -201,7 +218,7 @@ for img in result.images:                  # 추출된 이미지 (고유 파일�
 | 거부 | 비밀번호 문서 | `EncryptedDocumentError`, CLI 종료 코드 3, API 오류 코드 `encrypted`. 비밀번호 입력 기능은 없다 |
 | 미지원 | HWP 3.0 이하 | HWP 파일이 아닌 것으로 판정 (종료 코드 3) |
 
-요소별 상태(추출·부분·불가·제외)와 이유, 대안은 [docs/extraction-limits.md](docs/extraction-limits.md) 에 있다.
+요소별 상태(추출·부분·불가·제외)와 이유, 대안은 [docs/extraction-limits.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/extraction-limits.md) 에 있다.
 
 ### 건너뜀 보고
 
@@ -243,7 +260,7 @@ flowchart LR
   RD --> OUT["문서.md + 문서_images/<br>(CLI) 또는 메모리 결과(웹·API)"]
 ```
 
-세 포맷의 리더는 같은 블록 모델을 돌려주고, 렌더러는 포맷을 모른다. 그래서 CLI·웹 서버·브라우저 모드가 같은 Markdown 을 낸다. 모듈별 역할, 웹 엔드포인트, 브라우저 모드 시퀀스, 확장 방법은 [docs/system-overview.md](docs/system-overview.md) 에 있다.
+세 포맷의 리더는 같은 블록 모델을 돌려주고, 렌더러는 포맷을 모른다. 그래서 CLI·웹 서버·브라우저 모드가 같은 Markdown 을 낸다. 모듈별 역할, 웹 엔드포인트, 브라우저 모드 시퀀스, 확장 방법은 [docs/system-overview.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/system-overview.md) 에 있다.
 
 ## 개인정보·보안 설계
 
@@ -290,7 +307,7 @@ uv run mypy src                                 # strict
 - 구형 차트(차트 값이 OOXML 로 저장되지 않은 것)는 데이터를 꺼내지 못하고 건너뜀으로 보고한다.
 - 쪽 번호·날짜 같은 필드 값은 다시 계산하지 않는다. 목록 번호는 근사값이다.
 - 단락 중간에 놓인 그림의 위치가 HWP 5.0 과 HWPX 에서 다를 수 있다.
-- 요소별 전체 목록과 대안은 [docs/extraction-limits.md](docs/extraction-limits.md) 에 있다.
+- 요소별 전체 목록과 대안은 [docs/extraction-limits.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/extraction-limits.md) 에 있다.
 
 ## 로드맵
 
@@ -304,19 +321,28 @@ uv run mypy src                                 # strict
 
 ## 문서
 
-- [docs/vision.md](docs/vision.md) — 완성된 모습 (사용자 시나리오)
-- [docs/system-overview.md](docs/system-overview.md) — 내부 구조 (모듈·데이터 흐름·웹·보안·테스트·확장)
-- [docs/decisions.md](docs/decisions.md) — 결정 기록 (날짜와 이유)
-- [docs/releasing.md](docs/releasing.md) — 릴리스 절차 (PyPI 게시 설정·태그·실패 대응)
-- [docs/extraction-limits.md](docs/extraction-limits.md) — 추출 한계 (요소별 상태·이유·대안)
+- [docs/vision.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/vision.md) — 완성된 모습 (사용자 시나리오)
+- [docs/system-overview.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/system-overview.md) — 내부 구조 (모듈·데이터 흐름·웹·보안·테스트·확장)
+- [docs/decisions.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/decisions.md) — 결정 기록 (날짜와 이유)
+- [docs/releasing.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/releasing.md) — 릴리스 절차 (PyPI 게시 설정·태그·실패 대응)
+- [docs/extraction-limits.md](https://github.com/ilyos-numon/hwp2md/blob/main/docs/extraction-limits.md) — 추출 한계 (요소별 상태·이유·대안)
 
 ## 하지 않는 것
 
 - 역변환 (md → hwp)
 - 서식 완벽 재현 (글꼴·색상)
 
+## English
+
+hwp2md converts Korean HWP 5.0, HWPX and HWPML documents to Markdown without Hancom Office. It keeps the heading hierarchy, tables, images, footnotes and equations (as LaTeX), so the output is ready for RAG pipelines, LLM input and version control.
+
+- Install: `pip install hwp2markdown` (Python 3.11+). The command and import name is `hwp2md`: `hwp2md input.hwp -o out/`, or `from hwp2md import convert`.
+- Try it in your browser: https://ilyos-numon.github.io/hwp2md/ — no install; the converter runs in Pyodide (WebAssembly Python), and the first load takes about a minute.
+- Privacy: in the browser demo your file never leaves the browser. The local web preview (`hwp2md serve`, extra `[web]`) converts uploads in memory and writes nothing to disk.
+- License: MIT. The vendored equation converter is Apache-2.0 (see NOTICE). Developed with reference to Hancom's published HWP file format documents.
+
 ## 라이선스
 
-- hwp2md 는 [MIT 라이선스](LICENSE)로 배포한다.
-- `src/hwp2md/equation/eqedit.py`·`tokens.py` 는 python-hwpx 에서 가져온 코드로 Apache License 2.0 을 따른다. 출처·커밋·변경 사실은 [NOTICE](NOTICE) 에 있다.
+- hwp2md 는 [MIT 라이선스](https://github.com/ilyos-numon/hwp2md/blob/main/LICENSE)로 배포한다.
+- `src/hwp2md/equation/eqedit.py`·`tokens.py` 는 python-hwpx 에서 가져온 코드로 Apache License 2.0 을 따른다. 출처·커밋·변경 사실은 [NOTICE](https://github.com/ilyos-numon/hwp2md/blob/main/NOTICE) 에 있다.
 - 본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
