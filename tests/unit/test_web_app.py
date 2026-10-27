@@ -20,7 +20,7 @@ from samples import LEGACY_HWPX
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 HWP5 = FIXTURES / "form200005063113.hwp"
-BROTHER = next(p for p in LEGACY_HWPX if p.name.startswith("브라더"))
+BROTHER = next((p for p in LEGACY_HWPX if p.name.startswith("브라더")), None)
 OCTET = {"Content-Type": "application/octet-stream"}
 
 
@@ -87,6 +87,7 @@ def test_static_files(client: TestClient) -> None:
     assert client.get("/static/does-not-exist.js").status_code == 404
 
 
+@pytest.mark.real_samples
 def test_convert_hwp5(client: TestClient) -> None:
     data = HWP5.read_bytes()
     res = _post(client, "/api/convert", data, HWP5.name)
@@ -99,6 +100,7 @@ def test_convert_hwp5(client: TestClient) -> None:
     assert body["counts"]["paragraphs"] == expected.paragraph_count
 
 
+@pytest.mark.real_samples
 def test_convert_hwpx_with_image(client: TestClient) -> None:
     data = BROTHER.read_bytes()
     res = _post(client, "/api/convert", data, BROTHER.name)
@@ -109,6 +111,7 @@ def test_convert_hwpx_with_image(client: TestClient) -> None:
     assert body["images"] and body["images"][0]["mime"] == "image/png"
 
 
+@pytest.mark.real_samples
 def test_convert_korean_name_and_raw_utf8(client: TestClient) -> None:
     name = "보고서 양식.hwpx"
     url = "/api/convert?name=" + urllib.parse.quote(name)
@@ -119,6 +122,7 @@ def test_convert_korean_name_and_raw_utf8(client: TestClient) -> None:
     assert "보고서 양식".encode() in res.content  # ensure_ascii=False
 
 
+@pytest.mark.real_samples
 def test_convert_default_name(client: TestClient) -> None:
     res = _post(client, "/api/convert", HWP5.read_bytes(), None)
     assert res.status_code == 200
@@ -166,6 +170,7 @@ def test_convert_too_large_without_header(
     assert res.json()["error"]["code"] == "too_large"
 
 
+@pytest.mark.real_samples
 def test_zip_ok(client: TestClient) -> None:
     data = BROTHER.read_bytes()
     res = _post(client, "/api/zip", data, BROTHER.name)
@@ -217,6 +222,7 @@ def test_runtime_zip_deterministic() -> None:
     assert build_runtime_zip() == build_runtime_zip()
 
 
+@pytest.mark.real_samples
 def test_no_disk_writes(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     data = BROTHER.read_bytes()
     _block_disk_writes(monkeypatch)

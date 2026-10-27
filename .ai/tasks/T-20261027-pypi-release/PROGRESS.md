@@ -119,3 +119,26 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: ae58244 [T-20261027-pypi-release][s4] 배포물 검사 scripts/check_dist.py
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 16:11] S5 | hook | AUTO
+- 한 일: 도구 호출 60회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_web_api.py tests/conftest.py 
+- 커밋: 55ffd3e [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 16:14] S5 | hook | AUTO
+- 한 일: 도구 호출 75회 경과
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py tests/e2e/test_extract_real.py tests/e2e/test_web_api.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py tests/unit/test_memory.py tests/unit/test_web_app.py tests/conftest.py 
+- 커밋: 55ffd3e [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+
+## [2026-10-27 16:14] S5 | implementer(opus) | PARTIAL
+- 한 일: 마커·next(None)·안내 단언 갱신. 로컬 unit 815·e2e 127, 클린 e2e 77 passed 35 deselected. 클린 unit 1 실패: test_source_bytes.py::test_sample_counts (범위 밖)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py tests/e2e/test_extract_real.py tests/e2e/test_web_api.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py tests/unit/test_memory.py tests/unit/test_source_bytes.py tests/unit/test_web_app.py tests/conftest.py 
+- 커밋: 55ffd3e [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+- 다음: 범위에 test_source_bytes.py 추가 후 재호출
+- 메모: Python 3.14 에서 test_detect::test_corrupt_zip_raises 메시지 차이(3.11·3.13 정상)
+
+## [2026-10-27 16:14] S5 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): tests/e2e/test_cli_convert.py tests/e2e/test_cli_heading.py tests/e2e/test_cli_hwpx.py tests/e2e/test_cli_image.py tests/e2e/test_extract_real.py tests/e2e/test_web_api.py tests/e2e/test_web_ui.py tests/e2e/test_web_v3.py tests/unit/test_memory.py tests/unit/test_source_bytes.py tests/unit/test_web_app.py tests/conftest.py 
+- 커밋: 55ffd3e [T-20261027-pypi-release][S5][wip] auto checkpoint (stop)
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
