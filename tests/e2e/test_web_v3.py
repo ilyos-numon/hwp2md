@@ -66,6 +66,7 @@ def make_context(
 
     def _make(**kwargs: object) -> BrowserContext:
         kwargs.setdefault("viewport", VIEWPORT)
+        kwargs.setdefault("locale", "ko-KR")
         ctx = browser.new_context(**kwargs)  # type: ignore[arg-type]
         ctx.route("**/*", _guard)
         contexts.append(ctx)

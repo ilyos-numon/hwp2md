@@ -77,7 +77,7 @@ def browser() -> Iterator[Browser]:
 
 @pytest.fixture
 def server_page(browser: Browser, web_server: WebServer) -> Iterator[Page]:
-    ctx = browser.new_context(viewport=VIEWPORT)
+    ctx = browser.new_context(viewport=VIEWPORT, locale="ko-KR")
     page = ctx.new_page()
     page.goto(web_server.base_url + "/")
     page.wait_for_selector('body[data-state="idle"]', timeout=TIMEOUT_MS)
@@ -89,7 +89,7 @@ def server_page(browser: Browser, web_server: WebServer) -> Iterator[Page]:
 
 @pytest.fixture(scope="module")
 def browser_context(browser: Browser) -> Iterator[BrowserContext]:
-    ctx = browser.new_context(viewport=VIEWPORT)
+    ctx = browser.new_context(viewport=VIEWPORT, locale="ko-KR")
     try:
         yield ctx
     finally:
