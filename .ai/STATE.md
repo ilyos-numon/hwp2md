@@ -9,11 +9,11 @@
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
 - 현재 단계: S10 게이트 (사용자 승인 대기)
-- 상태: BLOCKED
+- 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
 1. 사용자 "force-push 와 공개 전환 승인" 받으면 PLAN §5 Stage 10 절차 3번(main 병합)부터. 백업 /Users/illi/hwp2md-backups/
 
 ## 차단 중이면
-- 이유: 승인 게이트 · 사용자 결정 필요: 이력 재작성 force-push + 저장소 공개
+- 이유: 없음 (S10 승인 받음)
