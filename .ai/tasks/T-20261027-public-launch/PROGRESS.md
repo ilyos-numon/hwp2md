@@ -204,3 +204,14 @@
 - 변경 파일(미커밋, .ai 제외): .github/ISSUE_TEMPLATE/ .github/workflows/pages.yml 
 - 커밋: d1f4653 [T-20261027-public-launch][S7][wip] auto checkpoint (stop)
 - 다음: S8 시작
+
+## [2026-10-27 18:19] S8 | orchestrator | START
+- 한 일: 홍보 초안
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c85664e [T-20261027-public-launch][s7] Pages 워크플로우·이슈 템플릿
+
+## [2026-10-27 18:20] S8 | hook | AUTO
+- 한 일: 자동 체크포인트 (stop)
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: c85664e [T-20261027-public-launch][s7] Pages 워크플로우·이슈 템플릿
+- 메모: STATE.md의 '다음 행동' 확인 후 이어서
