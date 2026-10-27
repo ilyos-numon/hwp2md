@@ -23,11 +23,15 @@
   const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
   const mm = gsap.matchMedia();
 
-  // SplitText 는 글꼴이 들어온 뒤에 나눠야 줄바꿈이 맞다 (최대 1.5초 대기)
-  const fontsReady = Promise.race([
+  // SplitText 는 글꼴이 들어온 뒤에 나눠야 줄바꿈이 맞다 (최대 1.5초 대기).
+  // i18n.js 가 DOMContentLoaded 에 문구를 다시 적용하므로 그 뒤에 나눈다 (먼저 나누면 글자가 겹친다).
+  const domReady = document.readyState === "loading"
+    ? new Promise((r) => document.addEventListener("DOMContentLoaded", r, { once: true }))
+    : Promise.resolve();
+  const fontsReady = domReady.then(() => Promise.race([
     document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(),
     new Promise((r) => setTimeout(r, 1500)),
-  ]);
+  ]));
 
   /* ================= 머리글 스크롤 진행 막대 ================= */
   mm.add(MOTION, () => {

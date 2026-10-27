@@ -400,3 +400,26 @@
 - 변경 파일(미커밋, .ai 제외): 없음
 - 커밋: 0450721 [T-20261027-public-launch][s13] i18n 코어·변환 화면 영어
 - 메모: STATE.md의 '다음 행동' 확인 후 이어서
+
+## [2026-10-27 19:20] S14 | hook | AUTO
+- 한 일: 도구 호출 195회 경과
+- 변경 파일(미커밋, .ai 제외): 없음
+- 커밋: 31401d0 [T-20261027-public-launch][S14][wip] auto checkpoint (stop)
+
+## [2026-10-27 19:24] S14 | hook | AUTO
+- 한 일: 도구 호출 210회 경과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/about.html src/hwp2md/web/static/js/landing.js src/hwp2md/web/static/js/i18n-about.js 
+- 커밋: 31401d0 [T-20261027-public-launch][S14][wip] auto checkpoint (stop)
+
+## [2026-10-27 19:25] S14 | implementer(opus) | DONE
+- 한 일: about.html data-i18n·lang-toggle·reload, i18n-about.js(137 키), landing.js fontsReady 가 DOMContentLoaded 뒤 실행. ko 회귀 11·unit 820, en 스모크 serve·Pages 하위 경로 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/about.html src/hwp2md/web/static/js/landing.js src/hwp2md/web/static/js/i18n-about.js 
+- 커밋: 31401d0 [T-20261027-public-launch][S14][wip] auto checkpoint (stop)
+- 다음: S15
+- 메모: landing.js 변경 이유: 폰트 캐시 재방문 시 SplitText 가 i18n apply 보다 먼저 돌아 제목이 두 번 보임(한국어도 해당)
+
+## [2026-10-27 19:25] S14 | orchestrator | DONE
+- 한 일: 소개 페이지 영어 검증 통과
+- 변경 파일(미커밋, .ai 제외): src/hwp2md/web/static/about.html src/hwp2md/web/static/js/landing.js src/hwp2md/web/static/js/i18n-about.js 
+- 커밋: 31401d0 [T-20261027-public-launch][S14][wip] auto checkpoint (stop)
+- 다음: S15 시작

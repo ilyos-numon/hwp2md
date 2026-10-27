@@ -8,12 +8,12 @@
 - 마지막 완료: T-20261027-pypi-release (v0.1.0 PyPI 게시)
 - 플랜: `.ai/tasks/T-20261027-public-launch/PLAN.md` (상태: APPROVED, §7 기본값 — 사용자 "알아서 해")
 - OpenSpec: `openspec/changes/public-launch/`
-- 현재 단계: S14 소개 페이지 영어
+- 현재 단계: S15 i18n E2E
 - 상태: RUNNING
 - 브랜치: `ai/T-20261027-public-launch`
 
 ## 다음 행동 (이어받는 작업자가 바로 실행)
-1. S14(소개 페이지 영어)부터 → S13~S16 영어 지원 → S17 main push → S18 사용자 v0.1.1 태그
+1. S15(i18n E2E)부터 → S13~S16 영어 지원 → S17 main push → S18 사용자 v0.1.1 태그
 
 ## 차단 중이면
 - 이유: 없음 (영어 지원 추가 중, 태그는 그 뒤)

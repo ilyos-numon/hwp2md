@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>hwp2md · 한글 문서를 Markdown으로</title>
-  <meta name="description" content="한컴오피스 없이 HWP·HWPX·HWPML 문서를 제목 구조·표·이미지가 살아 있는 Markdown으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.">
+  <title data-i18n="about.title">hwp2md · 한글 문서를 Markdown으로</title>
+  <meta name="description" data-i18n-attr="content:about.description" content="한컴오피스 없이 HWP·HWPX·HWPML 문서를 제목 구조·표·이미지가 살아 있는 Markdown으로 바꾸는 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기.">
   <script>
     (function () {
       document.documentElement.classList.add("js");
@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/landing.css">
 </head>
-<body class="page-landing">
+<body class="page-landing" data-i18n-reload>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
@@ -53,24 +53,25 @@
     </defs>
   </svg>
 
-  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <a class="skip-link" href="#main" data-i18n="about.skip">본문으로 건너뛰기</a>
 
   <header class="site-header">
     <div class="site-header__inner">
-      <a class="brand" href="/about" aria-label="hwp2md 홈">
+      <a class="brand" href="/about" data-i18n-attr="aria-label:about.brand_label" aria-label="hwp2md 홈">
         <svg class="brand__mark"><use href="#i-logo"/></svg>
         <span>hwp2md</span>
         <span class="brand__ver">v3.0</span>
       </a>
-      <nav class="site-nav" aria-label="페이지 내 이동">
-        <a href="#pipeline">작동 원리</a>
-        <a href="#entry">사용법</a>
-        <a href="#features">기능</a>
-        <a href="#privacy">개인정보·보안</a>
-        <a href="#limits">지원 범위</a>
+      <nav class="site-nav" data-i18n-attr="aria-label:about.nav_label" aria-label="페이지 내 이동">
+        <a data-i18n="about.nav_pipeline" href="#pipeline">작동 원리</a>
+        <a data-i18n="about.nav_entry" href="#entry">사용법</a>
+        <a data-i18n="about.nav_features" href="#features">기능</a>
+        <a data-i18n="about.nav_privacy" href="#privacy">개인정보·보안</a>
+        <a data-i18n="about.nav_limits" href="#limits">지원 범위</a>
       </nav>
       <div class="header-actions">
-        <a class="btn btn--primary btn--sm" href="/">변환 도구 열기</a>
+        <a class="btn btn--primary btn--sm" href="/" data-i18n="about.open_converter">변환 도구 열기</a>
+        <button type="button" class="icon-btn lang-toggle" data-i18n-attr="aria-label:lang.toggle_label" aria-label="Switch to English"><span data-i18n="lang.toggle_text">EN</span></button>
         <button type="button" class="icon-btn theme-toggle" aria-label="다크 모드로 전환">
           <svg class="i-moon"><use href="#i-moon"/></svg>
           <svg class="i-sun"><use href="#i-sun"/></svg>
@@ -100,28 +101,28 @@
 
       <div class="hero__copy">
         <h1 id="hero-title" class="hero__title">
-          <span class="hero__line">한글 문서를</span>
-          <span class="hero__line"><span class="hero__md" data-from="HWP·HWPX">Markdown</span>으로</span>
-          <span class="hero__line">꺼냅니다</span>
+          <span class="hero__line" data-i18n="about.hero_l1">한글 문서를</span>
+          <span class="hero__line"><span data-i18n="about.hero_l2_pre"></span><span class="hero__md" data-from="HWP·HWPX">Markdown</span><span data-i18n="about.hero_l2_post">으로</span></span>
+          <span class="hero__line" data-i18n="about.hero_l3">꺼냅니다</span>
         </h1>
-        <p class="hero__lead">한컴오피스 없이, 제목 구조·표·이미지가 살아 있는 Markdown으로. 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기가 한 엔진을 함께 씁니다.</p>
+        <p class="hero__lead" data-i18n="about.hero_lead">한컴오피스 없이, 제목 구조·표·이미지가 살아 있는 Markdown으로. 순수 파이썬 CLI·라이브러리·로컬 웹 미리보기가 한 엔진을 함께 씁니다.</p>
         <div class="hero__cta">
           <a class="btn btn--primary btn--lg magnetic" href="/">
-            변환 도구 열기 <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="about.open_converter">변환 도구 열기</span> <svg><use href="#i-arrow"/></svg>
           </a>
-          <a class="btn btn--ghost btn--lg magnetic" href="#pipeline">작동 원리 보기</a>
+          <a class="btn btn--ghost btn--lg magnetic" href="#pipeline" data-i18n="about.hero_how">작동 원리 보기</a>
         </div>
-        <ul class="hero__facts" aria-label="핵심 사실">
-          <li><code>HWP 5.0</code><code>HWPX</code><code>HWPML</code> 내용으로 판별</li>
-          <li>의존성 <code>olefile</code><code>lxml</code> 두 개</li>
-          <li>CLI·웹·라이브러리 출력 바이트 동일</li>
+        <ul class="hero__facts" data-i18n-attr="aria-label:about.facts_label" aria-label="핵심 사실">
+          <li data-i18n-html="about.fact_detect"><code>HWP 5.0</code><code>HWPX</code><code>HWPML</code> 내용으로 판별</li>
+          <li data-i18n-html="about.fact_deps">의존성 <code>olefile</code><code>lxml</code> 두 개</li>
+          <li data-i18n="about.fact_same">CLI·웹·라이브러리 출력 바이트 동일</li>
         </ul>
       </div>
 
       <div class="hero__visual" aria-hidden="true">
         <div class="hv-card hv-card--in">
           <div class="hv-card__head">
-            <span class="hv-card__label">입력 문서</span>
+            <span class="hv-card__label" data-i18n="about.hv_input">입력 문서</span>
             <span class="badge badge--hwpx">HWPX</span>
           </div>
           <div class="hv-file">
@@ -159,19 +160,19 @@
 
     <!-- ============ PROBLEM ============ -->
     <section class="problem" aria-labelledby="problem-title">
-      <h2 id="problem-title" class="problem__title">한국의 공공·기업 문서는<br>HWP 안에 갇혀 있습니다</h2>
-      <p class="problem__text">HWP·HWPX는 <mark>RAG 파이프라인</mark>에도, <mark>LLM 입력</mark>에도, <mark>버전 관리</mark>에도 바로 쓸 수 없습니다. 기존 변환 도구는 표와 이미지 위치를 잃거나 한컴 설치를 요구하고, 개발자는 매번 같은 파싱 코드를 다시 짭니다. hwp2md는 그 문을 여는 열쇠입니다.</p>
+      <h2 id="problem-title" class="problem__title" data-i18n-html="about.problem_title">한국의 공공·기업 문서는<br>HWP 안에 갇혀 있습니다</h2>
+      <p class="problem__text" data-i18n-html="about.problem_text">HWP·HWPX는 <mark>RAG 파이프라인</mark>에도, <mark>LLM 입력</mark>에도, <mark>버전 관리</mark>에도 바로 쓸 수 없습니다. 기존 변환 도구는 표와 이미지 위치를 잃거나 한컴 설치를 요구하고, 개발자는 매번 같은 파싱 코드를 다시 짭니다. hwp2md는 그 문을 여는 열쇠입니다.</p>
     </section>
 
     <!-- ============ PIPELINE (focal) ============ -->
     <section class="pipeline" id="pipeline" aria-labelledby="pipeline-title">
       <div class="pipeline__pin">
         <header class="pipeline__head">
-          <h2 id="pipeline-title">문서를 블록으로 읽고,<br>Markdown으로 다시 씁니다</h2>
-          <ol class="pipeline__phases" aria-label="변환 단계">
-            <li class="phase" data-phase="0"><b>읽기</b><span>확장자가 아니라 파일 내용으로 HWP 5.0·HWPX를 가립니다</span></li>
-            <li class="phase" data-phase="1"><b>블록으로 나누기</b><span>제목·단락·표·그림을 문서 순서대로 꺼냅니다</span></li>
-            <li class="phase" data-phase="2"><b>Markdown으로 쓰기</b><span>개요 수준은 #, 표는 GFM 표, 그림은 파일 링크가 됩니다</span></li>
+          <h2 id="pipeline-title" data-i18n-html="about.pipeline_title">문서를 블록으로 읽고,<br>Markdown으로 다시 씁니다</h2>
+          <ol class="pipeline__phases" data-i18n-attr="aria-label:about.phases_label" aria-label="변환 단계">
+            <li class="phase" data-phase="0"><b data-i18n="about.phase0">읽기</b><span data-i18n="about.phase0_text">확장자가 아니라 파일 내용으로 HWP 5.0·HWPX를 가립니다</span></li>
+            <li class="phase" data-phase="1"><b data-i18n="about.phase1">블록으로 나누기</b><span data-i18n="about.phase1_text">제목·단락·표·그림을 문서 순서대로 꺼냅니다</span></li>
+            <li class="phase" data-phase="2"><b data-i18n="about.phase2">Markdown으로 쓰기</b><span data-i18n="about.phase2_text">개요 수준은 #, 표는 GFM 표, 그림은 파일 링크가 됩니다</span></li>
           </ol>
         </header>
 
@@ -179,14 +180,14 @@
           <div class="paper" aria-hidden="true">
             <div class="paper__bar">
               <span class="paper__name">2026_가상_공고문.hwp</span>
-              <span class="detect"><span class="detect__q">판별 중…</span><span class="detect__a"><span class="badge badge--hwpx">HWPX</span> zip · Contents/section0.xml</span></span>
+              <span class="detect"><span class="detect__q" data-i18n="about.detecting">판별 중…</span><span class="detect__a"><span class="badge badge--hwpx">HWPX</span> zip · Contents/section0.xml</span></span>
             </div>
             <div class="paper__sheet">
               <span class="scan"></span>
-              <div class="blk" data-blk="h1" data-tag="제목 1"><p class="p-h1">2026년도 가상 문서 디지털 전환 지원사업 공고</p></div>
-              <div class="blk" data-blk="p1" data-tag="단락"><p class="p-body">이 문서는 hwp2md 시연을 위해 만든 가상의 공고문입니다.</p></div>
-              <div class="blk" data-blk="h2" data-tag="제목 2"><p class="p-h2">1. 사업 개요</p></div>
-              <div class="blk" data-blk="tbl" data-tag="표 4×2">
+              <div class="blk" data-blk="h1" data-i18n-attr="data-tag:about.tag_h1" data-tag="제목 1"><p class="p-h1">2026년도 가상 문서 디지털 전환 지원사업 공고</p></div>
+              <div class="blk" data-blk="p1" data-i18n-attr="data-tag:about.tag_p" data-tag="단락"><p class="p-body">이 문서는 hwp2md 시연을 위해 만든 가상의 공고문입니다.</p></div>
+              <div class="blk" data-blk="h2" data-i18n-attr="data-tag:about.tag_h2" data-tag="제목 2"><p class="p-h2">1. 사업 개요</p></div>
+              <div class="blk" data-blk="tbl" data-i18n-attr="data-tag:about.tag_table" data-tag="표 4×2">
                 <table class="p-table">
                   <tr><th>구분</th><th>내용</th></tr>
                   <tr><td>지원 규모</td><td>총 10억 원</td></tr>
@@ -194,8 +195,8 @@
                   <tr><td>신청 방법</td><td>온라인 접수</td></tr>
                 </table>
               </div>
-              <div class="blk" data-blk="img" data-tag="그림"><div class="p-img"><svg viewBox="0 0 120 40"><rect x="2" y="8" width="30" height="24" rx="4"/><rect x="45" y="8" width="30" height="24" rx="4"/><rect x="88" y="8" width="30" height="24" rx="4"/><path d="M32 20h13M75 20h13"/></svg><span>추진 절차도</span></div></div>
-              <div class="blk" data-blk="h3" data-tag="제목 3"><p class="p-h3">2.1 심사 기준</p></div>
+              <div class="blk" data-blk="img" data-i18n-attr="data-tag:about.tag_image" data-tag="그림"><div class="p-img"><svg viewBox="0 0 120 40"><rect x="2" y="8" width="30" height="24" rx="4"/><rect x="45" y="8" width="30" height="24" rx="4"/><rect x="88" y="8" width="30" height="24" rx="4"/><path d="M32 20h13M75 20h13"/></svg><span>추진 절차도</span></div></div>
+              <div class="blk" data-blk="h3" data-i18n-attr="data-tag:about.tag_h3" data-tag="제목 3"><p class="p-h3">2.1 심사 기준</p></div>
             </div>
           </div>
 
@@ -215,35 +216,35 @@
 <span class="ln" data-for="img"><em class="k">![</em>그림 1<em class="k">](</em>2026_가상_공고문_images/img_001.png<em class="k">)</em></span>
 <span class="ln" data-for="h3"><em class="k">###</em> 2.1 심사 기준</span></code></pre>
             <div class="tally">
-              <span>제목 <b data-count="h">0</b></span>
-              <span>단락 <b data-count="p">0</b></span>
-              <span>표 <b data-count="t">0</b></span>
-              <span>이미지 <b data-count="i">0</b></span>
+              <span data-i18n-html="about.tally_h">제목 <b data-count="h">0</b></span>
+              <span data-i18n-html="about.tally_p">단락 <b data-count="p">0</b></span>
+              <span data-i18n-html="about.tally_t">표 <b data-count="t">0</b></span>
+              <span data-i18n-html="about.tally_i">이미지 <b data-count="i">0</b></span>
             </div>
           </div>
           <div class="flyers" aria-hidden="true"></div>
         </div>
-        <p class="sr-only">예시: 공고문의 개요 수준 제목은 # 기호가 붙은 Markdown 제목이 되고, 표는 파이프 표, 그림은 문서명_images 폴더의 이미지 링크가 됩니다.</p>
+        <p class="sr-only" data-i18n="about.pipeline_sr">예시: 공고문의 개요 수준 제목은 # 기호가 붙은 Markdown 제목이 되고, 표는 파이프 표, 그림은 문서명_images 폴더의 이미지 링크가 됩니다.</p>
       </div>
     </section>
 
     <!-- ============ ENTRY POINTS ============ -->
     <section class="entry" id="entry" aria-labelledby="entry-title">
       <div class="section-head">
-        <h2 id="entry-title" class="fx-title">같은 엔진, 세 가지 입구</h2>
-        <p>터미널 한 줄, 브라우저 미리보기, 파이썬 코드. 어느 쪽으로 변환해도 같은 Markdown이 나옵니다.</p>
+        <h2 id="entry-title" class="fx-title" data-i18n="about.entry_title">같은 엔진, 세 가지 입구</h2>
+        <p data-i18n="about.entry_lead">터미널 한 줄, 브라우저 미리보기, 파이썬 코드. 어느 쪽으로 변환해도 같은 Markdown이 나옵니다.</p>
       </div>
 
       <div class="entry__body">
-        <div class="entry__tabs" role="tablist" aria-label="사용 방법">
+        <div class="entry__tabs" role="tablist" data-i18n-attr="aria-label:about.entry_tabs_label" aria-label="사용 방법">
           <button type="button" role="tab" id="et-cli" aria-controls="ep-cli" aria-selected="true" data-entry="cli">
-            <svg><use href="#i-terminal"/></svg><span><b>CLI</b><small>파일을 바로 변환</small></span>
+            <svg><use href="#i-terminal"/></svg><span><b>CLI</b><small data-i18n="about.entry_cli_sub">파일을 바로 변환</small></span>
           </button>
           <button type="button" role="tab" id="et-web" aria-controls="ep-web" aria-selected="false" tabindex="-1" data-entry="web">
-            <svg><use href="#i-browser"/></svg><span><b>웹 미리보기</b><small>끌어다 놓고 확인</small></span>
+            <svg><use href="#i-browser"/></svg><span><b data-i18n="about.entry_web">웹 미리보기</b><small data-i18n="about.entry_web_sub">끌어다 놓고 확인</small></span>
           </button>
           <button type="button" role="tab" id="et-lib" aria-controls="ep-lib" aria-selected="false" tabindex="-1" data-entry="lib">
-            <svg><use href="#i-code"/></svg><span><b>파이썬 라이브러리</b><small>파이프라인에 넣기</small></span>
+            <svg><use href="#i-code"/></svg><span><b data-i18n="about.entry_lib">파이썬 라이브러리</b><small data-i18n="about.entry_lib_sub">파이프라인에 넣기</small></span>
           </button>
         </div>
 
@@ -261,63 +262,63 @@
 <span class="tl" data-t="    └── img_001.png"></span></code></pre>
             <pre class="term__panel" role="tabpanel" id="ep-web" aria-labelledby="et-web" hidden><code><span class="tl tl--cmd" data-t="hwp2md serve"></span>
 <span class="tl" data-t="hwp2md serve: http://localhost:8770/ (Ctrl+C 로 종료)"></span>
-<span class="tl tl--note" data-t="# 브라우저가 열리면 파일을 끌어다 놓으세요 (최대 50MB)"></span>
-<span class="tl tl--note" data-t="# 왼쪽은 미리보기, 오른쪽은 Markdown 원문, ZIP으로 한 번에 받기"></span>
+<span class="tl tl--note" data-i18n-attr="data-t:about.note1" data-t="# 브라우저가 열리면 파일을 끌어다 놓으세요 (최대 50MB)"></span>
+<span class="tl tl--note" data-i18n-attr="data-t:about.note2" data-t="# 왼쪽은 미리보기, 오른쪽은 Markdown 원문, ZIP으로 한 번에 받기"></span>
 <span class="tl tl--cmd" data-t="hwp2md serve --port 8780 --no-browser"></span>
-<span class="tl tl--note" data-t="# 포트를 바꾸거나 브라우저 자동 열기를 끌 수 있습니다"></span></code></pre>
+<span class="tl tl--note" data-i18n-attr="data-t:about.note3" data-t="# 포트를 바꾸거나 브라우저 자동 열기를 끌 수 있습니다"></span></code></pre>
             <pre class="term__panel" role="tabpanel" id="ep-lib" aria-labelledby="et-lib" hidden><code><span class="tl tl--py" data-t="from hwp2md import convert_bytes"></span>
 <span class="tl tl--py" data-t="r = convert_bytes(data, filename=&quot;demo.hwpx&quot;)"></span>
 <span class="tl tl--py" data-t="r.heading_count, r.table_count, r.image_count"></span>
 <span class="tl" data-t="(5, 1, 1)"></span>
 <span class="tl tl--py" data-t="[i.file_name for i in r.images]"></span>
 <span class="tl" data-t="['img_001.png']"></span>
-<span class="tl tl--note" data-t="# 디스크에 아무것도 쓰지 않습니다. 파일로 쓰려면 convert(path, out_dir)"></span></code></pre>
+<span class="tl tl--note" data-i18n-attr="data-t:about.note4" data-t="# 디스크에 아무것도 쓰지 않습니다. 파일로 쓰려면 convert(path, out_dir)"></span></code></pre>
           </div>
         </div>
-        <p class="entry__note">아직 PyPI 배포 전입니다. 소스에서 <code>pip install '.[web]'</code>으로 설치하세요. Python 3.11 이상.</p>
+        <p class="entry__note" data-i18n-html="about.entry_note">아직 PyPI 배포 전입니다. 소스에서 <code>pip install '.[web]'</code>으로 설치하세요. Python 3.11 이상.</p>
       </div>
     </section>
 
     <!-- ============ FEATURES ============ -->
     <section class="features" id="features" aria-labelledby="features-title">
       <div class="section-head section-head--left">
-        <h2 id="features-title" class="fx-title">재활용에 필요한 것만<br>정확하게 옮깁니다</h2>
-        <p>서식 재현 대신 구조를 지킵니다. 제목 계층·표·이미지가 다음 도구에서 바로 쓰이도록.</p>
+        <h2 id="features-title" class="fx-title" data-i18n-html="about.features_title">재활용에 필요한 것만<br>정확하게 옮깁니다</h2>
+        <p data-i18n="about.features_lead">서식 재현 대신 구조를 지킵니다. 제목 계층·표·이미지가 다음 도구에서 바로 쓰이도록.</p>
       </div>
       <ul class="feat-list">
         <li class="feat">
           <svg class="feat__icon"><use href="#i-files"/></svg>
-          <div><h3>HWP 5.0·HWPX·HWPML, 같은 명령</h3><p>바이너리 HWP 5.0(OLE), XML 기반 HWPX(zip), 단일 XML인 HWPML 2.x를 모두 읽습니다. 확장자가 아니라 파일 내용으로 판별해, HWPX에 .hwp 확장자가 붙은 파일도 그대로 변환합니다. 복사·인쇄를 막은 배포용 문서도 공개된 방식으로 풀어 본문을 꺼냅니다.</p></div>
+          <div><h3 data-i18n="about.feat1">HWP 5.0·HWPX·HWPML, 같은 명령</h3><p data-i18n="about.feat1_text">바이너리 HWP 5.0(OLE), XML 기반 HWPX(zip), 단일 XML인 HWPML 2.x를 모두 읽습니다. 확장자가 아니라 파일 내용으로 판별해, HWPX에 .hwp 확장자가 붙은 파일도 그대로 변환합니다. 복사·인쇄를 막은 배포용 문서도 공개된 방식으로 풀어 본문을 꺼냅니다.</p></div>
           <code class="feat__sample" data-scramble>OLE → hwp5 · zip → hwpx · xml → hwpml</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-heading"/></svg>
-          <div><h3>개요 수준이 제목이 됩니다</h3><p>문단 모양의 개요 1~6수준을 #~######으로 옮깁니다. 7수준 이상은 ######로 묶어 구조를 버리지 않습니다.</p></div>
+          <div><h3 data-i18n="about.feat2">개요 수준이 제목이 됩니다</h3><p data-i18n="about.feat2_text">문단 모양의 개요 1~6수준을 #~######으로 옮깁니다. 7수준 이상은 ######로 묶어 구조를 버리지 않습니다.</p></div>
           <code class="feat__sample" data-scramble># · ## · ### … ######</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-table"/></svg>
-          <div><h3>표는 GFM 표로</h3><p>첫 행을 헤더로 쓰고, 셀 안 줄바꿈은 &lt;br&gt;, 파이프는 \|로 이스케이프합니다. 병합으로 덮인 칸은 빈 칸으로 남겨 열 정렬을 지킵니다.</p></div>
-          <code class="feat__sample" data-scramble>| 구분 | 내용 |</code>
+          <div><h3 data-i18n="about.feat3">표는 GFM 표로</h3><p data-i18n="about.feat3_text">첫 행을 헤더로 쓰고, 셀 안 줄바꿈은 &lt;br&gt;, 파이프는 \|로 이스케이프합니다. 병합으로 덮인 칸은 빈 칸으로 남겨 열 정렬을 지킵니다.</p></div>
+          <code class="feat__sample" data-scramble data-i18n="about.sample_table">| 구분 | 내용 |</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-image"/></svg>
-          <div><h3>그림은 원본 파일 그대로</h3><p>본문·표 칸·글상자 안 그림을 img_001.png처럼 순서대로 꺼내 제자리에 링크합니다. 같은 그림을 다시 쓰면 파일은 하나, 링크는 여러 개입니다. 글상자·도형 안 글과 표·그림 캡션도 본문 단락으로 옮깁니다.</p></div>
-          <code class="feat__sample" data-scramble>![그림 1](demo_images/img_001.png)</code>
+          <div><h3 data-i18n="about.feat4">그림은 원본 파일 그대로</h3><p data-i18n="about.feat4_text">본문·표 칸·글상자 안 그림을 img_001.png처럼 순서대로 꺼내 제자리에 링크합니다. 같은 그림을 다시 쓰면 파일은 하나, 링크는 여러 개입니다. 글상자·도형 안 글과 표·그림 캡션도 본문 단락으로 옮깁니다.</p></div>
+          <code class="feat__sample" data-scramble data-i18n="about.sample_image">![그림 1](demo_images/img_001.png)</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-code"/></svg>
-          <div><h3>각주·링크·수식·목록도 Markdown 문법으로</h3><p>각주·미주는 [^1] 참조와 문서 끝 정의로, 하이퍼링크는 [글자](주소)로(http·https·mailto만), 수식은 LaTeX $…$로, 번호·글머리표 목록은 - 와 1. 목록으로 옮깁니다(가.·① 같은 번호는 글자로 앞에 붙입니다). 번호는 한글 화면과 다를 수 있는 근사값이고, 수식을 바꾸지 못하면 원래 수식 문자열을 코드로 남깁니다.</p></div>
-          <code class="feat__sample" data-scramble>[^1] · [링크](https://…) · $\frac{a}{b}$ · - 목록</code>
+          <div><h3 data-i18n="about.feat5">각주·링크·수식·목록도 Markdown 문법으로</h3><p data-i18n="about.feat5_text">각주·미주는 [^1] 참조와 문서 끝 정의로, 하이퍼링크는 [글자](주소)로(http·https·mailto만), 수식은 LaTeX $…$로, 번호·글머리표 목록은 - 와 1. 목록으로 옮깁니다(가.·① 같은 번호는 글자로 앞에 붙입니다). 번호는 한글 화면과 다를 수 있는 근사값이고, 수식을 바꾸지 못하면 원래 수식 문자열을 코드로 남깁니다.</p></div>
+          <code class="feat__sample" data-scramble data-i18n="about.sample_syntax">[^1] · [링크](https://…) · $\frac{a}{b}$ · - 목록</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-zip"/></svg>
-          <div><h3>미리보고, 복사하고, ZIP으로</h3><p>웹 미리보기에서 렌더링 결과와 원문을 나란히 확인하고, 원문만 복사하거나 .md와 이미지 폴더를 한 압축 파일로 받습니다.</p></div>
+          <div><h3 data-i18n="about.feat6">미리보고, 복사하고, ZIP으로</h3><p data-i18n="about.feat6_text">웹 미리보기에서 렌더링 결과와 원문을 나란히 확인하고, 원문만 복사하거나 .md와 이미지 폴더를 한 압축 파일로 받습니다.</p></div>
           <code class="feat__sample" data-scramble>demo.md + demo_images/</code>
         </li>
         <li class="feat">
           <svg class="feat__icon"><use href="#i-switch"/></svg>
-          <div><h3>파일을 보내지 않는 선택지</h3><p>"브라우저 안에서만 처리"를 켜면 같은 파이썬 코드가 브라우저 안에서 돌고, 문서 파일은 페이지 밖으로 나가지 않습니다.</p></div>
+          <div><h3 data-i18n="about.feat7">파일을 보내지 않는 선택지</h3><p data-i18n="about.feat7_text">"브라우저 안에서만 처리"를 켜면 같은 파이썬 코드가 브라우저 안에서 돌고, 문서 파일은 페이지 밖으로 나가지 않습니다.</p></div>
           <code class="feat__sample" data-scramble>server · browser</code>
         </li>
       </ul>
@@ -327,14 +328,14 @@
     <section class="cases" aria-labelledby="cases-title">
       <div class="cases__pin">
         <div class="cases__head">
-          <h2 id="cases-title" class="fx-title">이런 작업에 맞춰 만들었습니다</h2>
-          <p>문서를 다음 도구로 넘겨야 하는 사람들의 실제 요구에서 출발했습니다.</p>
+          <h2 id="cases-title" class="fx-title" data-i18n="about.cases_title">이런 작업에 맞춰 만들었습니다</h2>
+          <p data-i18n="about.cases_lead">문서를 다음 도구로 넘겨야 하는 사람들의 실제 요구에서 출발했습니다.</p>
         </div>
         <div class="cases__track">
           <article class="case">
-            <span class="case__who">RAG 개발자</span>
-            <h3>공공기관 HWP 수천 개를 지식베이스에</h3>
-            <p>개요 수준이 Markdown 제목이 되어 제목 단위로 자르기 좋습니다. 머리말·꼬리말·쪽 번호는 본문에 섞지 않아 청크에 잡음이 들어가지 않습니다.</p>
+            <span class="case__who" data-i18n="about.case1_who">RAG 개발자</span>
+            <h3 data-i18n="about.case1">공공기관 HWP 수천 개를 지식베이스에</h3>
+            <p data-i18n="about.case1_text">개요 수준이 Markdown 제목이 되어 제목 단위로 자르기 좋습니다. 머리말·꼬리말·쪽 번호는 본문에 섞지 않아 청크에 잡음이 들어가지 않습니다.</p>
             <pre class="case__snip"><code><em class="k">##</em> 1. 사업 개요
 …
 <em class="k">##</em> 2. 추진 절차
@@ -342,18 +343,18 @@
 <em class="k">###</em> 2.1 심사 기준</code></pre>
           </article>
           <article class="case">
-            <span class="case__who">데이터 분석가</span>
-            <h3>입찰 공고에서 예산·기간 표만</h3>
-            <p>표는 첫 행이 헤더인 GFM 표가 됩니다. 셀 안 여러 줄은 &lt;br&gt;로 이어져 행·열 수가 그대로 남습니다.</p>
+            <span class="case__who" data-i18n="about.case2_who">데이터 분석가</span>
+            <h3 data-i18n="about.case2">입찰 공고에서 예산·기간 표만</h3>
+            <p data-i18n="about.case2_text">표는 첫 행이 헤더인 GFM 표가 됩니다. 셀 안 여러 줄은 &lt;br&gt;로 이어져 행·열 수가 그대로 남습니다.</p>
             <pre class="case__snip"><code><em class="k">|</em> 구분 <em class="k">|</em> 내용 <em class="k">|</em>
 <em class="k">|---|---|</em>
 <em class="k">|</em> 지원 규모 <em class="k">|</em> 총 10억 원 <em class="k">|</em>
 <em class="k">|</em> 지원 기간 <em class="k">|</em> 2026. 3. ~ 12. <em class="k">|</em></code></pre>
           </article>
           <article class="case">
-            <span class="case__who">서버·오픈소스 사용자</span>
-            <h3>한컴을 설치할 수 없는 리눅스 서버에서</h3>
-            <p>순수 파이썬 3.11 이상, 기본 의존성은 olefile과 lxml 두 개입니다. 웹 미리보기용 의존성은 [web] extra에만 있습니다.</p>
+            <span class="case__who" data-i18n="about.case3_who">서버·오픈소스 사용자</span>
+            <h3 data-i18n="about.case3">한컴을 설치할 수 없는 리눅스 서버에서</h3>
+            <p data-i18n="about.case3_text">순수 파이썬 3.11 이상, 기본 의존성은 olefile과 lxml 두 개입니다. 웹 미리보기용 의존성은 [web] extra에만 있습니다.</p>
             <pre class="case__snip"><code><em class="k">$</em> pip install .
 <em class="k">$</em> hwp2md 공고문.hwp -o out/
 ✓ 공고문.hwp → out/공고문.md</code></pre>
@@ -365,17 +366,17 @@
     <!-- ============ PRIVACY ============ -->
     <section class="privacy" id="privacy" aria-labelledby="privacy-title">
       <div class="section-head">
-        <h2 id="privacy-title" class="fx-title">문서는 내 컴퓨터를 떠나지 않습니다</h2>
-        <p>웹 미리보기는 내 컴퓨터에서 실행하는 <code>hwp2md serve</code>입니다. 두 가지 처리 방식의 차이를 직접 확인하세요.</p>
+        <h2 id="privacy-title" class="fx-title" data-i18n="about.privacy_title">문서는 내 컴퓨터를 떠나지 않습니다</h2>
+        <p data-i18n-html="about.privacy_lead">웹 미리보기는 내 컴퓨터에서 실행하는 <code>hwp2md serve</code>입니다. 두 가지 처리 방식의 차이를 직접 확인하세요.</p>
       </div>
 
       <div class="privacy__body">
-        <div class="mode-tabs" role="tablist" aria-label="처리 모드">
+        <div class="mode-tabs" role="tablist" data-i18n-attr="aria-label:about.mode_tabs_label" aria-label="처리 모드">
           <button type="button" role="tab" id="tab-server" aria-controls="panel-server" aria-selected="true" class="mode-tab" data-mode="server">
-            <span class="mode-tab__dot"></span>서버 모드 <small>기본</small>
+            <span class="mode-tab__dot"></span><span data-i18n="about.mode_server">서버 모드</span> <small data-i18n="about.mode_default">기본</small>
           </button>
           <button type="button" role="tab" id="tab-browser" aria-controls="panel-browser" aria-selected="false" tabindex="-1" class="mode-tab" data-mode="browser">
-            <span class="mode-tab__dot"></span>브라우저 안에서만 처리
+            <span class="mode-tab__dot"></span><span data-i18n="about.mode_browser">브라우저 안에서만 처리</span>
           </button>
           <span class="mode-tabs__ind" aria-hidden="true"></span>
         </div>
@@ -383,31 +384,31 @@
         <div class="flow" data-mode="server" aria-hidden="true">
           <div class="flow__node flow__node--browser">
             <svg><use href="#i-browser"/></svg>
-            <b>브라우저 화면</b>
+            <b data-i18n="about.flow_browser">브라우저 화면</b>
             <span class="flow__slot flow__slot--local"></span>
           </div>
           <div class="flow__wire"><span class="flow__wire-line"></span></div>
           <div class="flow__node flow__node--server">
             <svg><use href="#i-server"/></svg>
             <b>hwp2md serve</b>
-            <span class="flow__mem">메모리</span>
-            <span class="flow__disk"><svg><use href="#i-disk-off"/></svg>디스크 저장 없음</span>
+            <span class="flow__mem" data-i18n="about.flow_memory">메모리</span>
+            <span class="flow__disk"><svg><use href="#i-disk-off"/></svg><span data-i18n="about.flow_no_disk">디스크 저장 없음</span></span>
           </div>
-          <span class="packet packet--file"><svg><use href="#i-logo"/></svg>문서</span>
+          <span class="packet packet--file"><svg><use href="#i-logo"/></svg><span data-i18n="about.packet_doc">문서</span></span>
           <span class="packet packet--md">.md</span>
-          <span class="packet packet--code">변환 코드</span>
+          <span class="packet packet--code" data-i18n="about.packet_code">변환 코드</span>
         </div>
 
         <div class="mode-panels">
           <div class="mode-panel" role="tabpanel" id="panel-server" aria-labelledby="tab-server">
-            <h3>내 컴퓨터의 hwp2md serve가 메모리에서 변환</h3>
-            <p>파일은 같은 컴퓨터에서 실행 중인 hwp2md serve 프로세스로 전달되어 메모리 안에서만 변환됩니다. 임시 파일을 만들지 않고, 결과를 돌려준 뒤 남는 사본이 없습니다.</p>
-            <p class="mode-panel__note">인터넷 연결이 필요 없습니다. 기본 주소는 localhost:8770이며 인증이 없으니 외부에 공개하지 마세요.</p>
+            <h3 data-i18n="about.panel_server">내 컴퓨터의 hwp2md serve가 메모리에서 변환</h3>
+            <p data-i18n="about.panel_server_text">파일은 같은 컴퓨터에서 실행 중인 hwp2md serve 프로세스로 전달되어 메모리 안에서만 변환됩니다. 임시 파일을 만들지 않고, 결과를 돌려준 뒤 남는 사본이 없습니다.</p>
+            <p class="mode-panel__note" data-i18n="about.panel_server_note">인터넷 연결이 필요 없습니다. 기본 주소는 localhost:8770이며 인증이 없으니 외부에 공개하지 마세요.</p>
           </div>
           <div class="mode-panel" role="tabpanel" id="panel-browser" aria-labelledby="tab-browser" hidden>
-            <h3>브라우저 안에서 변환, 파일 전송 없음</h3>
-            <p>같은 변환 코드가 브라우저 안의 Pyodide(WebAssembly 파이썬)에서 실행됩니다. 문서 파일은 페이지 밖으로 나가지 않고, 결과도 서버 모드와 같습니다.</p>
-            <p class="mode-panel__note">처음 켤 때 Python 실행 환경과 lxml을 CDN에서, 변환 코드를 hwp2md serve에서 받습니다. 첫 준비에 약 1분이 걸리고 인터넷 연결이 필요합니다.</p>
+            <h3 data-i18n="about.panel_browser">브라우저 안에서 변환, 파일 전송 없음</h3>
+            <p data-i18n="about.panel_browser_text">같은 변환 코드가 브라우저 안의 Pyodide(WebAssembly 파이썬)에서 실행됩니다. 문서 파일은 페이지 밖으로 나가지 않고, 결과도 서버 모드와 같습니다.</p>
+            <p class="mode-panel__note" data-i18n="about.panel_browser_note">처음 켤 때 Python 실행 환경과 lxml을 CDN에서, 변환 코드를 hwp2md serve에서 받습니다. 첫 준비에 약 1분이 걸리고 인터넷 연결이 필요합니다.</p>
           </div>
         </div>
       </div>
@@ -417,29 +418,29 @@
     <section class="limits" id="limits" aria-labelledby="limits-title">
       <div class="limits__box">
         <div class="limits__head">
-          <h2 id="limits-title"><svg><use href="#i-alert"/></svg>지원 범위와 한계</h2>
-          <p>지금 꺼내지 못하는 것을 먼저 밝힙니다. 변환할 때 빠진 요소는 화면과 CLI가 종류별 개수로 알려 줍니다. 변환하지 못하는 요소 전체 목록과 이유는 저장소의 docs/extraction-limits.md 에 있습니다.</p>
+          <h2 id="limits-title"><svg><use href="#i-alert"/></svg><span data-i18n="about.limits_title">지원 범위와 한계</span></h2>
+          <p data-i18n="about.limits_lead">지금 꺼내지 못하는 것을 먼저 밝힙니다. 변환할 때 빠진 요소는 화면과 CLI가 종류별 개수로 알려 줍니다. 변환하지 못하는 요소 전체 목록과 이유는 저장소의 docs/extraction-limits.md 에 있습니다.</p>
         </div>
         <ul>
-          <li><span>문서보안(DRM)이 걸린 파일은 변환할 수 없습니다. 공개된 형식이 없습니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>암호를 건 문서는 변환할 수 없습니다. 암호화 방식이 공개되지 않았고 암호가 필요합니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>HWP 3.0 이하 문서는 변환할 수 없습니다. 파일 형식이 전혀 다릅니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>구형 차트는 데이터를 꺼내지 못하고 건너뜁니다. 객체 직렬화 형식이 수십 종이라 이번 범위에서 뺐습니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>쪽 번호·자동 번호는 출력하지 않습니다. 값을 알려면 쪽 나눔 계산이 필요합니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>WMF·EMF 그림은 PNG로 바꾸지 않고 원본 그대로 저장합니다. 순수 파이썬 변환기가 없어 브라우저에서 안 보일 수 있습니다.</span><span class="chip chip--plan">부분</span></li>
-          <li><span>문서 밖 파일에 연결된 그림과 본체가 빠진 그림은 꺼낼 수 없습니다. 문서 안에 그림 데이터가 없습니다.</span><span class="chip chip--out">불가</span></li>
-          <li><span>차트는 캐시된 값으로 제목과 표를 만듭니다. 실제 한글 문서의 차트로는 아직 확인하지 못했습니다.</span><span class="chip chip--plan">부분</span></li>
-          <li><span>그 밖의 OLE 개체는 안에 든 원본 그림만 꺼내고 나머지는 건너뜁니다. 개체마다 형식이 다릅니다.</span><span class="chip chip--plan">부분</span></li>
-          <li><span>단락 중간에 놓인 그림은 HWP 5.0에서는 단락 글자 뒤에 나오고, HWPX·HWPML에서는 그림 자리에서 단락이 나뉩니다. 위치를 맞추면 기존 출력이 넓게 바뀌어 보류했습니다.</span><span class="chip chip--plan">부분</span></li>
-          <li><span>머리말·꼬리말은 본문에 넣지 않고 건너뛴 개수로만 알립니다. 쪽마다 반복되는 글이라 본문을 흐립니다.</span><span class="chip chip--out">제외</span></li>
-          <li><span>메모와 숨은 설명은 넣지 않고 개수로만 알립니다. 작성자 정보가 들어 있을 수 있습니다.</span><span class="chip chip--out">제외</span></li>
-          <li><span>글맵시·양식 개체는 건너뛰고 개수로 알립니다. 확인할 샘플 문서가 없습니다.</span><span class="chip chip--out">제외</span></li>
-          <li><span>책갈피는 출력하지 않습니다. 본문 내용이 없고 Markdown에 표준 앵커가 없습니다.</span><span class="chip chip--out">제외</span></li>
-          <li><span>병합된 표 칸은 빈 칸으로 남습니다. Markdown 표는 병합을 표현할 수 없어서입니다. 병합 보존(<code>--table html</code>)은 예정입니다.</span><span class="chip chip--plan">부분</span></li>
-          <li><span>문서 하나당 .md 파일 하나로 나옵니다. 제목 단위 분할과 메타데이터 JSON은 아직 없습니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>한 번에 파일 하나씩 변환합니다. 폴더 일괄 변환은 아직 없습니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>아직 PyPI에 배포하지 않아 소스에서 설치합니다.</span><span class="chip chip--plan">예정</span></li>
-          <li><span>글꼴·색·정렬·굵게 같은 서식은 옮기지 않습니다. 목표는 구조와 내용입니다. 파일 하나는 50MB까지.</span><span class="chip chip--out">범위 밖</span></li>
+          <li><span data-i18n="about.limit1">문서보안(DRM)이 걸린 파일은 변환할 수 없습니다. 공개된 형식이 없습니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit2">암호를 건 문서는 변환할 수 없습니다. 암호화 방식이 공개되지 않았고 암호가 필요합니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit3">HWP 3.0 이하 문서는 변환할 수 없습니다. 파일 형식이 전혀 다릅니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit4">구형 차트는 데이터를 꺼내지 못하고 건너뜁니다. 객체 직렬화 형식이 수십 종이라 이번 범위에서 뺐습니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit5">쪽 번호·자동 번호는 출력하지 않습니다. 값을 알려면 쪽 나눔 계산이 필요합니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit6">WMF·EMF 그림은 PNG로 바꾸지 않고 원본 그대로 저장합니다. 순수 파이썬 변환기가 없어 브라우저에서 안 보일 수 있습니다.</span><span class="chip chip--plan" data-i18n="about.chip_partial">부분</span></li>
+          <li><span data-i18n="about.limit7">문서 밖 파일에 연결된 그림과 본체가 빠진 그림은 꺼낼 수 없습니다. 문서 안에 그림 데이터가 없습니다.</span><span class="chip chip--out" data-i18n="about.chip_no">불가</span></li>
+          <li><span data-i18n="about.limit8">차트는 캐시된 값으로 제목과 표를 만듭니다. 실제 한글 문서의 차트로는 아직 확인하지 못했습니다.</span><span class="chip chip--plan" data-i18n="about.chip_partial">부분</span></li>
+          <li><span data-i18n="about.limit9">그 밖의 OLE 개체는 안에 든 원본 그림만 꺼내고 나머지는 건너뜁니다. 개체마다 형식이 다릅니다.</span><span class="chip chip--plan" data-i18n="about.chip_partial">부분</span></li>
+          <li><span data-i18n="about.limit10">단락 중간에 놓인 그림은 HWP 5.0에서는 단락 글자 뒤에 나오고, HWPX·HWPML에서는 그림 자리에서 단락이 나뉩니다. 위치를 맞추면 기존 출력이 넓게 바뀌어 보류했습니다.</span><span class="chip chip--plan" data-i18n="about.chip_partial">부분</span></li>
+          <li><span data-i18n="about.limit11">머리말·꼬리말은 본문에 넣지 않고 건너뛴 개수로만 알립니다. 쪽마다 반복되는 글이라 본문을 흐립니다.</span><span class="chip chip--out" data-i18n="about.chip_excluded">제외</span></li>
+          <li><span data-i18n="about.limit12">메모와 숨은 설명은 넣지 않고 개수로만 알립니다. 작성자 정보가 들어 있을 수 있습니다.</span><span class="chip chip--out" data-i18n="about.chip_excluded">제외</span></li>
+          <li><span data-i18n="about.limit13">글맵시·양식 개체는 건너뛰고 개수로 알립니다. 확인할 샘플 문서가 없습니다.</span><span class="chip chip--out" data-i18n="about.chip_excluded">제외</span></li>
+          <li><span data-i18n="about.limit14">책갈피는 출력하지 않습니다. 본문 내용이 없고 Markdown에 표준 앵커가 없습니다.</span><span class="chip chip--out" data-i18n="about.chip_excluded">제외</span></li>
+          <li><span data-i18n-html="about.limit15">병합된 표 칸은 빈 칸으로 남습니다. Markdown 표는 병합을 표현할 수 없어서입니다. 병합 보존(<code>--table html</code>)은 예정입니다.</span><span class="chip chip--plan" data-i18n="about.chip_partial">부분</span></li>
+          <li><span data-i18n="about.limit16">문서 하나당 .md 파일 하나로 나옵니다. 제목 단위 분할과 메타데이터 JSON은 아직 없습니다.</span><span class="chip chip--plan" data-i18n="about.chip_planned">예정</span></li>
+          <li><span data-i18n="about.limit17">한 번에 파일 하나씩 변환합니다. 폴더 일괄 변환은 아직 없습니다.</span><span class="chip chip--plan" data-i18n="about.chip_planned">예정</span></li>
+          <li><span data-i18n="about.limit18">아직 PyPI에 배포하지 않아 소스에서 설치합니다.</span><span class="chip chip--plan" data-i18n="about.chip_planned">예정</span></li>
+          <li><span data-i18n="about.limit19">글꼴·색·정렬·굵게 같은 서식은 옮기지 않습니다. 목표는 구조와 내용입니다. 파일 하나는 50MB까지.</span><span class="chip chip--out" data-i18n="about.chip_out_of_scope">범위 밖</span></li>
         </ul>
       </div>
     </section>
@@ -448,30 +449,32 @@
     <section class="cta" aria-labelledby="cta-title">
       <div class="marquee" aria-hidden="true">
         <div class="marquee__row" data-dir="-1">
-          <div class="marquee__track"><span># 제목</span><span>| 표 |</span><span>![그림 1]</span><span>## 개요</span><span>|---|---|</span><span>demo_images/</span><span>### 2.1</span><span>img_001.png</span></div>
+          <div class="marquee__track"><span data-i18n="about.mq_heading"># 제목</span><span data-i18n="about.mq_table">| 표 |</span><span data-i18n="about.mq_image">![그림 1]</span><span data-i18n="about.mq_overview">## 개요</span><span>|---|---|</span><span>demo_images/</span><span>### 2.1</span><span>img_001.png</span></div>
         </div>
         <div class="marquee__row" data-dir="1">
           <div class="marquee__track"><span>HWP 5.0</span><span>HWPX</span><span>.md</span><span>&lt;br&gt;</span><span>olefile</span><span>lxml</span><span>convert_bytes()</span><span>hwp2md serve</span></div>
         </div>
       </div>
-      <h2 id="cta-title" class="cta__title">갇힌 문서를 꺼내 보세요</h2>
-      <a class="btn btn--primary btn--lg magnetic" href="/">변환 도구 열기 <svg><use href="#i-arrow"/></svg></a>
+      <h2 id="cta-title" class="cta__title" data-i18n="about.cta_title">갇힌 문서를 꺼내 보세요</h2>
+      <a class="btn btn--primary btn--lg magnetic" href="/"><span data-i18n="about.open_converter">변환 도구 열기</span> <svg><use href="#i-arrow"/></svg></a>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <span><b>hwp2md</b> · 한컴오피스 없이 HWP·HWPX·HWPML을 Markdown으로<br>본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</span>
-      <nav aria-label="바닥글">
-        <a href="/">변환 도구</a>
-        <a href="#pipeline">작동 원리</a>
-        <a href="#entry">사용법</a>
-        <a href="#privacy">개인정보·보안</a>
-        <a href="#limits">지원 범위</a>
+      <span data-i18n-html="about.footer"><b>hwp2md</b> · 한컴오피스 없이 HWP·HWPX·HWPML을 Markdown으로<br>본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.</span>
+      <nav data-i18n-attr="aria-label:about.footer_nav_label" aria-label="바닥글">
+        <a data-i18n="about.nav_converter" href="/">변환 도구</a>
+        <a data-i18n="about.nav_pipeline" href="#pipeline">작동 원리</a>
+        <a data-i18n="about.nav_entry" href="#entry">사용법</a>
+        <a data-i18n="about.nav_privacy" href="#privacy">개인정보·보안</a>
+        <a data-i18n="about.nav_limits" href="#limits">지원 범위</a>
       </nav>
     </div>
   </footer>
 
+  <script src="/static/js/i18n-about.js"></script>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/vendor/gsap/gsap.min.js"></script>
   <script src="/static/vendor/gsap/ScrollTrigger.min.js"></script>
   <script src="/static/vendor/gsap/SplitText.min.js"></script>
