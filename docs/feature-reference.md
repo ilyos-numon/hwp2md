@@ -1108,5 +1108,4 @@ Hwp2mdError                     (손상 레코드, 깨진 XML, 과대 엔트리 
 | 추출 한계 | [extraction-limits.md](extraction-limits.md) |
 | 웹 서버 | [app.py](../src/hwp2md/web/app.py) · [server.py](../src/hwp2md/web/server.py) |
 | 웹 UI | [index.html](../src/hwp2md/web/static/index.html) · [about.html](../src/hwp2md/web/static/about.html) · [js/app.js](../src/hwp2md/web/static/js/app.js) · [pyodide-runner.js](../src/hwp2md/web/static/pyodide-runner.js) · [css/base.css](../src/hwp2md/web/static/css/base.css) · [vendor/README.md](../src/hwp2md/web/static/vendor/README.md) |
-| 스펙 | [openspec/specs/](../openspec/specs/) (`image-extraction`, `memory-conversion`, `web-preview`), 진행 중 변경 [openspec/changes/extract-dropped/](../openspec/changes/extract-dropped/) (`element-extraction`, `document-protection`, `hwpml-input` 추가) |
 | E2E (UI 계약) | [tests/e2e/test_web_ui.py](../tests/e2e/test_web_ui.py) · [test_web_api.py](../tests/e2e/test_web_api.py) |
